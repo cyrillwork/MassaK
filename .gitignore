@@ -2,4 +2,8 @@
 *.e
 Makefile
 Makefile.*
-
+*.user
+MassaK
+*.stash
+moc_*
+ui_*
