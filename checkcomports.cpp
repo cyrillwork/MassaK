@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include <iostream>
 
 CheckCOMPorts::CheckCOMPorts()
 {
@@ -65,6 +66,6 @@ void CheckCOMPorts::get_tty_ports(COMPorts& tty_ports)
     findFilesWithMask(directory, mask1, mask_array);
     findFilesWithMask(directory, mask2, mask_array);
 
-    checkCOMPorts(mask_array, tty_portss);
+    checkCOMPorts(mask_array, tty_ports);
 }
 
