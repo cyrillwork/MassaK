@@ -11,11 +11,16 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    checkcomports.cpp
+    checkcomports.cpp \
+    controller.cpp \
+    protocol.cpp
 
 HEADERS += \
     mainwindow.h \
-    checkcomports.h
+    checkcomports.h \
+    controller.h \
+    protocol.h \
+    messages.h
 
 FORMS += \
     mainwindow.ui
