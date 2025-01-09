@@ -10,8 +10,8 @@ Protocol::Protocol()
 void Protocol::getMassa(std::vector<uint8_t>& buff)
 {
     size_t len_message = sizeof(GetMassa);
-    data.clear();
-    data.reserve(len_message);
+    buff.clear();
+    buff.reserve(len_message);
 
     GetMassa message;
     uint8_t* ptr1 = (uint8_t*)&message;
@@ -22,8 +22,8 @@ void Protocol::getMassa(std::vector<uint8_t>& buff)
 void Protocol::setZero(std::vector<uint8_t>& buff)
 {
     size_t len_message = sizeof(SetZero);
-    data.clear();
-    data.reserve(len_message);
+    buff.clear();
+    buff.reserve(len_message);
 
     SetZero message;
     uint8_t* ptr1 = (uint8_t*)&message;
@@ -34,8 +34,8 @@ void Protocol::setZero(std::vector<uint8_t>& buff)
 void Protocol::setTare(std::vector<uint8_t>& buff)
 {
     size_t len_message = sizeof(SetTare);
-    data.clear();
-    data.reserve(len_message);
+    buff.clear();
+    buff.reserve(len_message);
 
     SetTare message;
     uint8_t* ptr1 = (uint8_t*)&message;
