@@ -1,7 +1,8 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
+
+#include "controller.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,10 +18,11 @@ public:
 
 private slots:
     void on_getWeight_released();
-
     void on_setZero_released();
 
 private:
     Ui::MainWindow *ui;
+
+    Controller controller;
 };
-#endif // MAINWINDOW_H
+
