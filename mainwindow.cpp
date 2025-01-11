@@ -24,11 +24,13 @@ void MainWindow::on_getMassa_released()
 void MainWindow::on_setZero_released()
 {
     std::cout << "Set Zero" << std::endl;
+    controller.setZero();
 }
 
 void MainWindow::on_setTare_released()
 {
     std::cout << "Set Tare" << std::endl;
+    controller.setTare();
 }
 
 void MainWindow::on_startButton_released()

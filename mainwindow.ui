@@ -11,7 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Test Massa K</string>
+  </property>
+  <property name="windowOpacity">
+   <double>5.000000000000000</double>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="getMassa">

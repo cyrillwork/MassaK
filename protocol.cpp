@@ -1,5 +1,6 @@
 #include "protocol.h"
 #include "messages.h"
+#include "boost/crc.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -50,5 +51,7 @@ void Protocol::print(const Data& buff)
 
 void Protocol::addCRC(uint8_t* data, size_t len)
 {
-
+    boost::crc_ccitt_false_t  _res;
+    _res.process_bytes(data, len - 2);
+    *(uint16_t*)(data + len - 2) = _res.checksum();
 }

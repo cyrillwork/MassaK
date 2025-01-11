@@ -34,17 +34,22 @@ void Controller::stop()
 void Controller::getMassa()
 {
     Data data;
-
     Protocol::getMassa(data);
     Protocol::print(data);
 }
 
 void Controller::setZero()
 {
+    Data data;
+    Protocol::setZero(data);
+    Protocol::print(data);
 }
 
 void Controller::setTare()
 {
+    Data data;
+    Protocol::setTare(data);
+    Protocol::print(data);
 }
 
 void Controller::routine()
