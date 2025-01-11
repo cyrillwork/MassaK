@@ -58,8 +58,26 @@ void Controller::routine()
 
     while (is_run) {
         std::cout << "routine alive" << std::endl;
+        printScalesParameters();
         std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     }
 
     std::cout << "routine stop" << std::endl;
+}
+
+const ScalesParameters& Controller::getScalesParameters() const
+{
+    return scalesParameters;
+}
+
+void Controller::printScalesParameters() const
+{
+    std::cout << "connection: " << scalesParameters.connection << std::endl;
+    std::cout << "condition: "  << scalesParameters.condition << std::endl;
+    std::cout << "weight: "     << scalesParameters.weight << std::endl;
+
+    std::cout << "weight_stable: "  << scalesParameters.weight_stable << std::endl;
+    std::cout << "weight_overmax: " << scalesParameters.weight_overmax << std::endl;
+    std::cout << "weight_net: "     << scalesParameters.weight_net << std::endl;
+    std::cout << "weight_zero: "    << scalesParameters.weight_zero << std::endl;
 }
