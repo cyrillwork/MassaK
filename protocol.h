@@ -3,14 +3,17 @@
 #include <cinttypes>
 #include <vector>
 
+
+using Data = std::vector<uint8_t>;
+
 class Protocol
 {
-public:
-    Protocol();    
-    void getMassa(std::vector<uint8_t>& buff);
-    void setZero(std::vector<uint8_t>& buff);
-    void setTare(std::vector<uint8_t>& buff);
+public:    
+    static void getMassa(Data& buff);
+    static void setZero(Data& buff);
+    static void setTare(Data& buff);
+    static void print(const Data& buff);
 
 private:
-    void addCRC(uint8_t* data, size_t len);
+    static void addCRC(uint8_t* data, size_t len);
 };

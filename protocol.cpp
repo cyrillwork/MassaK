@@ -2,12 +2,9 @@
 #include "messages.h"
 
 #include <algorithm>
+#include <iostream>
 
-Protocol::Protocol()
-{
-}
-
-void Protocol::getMassa(std::vector<uint8_t>& buff)
+void Protocol::getMassa(Data& buff)
 {
     size_t len_message = sizeof(GetMassa);
     buff.clear();
@@ -19,7 +16,7 @@ void Protocol::getMassa(std::vector<uint8_t>& buff)
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
 }
 
-void Protocol::setZero(std::vector<uint8_t>& buff)
+void Protocol::setZero(Data& buff)
 {
     size_t len_message = sizeof(SetZero);
     buff.clear();
@@ -31,7 +28,7 @@ void Protocol::setZero(std::vector<uint8_t>& buff)
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
 }
 
-void Protocol::setTare(std::vector<uint8_t>& buff)
+void Protocol::setTare(Data& buff)
 {
     size_t len_message = sizeof(SetTare);
     buff.clear();
@@ -43,6 +40,15 @@ void Protocol::setTare(std::vector<uint8_t>& buff)
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
 }
 
+void Protocol::print(const Data& buff)
+{
+    for (const auto iii: buff) {
+        std::cout << std::hex << (int)iii << " ";
+    }
+    std::cout << std::dec << "\n";
+}
+
 void Protocol::addCRC(uint8_t* data, size_t len)
 {
+
 }

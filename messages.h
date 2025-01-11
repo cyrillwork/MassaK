@@ -22,7 +22,7 @@ struct CommonMessage
     uint8_t header_3 = 0xCE;
     uint16_t length;
     uint8_t command;
-};
+} __attribute__ ((packed));
 
 struct GetMassa: public CommonMessage
 {

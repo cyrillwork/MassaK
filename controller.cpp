@@ -1,10 +1,11 @@
 #include "controller.h"
+#include "protocol.h"
 
 #include <iostream>
 
 Controller::Controller():
     is_run{false}
-{    
+{
 }
 
 Controller::~Controller()
@@ -28,6 +29,22 @@ void Controller::stop()
         main_thread->join();
         main_thread.reset();
     }
+}
+
+void Controller::getMassa()
+{
+    Data data;
+
+    Protocol::getMassa(data);
+    Protocol::print(data);
+}
+
+void Controller::setZero()
+{
+}
+
+void Controller::setTare()
+{
 }
 
 void Controller::routine()

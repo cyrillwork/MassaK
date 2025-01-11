@@ -12,6 +12,10 @@ public:
     void start();
     void stop();
 
+    void getMassa();
+    void setZero();
+    void setTare();
+
 private:
     bool is_run;
     std::unique_ptr<std::thread> main_thread;
