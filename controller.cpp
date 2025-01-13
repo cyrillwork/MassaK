@@ -1,83 +1,167 @@
 #include "controller.h"
-#include "protocol.h"
 
 #include <iostream>
+#include <cstring>
+#include <unistd.h>
+#include <fcntl.h>
+#include <termios.h>
+#include <sstream>
 
-Controller::Controller():
-    is_run{false}
+Controller::Controller(const std::string& port_name)
 {
+    std::cout << "Controller" << std::endl;
+    is_init = open(port_name);
 }
 
 Controller::~Controller()
 {
-    stop();
-}
-
-void Controller::start()
-{
-    if(main_thread) {
-        stop();
-    }
-    is_run = true;
-    main_thread = std::make_unique<std::thread>(&Controller::routine, this);
-}
-
-void Controller::stop()
-{
-    if(main_thread && main_thread->joinable()) {
-        is_run = false;
-        main_thread->join();
-        main_thread.reset();
+    std::cout << "~Controller" << std::endl;
+    if(fd >= 0) {
+        ::close(fd);
     }
 }
 
-void Controller::getMassa()
+bool Controller::isInit() const
 {
-    Data data;
-    Protocol::getMassa(data);
-    Protocol::print(data);
+    return is_init;
 }
 
-void Controller::setZero()
+bool Controller::open(const std::string& port_name)
 {
-    Data data;
-    Protocol::setZero(data);
-    Protocol::print(data);
-}
-
-void Controller::setTare()
-{
-    Data data;
-    Protocol::setTare(data);
-    Protocol::print(data);
-}
-
-void Controller::routine()
-{
-    std::cout << "routine start" << std::endl;
-
-    while (is_run) {
-        std::cout << "routine alive" << std::endl;
-        printScalesParameters();
-        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+    bool result = false;
+    fd = ::open(port_name.c_str(), O_RDWR | O_NONBLOCK /*O_NOCTTY | O_NDELAY*/);
+    if (fd == -1) {
+        std::cerr << "Error open port: " << port_name << std::endl;
+        return result;
+    } else {
+        std::cout << "port opened fd: " << fd << std::endl;
     }
 
-    std::cout << "routine stop" << std::endl;
+    //fcntl(fd, F_SETFL, FNDELAY);	//read with no delay
+    result = set_params(B57600 /*baud_rate*/);
+    return result;
 }
 
-const ScalesParameters& Controller::getScalesParameters() const
+bool Controller::set_params(uint32_t baud_rate)
 {
-    return scalesParameters;
+    bool result = false;
+
+    struct termios tty;
+    memset(&tty, 0, sizeof(tty));
+    if (tcgetattr(fd, &tty) != 0) {
+        std::cerr << "Ошибка получения атрибутов порта" << std::endl;
+        return result;
+    } else {
+        std::cout << "tcgetattr OK" << std::endl;
+    }
+
+    {
+        cfsetispeed(&tty, baud_rate);
+        cfsetospeed(&tty, baud_rate);
+        {
+            tty.c_cflag |= (CLOCAL | CREAD);
+
+            tty.c_cflag |= PARENB; // Enable parity
+            tty.c_cflag |= PARODD; // Set odd parity
+            {
+                tty.c_cflag &= ~CSTOPB;
+            }			//1 stop bit
+            tty.c_cflag &= ~CSIZE;	//bit mask for data bits
+            tty.c_cflag |= CS8;	//8 data bits
+            tty.c_cflag &= ~CRTSCTS;	//disable hardware flow control
+            tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);	//raw mode!
+            tty.c_iflag &= ~(INPCK | ISTRIP | IUCLC | IGNCR | ICRNL | INLCR | PARMRK);	//raw mode!
+            tty.c_iflag &= ~(IXON | IXOFF | IXANY);	//disable software flow control
+            tty.c_oflag &= ~OPOST;
+
+            tty.c_cc[VMIN] = 0;
+            tty.c_cc[VTIME]= 0;
+        }
+        tty.c_cflag &= ~CBAUD;
+        tty.c_cflag |= baud_rate;	//9600BAUD
+    }
+
+    if (tcsetattr(fd, TCSANOW, &tty) != 0) {
+        std::cerr << "Error tcsetattr" << std::endl;
+        return result;
+    } else {
+        std::cout << "tcsetattr OK" << std::endl;
+    }
+
+    result = true;
+    return result;
+
 }
 
-void Controller::printScalesParameters() const
+bool Controller::send(const std::vector<uint8_t>& buff)
 {
-    std::cout << "connection: " << scalesParameters.connection << std::endl;
-    std::cout << "condition: "  << scalesParameters.condition << std::endl;
-    std::cout << "weight: "     << scalesParameters.weight << std::endl;
+    bool result = false;
 
-    std::cout << "weight_stable: "  << scalesParameters.weight_stable << std::endl;
-    std::cout << "weight_overmax: " << scalesParameters.weight_overmax << std::endl;
-    std::cout << "weight_net: "     << scalesParameters.weight_net << std::endl;
-    std::cout << "weight_zero: "    << scalesParameters.weight_zero << std::endl;
+    auto size_w = ::write(fd, buff.data(), buff.size());
+    std::cout << std::dec << "write size: " << size_w << " buf_len: " << (int)buff.size() << std::endl;
+
+    if((size_w >= 0) && ((size_t)size_w == buff.size()))
+    {
+        std::vector<uint8_t> resp_buff;
+        if (read_fd(resp_buff) && (resp_buff.size() > 0))
+        {
+            /*
+            was_nack = false;
+            if(resp_buff.size() == 1 && (resp_buff[0] == ACK)) {
+                //std::cout << "ACK" << std::endl;
+                LOG(LOG_BACTA) << "IN ACK" << "\n";
+                result = true;
+            } else if(resp_buff.size() == 1 && (resp_buff[0] == NACK)) {
+                //std::cout << "NACK" << std::endl;
+                LOG(LOG_BACTA) << "IN NACK" << "\n";
+                was_nack = true;
+            } else if(resp_buff.size() == 1 && (resp_buff[0] == RVI)) {
+                //std::cout << "RVI" << std::endl;
+                LOG(LOG_BACTA) << "IN RVI" << "\n";
+                uint8_t _buff_ack[] = {ACK};
+                is_RVI = true;
+                result = true;
+                //send ACK
+                write(fd, _buff_ack, 1);
+                std::cout << "OUT ACK "<< std::endl;
+            }
+            */
+        } else {
+            std::cout << "Error reading answer send" << std::endl;
+        }
+    }
+
+    return result;
+
+}
+
+bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
+{
+    fd_set rfds;
+    struct timeval tv;
+    bool result = false;
+
+    FD_ZERO(&rfds);
+    FD_SET(fd, &rfds);
+
+    tv.tv_sec  = 0;
+    tv.tv_usec = 500000;
+
+    if(select(fd + 1, &rfds, NULL, NULL, &tv) > 0) {
+        uint8_t response[256];
+        int bytesRead = read(fd, response, sizeof(response));
+        if (bytesRead > 0) {
+            if(print) {
+                std::cout << "IN: ";
+                for (int i = 0; i < bytesRead; ++i) {
+                    std::cout << std::hex << (int)response[i] << " ";
+                }
+                std::cout << "\n";
+            }
+
+            std::copy(response, response + bytesRead, back_inserter(buff));
+            result = true;
+        }
+    }
+    return result;
 }

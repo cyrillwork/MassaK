@@ -44,3 +44,11 @@ struct SetTare: public CommonMessage
     { length = 0x0001; }
     uint16_t crc;
 } __attribute__ ((packed));
+
+struct GetScalePar: public CommonMessage
+{
+    GetScalePar(): CommonMessage(CMD_GET_SCALE_PAR)
+    { length = 0x0001; }
+    uint16_t crc;
+} __attribute__ ((packed));
+

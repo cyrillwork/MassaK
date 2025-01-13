@@ -1,41 +1,22 @@
 #pragma once
 
-#include <thread>
-#include <memory>
-
-struct ScalesParameters
-{
-    bool connection = false;
-    bool condition  = false;
-    uint32_t weight = 0;
-    bool weight_stable = false;
-    bool weight_overmax = false;
-    bool weight_net = false;
-    bool weight_zero = false;
-};
+#include <string>
+#include <vector>
 
 class Controller
 {
 public:
-    Controller();
+    Controller(const std::string& port_name);
     ~Controller();
 
-    void start();
-    void stop();
-
-    void getMassa();
-    void setZero();
-    void setTare();
-
-    const ScalesParameters& getScalesParameters() const;
-    void printScalesParameters() const;
+    bool isInit() const;
+    bool send(const std::vector<uint8_t>& buff);
+    bool read_fd(std::vector<uint8_t>& buff, bool print = true);
 
 private:
-    bool is_run;
-    std::unique_ptr<std::thread> main_thread;
+    int fd;
+    bool is_init;
 
-    void routine();
-
-    ScalesParameters scalesParameters;
+    bool open(const std::string& port_name);
+    bool set_params(uint32_t baud_rate);
 };
-

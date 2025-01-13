@@ -12,8 +12,10 @@ public:
     static void getMassa(Data& buff);
     static void setZero(Data& buff);
     static void setTare(Data& buff);
+    static void getScalePar(Data& buff);
     static void print(const Data& buff);
 
+    static void test_crc();
 private:
     static void addCRC(uint8_t* data, size_t len);
 };

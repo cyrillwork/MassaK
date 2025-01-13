@@ -9,16 +9,18 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    driver.cpp \
+    controller.cpp \
     main.cpp \
     mainwindow.cpp \
-    checkcomports.cpp \
-    controller.cpp \
+    checkcomports.cpp \    
     protocol.cpp
 
 HEADERS += \
+    driver.h \
+    controller.h \
     mainwindow.h \
     checkcomports.h \
-    controller.h \
     protocol.h \
     messages.h
 
