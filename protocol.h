@@ -16,6 +16,8 @@ public:
     static void print(const Data& buff);
 
     static void test_crc();
+    static bool check_crc(const Data& buff);
+
 private:
     static void addCRC(uint8_t* data, size_t len);
 };

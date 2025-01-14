@@ -100,39 +100,24 @@ bool Controller::send(const std::vector<uint8_t>& buff)
     auto size_w = ::write(fd, buff.data(), buff.size());
     std::cout << std::dec << "write size: " << size_w << " buf_len: " << (int)buff.size() << std::endl;
 
-    if((size_w >= 0) && ((size_t)size_w == buff.size()))
-    {
-        std::vector<uint8_t> resp_buff;
-        if (read_fd(resp_buff) && (resp_buff.size() > 0))
-        {
-            /*
-            was_nack = false;
-            if(resp_buff.size() == 1 && (resp_buff[0] == ACK)) {
-                //std::cout << "ACK" << std::endl;
-                LOG(LOG_BACTA) << "IN ACK" << "\n";
-                result = true;
-            } else if(resp_buff.size() == 1 && (resp_buff[0] == NACK)) {
-                //std::cout << "NACK" << std::endl;
-                LOG(LOG_BACTA) << "IN NACK" << "\n";
-                was_nack = true;
-            } else if(resp_buff.size() == 1 && (resp_buff[0] == RVI)) {
-                //std::cout << "RVI" << std::endl;
-                LOG(LOG_BACTA) << "IN RVI" << "\n";
-                uint8_t _buff_ack[] = {ACK};
-                is_RVI = true;
-                result = true;
-                //send ACK
-                write(fd, _buff_ack, 1);
-                std::cout << "OUT ACK "<< std::endl;
-            }
-            */
-        } else {
-            std::cout << "Error reading answer send" << std::endl;
-        }
+    if((size_w >= 0) && ((size_t)size_w == buff.size())) {
+        result = true;
+    } else {
+        std::cout << "Error Controller::send size_w: " << size_w << std::endl;
     }
 
     return result;
+}
 
+bool Controller::read(std::vector<uint8_t>& buff)
+{
+    bool result = false;
+    if (read_fd(buff) && (buff.size() > 0)) {
+        result = true;
+    } else {
+        std::cout << "Error reading answer send" << std::endl;
+    }
+    return result;
 }
 
 bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
@@ -149,7 +134,7 @@ bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
 
     if(select(fd + 1, &rfds, NULL, NULL, &tv) > 0) {
         uint8_t response[256];
-        int bytesRead = read(fd, response, sizeof(response));
+        int bytesRead = ::read(fd, response, sizeof(response));
         if (bytesRead > 0) {
             if(print) {
                 std::cout << "IN: ";

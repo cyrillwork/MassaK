@@ -73,11 +73,16 @@ void Driver::routine()
 
         if(controller && controller->isInit()) {
             Data data;
+            Data recv_data;
             //Protocol::setTare(data);
             //Protocol::setZero(data);
             Protocol::getMassa(data);
             Protocol::print(data);
-            controller->send(data);
+            if(controller->send(data)) {
+               if(controller->read(recv_data)) {
+                   Protocol::check_crc(recv_data);
+               }
+            }
         } else {
             std::cout << "make controller" << std::endl;
         }

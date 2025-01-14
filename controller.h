@@ -11,6 +11,7 @@ public:
 
     bool isInit() const;
     bool send(const std::vector<uint8_t>& buff);
+    bool read(std::vector<uint8_t>& buff);
     bool read_fd(std::vector<uint8_t>& buff, bool print = true);
 
 private:
