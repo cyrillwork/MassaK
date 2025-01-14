@@ -79,8 +79,8 @@ void Driver::routine()
             Protocol::getMassa(data);
             Protocol::print(data);
             if(controller->send(data)) {
-               if(controller->read(recv_data)) {
-                   Protocol::check_crc(recv_data);
+               if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
+                   Protocol::parseResponseGetMassa(recv_data);
                }
             }
         } else {

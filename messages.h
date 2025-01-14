@@ -9,7 +9,11 @@ enum ProtocolCommands: uint8_t
     CMD_SET_TARE        = 0xA3,
     CMD_SET_ZERO        = 0x72,
     CMD_GET_NAME        = 0x20,
-    CMD_SET_NAME        = 0x22
+    CMD_SET_NAME        = 0x22,
+
+    CMD_ACK_MASSA       = 0x24,
+    CMD_ACK_SCALE_PAR   = 0x76,
+    CMD_ERROR           = 0x28
 };
 
 struct CommonMessage
@@ -50,5 +54,24 @@ struct GetScalePar: public CommonMessage
     GetScalePar(): CommonMessage(CMD_GET_SCALE_PAR)
     { length = 0x0001; }
     uint16_t crc;
+} __attribute__ ((packed));
+
+struct AckMassa: public CommonMessage
+{
+    AckMassa(): CommonMessage(CMD_ACK_MASSA)
+    { length = 0x0009; }
+    int32_t weight;
+    uint8_t division; //Цена деления в значении массы нетто и массы тары:
+                          //0 – 100 мг, 1 – 1 г, 2 – 10 г, 3 – 100 г, 4 – 1 кг
+    uint8_t stable;   //Признак стабилизации массы: 0 – нестабильна, 1 – стабильна
+    uint8_t net;      //Признак индикации <NET>: 0 – нет индикации, 1 – есть индикация
+    uint8_t zero;     //Признак индикации >0< : 0 – нет индикации, 1 – есть индикация
+} __attribute__ ((packed));
+
+struct AckMassaTare: public AckMassa
+{
+    AckMassaTare(): AckMassa()
+    { length = 0x000d; }
+    int32_t tare;
 } __attribute__ ((packed));
 

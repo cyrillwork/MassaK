@@ -83,6 +83,30 @@ void Protocol::print(const Data& buff)
     std::cout << std::dec << std::endl;
 }
 
+bool Protocol::parseResponseGetMassa(Data& buff)
+{
+    bool result = false;
+    auto len = buff.size();
+    if(len <= 7) {
+        std::cout << "Protocol::parseResponse Error too small len: " << len << std::endl;
+        return result;
+    }
+
+    if(!((buff[0] == 0xf8) && (buff[1] == 0x55) && (buff[2] == 0xce))) {
+        std::cout << "Protocol::parseResponse Error header" << std::endl;
+        return result;
+    }
+
+    CommonMessage commonMessage(CMD_ACK_MASSA);
+
+    std::copy(buff.data(), buff.data() + sizeof(CommonMessage),
+              (uint8_t*)&commonMessage);
+
+    std::cout << std::hex << "parseResponseGetMassa command:" << (int)commonMessage.command << std::endl;
+
+    return result;
+}
+
 void Protocol::test_crc()
 {
     //proper crc 0x7d, 0x42
