@@ -4,6 +4,7 @@
 
 enum ProtocolCommands: uint8_t
 {
+    CMD_NONE            = 0x0,
     CMD_GET_SCALE_PAR   = 0x75,
     CMD_GET_MASSA       = 0x23,
     CMD_SET_TARE        = 0xA3,

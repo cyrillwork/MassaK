@@ -3,16 +3,7 @@
 #include <thread>
 #include <memory>
 
-struct ScalesParameters
-{
-    bool connection = false;
-    bool condition  = false;
-    uint32_t weight = 0;
-    bool weight_stable = false;
-    bool weight_overmax = false;
-    bool weight_net = false;
-    bool weight_zero = false;
-};
+#include "protocol.h"
 
 class Driver
 {

@@ -83,7 +83,7 @@ void Protocol::print(const Data& buff)
     std::cout << std::dec << std::endl;
 }
 
-bool Protocol::parseResponseGetMassa(Data& buff)
+bool Protocol::parseResponseGetMassa(Data& buff, ScalesParameters& params)
 {
     bool result = false;
     auto len = buff.size();
@@ -97,12 +97,34 @@ bool Protocol::parseResponseGetMassa(Data& buff)
         return result;
     }
 
-    CommonMessage commonMessage(CMD_ACK_MASSA);
+    CommonMessage commonMessage(CMD_NONE);
 
     std::copy(buff.data(), buff.data() + sizeof(CommonMessage),
               (uint8_t*)&commonMessage);
 
     std::cout << std::hex << "parseResponseGetMassa command:" << (int)commonMessage.command << std::endl;
+    if(commonMessage.command == CMD_ACK_MASSA)
+    {
+        AckMassaTare ackMassa;
+
+        if(commonMessage.length == 0x9) {
+            std::copy(buff.data(), buff.data() + sizeof(AckMassa),
+                      (uint8_t*)&ackMassa);
+        } else if(commonMessage.length == 0xd) {
+            std::copy(buff.data(), buff.data() + sizeof(AckMassaTare),
+                      (uint8_t*)&ackMassa);
+        } else {
+            std::cout << std::dec << "len error:" << (int)commonMessage.length << std::endl;
+            return result;
+        }
+        result = true;
+        params.connection = true;
+        params.condition  = true;
+        params.weight = ackMassa.weight;
+        params.weight_net  = ackMassa.net;
+        params.weight_zero = ackMassa.zero;
+        params.weight_stable = ackMassa.stable;
+    }
 
     return result;
 }
