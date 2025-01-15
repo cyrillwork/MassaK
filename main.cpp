@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-#include "checkcomports.h"
+//#include "checkcomports.h"
 
 int main(int argc, char *argv[])
 {
