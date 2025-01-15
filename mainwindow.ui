@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>710</width>
+    <height>483</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,8 +20,8 @@
    <widget class="QPushButton" name="getMassa">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>150</y>
+      <x>20</x>
+      <y>20</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -33,8 +33,8 @@
    <widget class="QPushButton" name="setZero">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>190</y>
+      <x>20</x>
+      <y>60</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -43,37 +43,11 @@
      <string>Set Zero</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="startButton">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>20</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Start</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="stopButton">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>60</y>
-      <width>101</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Stop</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="setTare">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>230</y>
+      <x>20</x>
+      <y>100</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -82,13 +56,36 @@
      <string>Set Tare</string>
     </property>
    </widget>
+   <widget class="QLabel" name="scaleInfo">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>20</y>
+      <width>501</width>
+      <height>371</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>710</width>
      <height>20</height>
     </rect>
    </property>

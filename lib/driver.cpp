@@ -5,9 +5,12 @@
 
 #include "controller.h"
 
+std::unique_ptr<Controller> controller;
+
 Driver::Driver():
     is_run{false}
 {
+    start();
 }
 
 Driver::~Driver()
@@ -33,11 +36,34 @@ void Driver::stop()
     }
 }
 
-void Driver::getMassa()
+bool Driver::getMassa()
 {
+    bool result = false;
+
+    if(!(controller && controller->isInit())) {
+        std::cout << "Driver::getMassa controller not init" << std::endl;
+        return result;
+    }
+
     Data data;
+    Data recv_data;
     Protocol::getMassa(data);
-    Protocol::print(data);
+    //Protocol::print(data);
+
+    if(controller->send(data)) {
+       if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
+           ScalesParameters _temp;
+           Protocol::parseResponseGetMassa(recv_data, _temp);
+           scalesParameters = _temp;
+           result = true;
+       }
+    }
+
+    if(!result) {
+        resetScaleParameters();
+    }
+
+    return result;
 }
 
 void Driver::setZero()
@@ -58,46 +84,36 @@ void Driver::setTare()
 
 void Driver::routine()
 {
-    std::cout << "routine start" << std::endl;
-    std::unique_ptr<Controller> controller;
+    std::cout << "routine start" << std::endl;    
 
     while (is_run)
     {
         std::cout << "---------------------------------" << std::endl;
-
         if(!controller) {
             std::cout << "make controller" << std::endl;
             controller = std::make_unique<Controller>("/dev/ttyACM0");
             std::cout << "is_init: " << controller->isInit() << std::endl;
-        }
-
-        if(controller && controller->isInit()) {
-            Data data;
-            Data recv_data;
-            //Protocol::setTare(data);
-            //Protocol::setZero(data);
-            Protocol::getMassa(data);
-            //Protocol::getScalePar(data);
-
-            Protocol::print(data);
-            if(controller->send(data)) {
-               if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
-                   ScalesParameters _temp;
-                   Protocol::parseResponseGetMassa(recv_data, _temp);
-                   scalesParameters = _temp;
-               }
+            if(!controller->isInit()) {
+                controller.reset();
+                controller = nullptr;
             }
-        } else {
-            std::cout << "make controller" << std::endl;
         }
 
-        printScalesParameters();
-
-        //printScalesParameters();
-        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
     std::cout << "routine stop" << std::endl;
+}
+
+void Driver::resetScaleParameters()
+{
+    scalesParameters.connection     = false;
+    scalesParameters.condition      = false;
+    scalesParameters.weight         = 0;
+    scalesParameters.weight_stable  = false;
+    scalesParameters.weight_overmax = false;
+    scalesParameters.weight_net     = false;
+    scalesParameters.weight_zero    = false;
 }
 
 const ScalesParameters& Driver::getScalesParameters() const

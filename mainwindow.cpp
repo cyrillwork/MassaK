@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <iostream>
+#include <QString>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,8 +18,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_getMassa_released()
 {
-    std::cout << "Get Massa" << std::endl;
-    controller.getMassa();
+    std::cout << "Get Massa" << std::endl;    
+
+    if(controller.getMassa()) {
+        std::cout << "Get Massa OK" << std::endl;
+    } else {
+        std::cout << "Get Massa Error" << std::endl;
+    }
+
+    show_info();
 }
 
 void MainWindow::on_setZero_released()
@@ -33,14 +41,30 @@ void MainWindow::on_setTare_released()
     controller.setTare();
 }
 
-void MainWindow::on_startButton_released()
-{
-    std::cout << "Start" << std::endl;
-    controller.start();
-}
+//void MainWindow::on_startButton_released()
+//{
+//    std::cout << "Start" << std::endl;
+//    controller.start();
+//}
 
-void MainWindow::on_stopButton_released()
+//void MainWindow::on_stopButton_released()
+//{
+//    std::cout << "Stop" << std::endl;
+//    controller.stop();
+//}
+
+void MainWindow::show_info()
 {
-    std::cout << "Stop" << std::endl;
-    controller.stop();
+    std::string str_info;
+    auto params = controller.getScalesParameters();
+    str_info =  "connection: "      + std::to_string(params.connection)     + "\n" +
+                "condition: "       + std::to_string(params.condition)      + "\n" +
+                "weigth: "          + std::to_string(params.weight)         + "\n" +
+                "weight_stable:"    + std::to_string(params.weight_stable)  + "\n" +
+                "weight_overmax:"   + std::to_string(params.weight_overmax) + "\n" +
+                "weight_net:"       + std::to_string(params.weight_net)     + "\n" +
+                "weight_zero:"      + std::to_string(params.weight_zero);
+
+    QString _temp(str_info.c_str());
+    ui->scaleInfo->setText(_temp);
 }

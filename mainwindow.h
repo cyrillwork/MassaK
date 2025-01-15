@@ -16,16 +16,17 @@ public:
     ~MainWindow();
 
 private slots:
-
     void on_getMassa_released();
     void on_setZero_released();
     void on_setTare_released();
 
-    void on_startButton_released();
-    void on_stopButton_released();
+    //void on_startButton_released();
+    //void on_stopButton_released();
 
 private:
     Ui::MainWindow *ui;
+
+    void show_info();
 
     Driver controller;
 };

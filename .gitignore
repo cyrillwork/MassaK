@@ -1,5 +1,8 @@
 *.o
 *.e
+*.1
+*.0
+*.so
 Makefile
 Makefile.*
 *.user

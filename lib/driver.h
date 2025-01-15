@@ -14,7 +14,7 @@ public:
     void start();
     void stop();
 
-    void getMassa();
+    bool getMassa();
     void setZero();
     void setTare();
 
@@ -28,5 +28,6 @@ private:
     void routine();
 
     ScalesParameters scalesParameters;
+    void resetScaleParameters();
 };
 
