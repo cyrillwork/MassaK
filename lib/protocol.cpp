@@ -83,7 +83,7 @@ void Protocol::print(const Data& buff)
     std::cout << std::dec << std::endl;
 }
 
-bool Protocol::parseResponseGetMassa(Data& buff, ScalesParameters& params)
+bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
 {
     bool result = false;
     auto len = buff.size();
@@ -124,6 +124,33 @@ bool Protocol::parseResponseGetMassa(Data& buff, ScalesParameters& params)
         params.weight_net  = ackMassa.net;
         params.weight_zero = ackMassa.zero;
         params.weight_stable = ackMassa.stable;
+    }
+
+    return result;
+}
+
+bool Protocol::parseResponseGetScalePar(const Data& buff)
+{
+    bool result = false;
+    auto len = buff.size();
+    if(len <= 7) {
+        std::cout << "Protocol::parseResponseGetScalePar Error too small len: " << len << std::endl;
+        return result;
+    }
+
+    if(!((buff[0] == 0xf8) && (buff[1] == 0x55) && (buff[2] == 0xce))) {
+        std::cout << "Protocol::parseResponseGetScalePar Error header" << std::endl;
+        return result;
+    }
+
+    CommonMessage commonMessage(CMD_NONE);
+
+    std::copy(buff.data(), buff.data() + sizeof(CommonMessage),
+              (uint8_t*)&commonMessage);
+
+    std::cout << std::hex << "parseResponseGetScalePar command:" << (int)commonMessage.command << std::endl;
+    if(commonMessage.command == CMD_ACK_SCALE_PAR) {
+        result = true;
     }
 
     return result;

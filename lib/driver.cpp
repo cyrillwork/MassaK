@@ -10,6 +10,9 @@ std::unique_ptr<Controller> controller;
 
 Driver::Driver():
     is_run{false}
+  , need_getMassa{false}
+  , need_setZero{false}
+  , need_setTare{false}
 {
     start();
 }
@@ -37,7 +40,38 @@ void Driver::stop()
     }
 }
 
-bool Driver::getMassa()
+bool Driver::getScalePar()
+{
+    bool result = false;
+
+    if(!(controller && controller->isInit())) {
+        std::cout << "Driver::getScalePar controller not init" << std::endl;
+        return result;
+    }
+
+    Data data;
+    Data recv_data;
+    Protocol::getScalePar(data);
+
+    if(controller->send(data)) {
+       if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
+           result = Protocol::parseResponseGetScalePar(recv_data);
+       }
+    }
+
+    if(!result) {
+        std::cout << "Driver::getScalePar error parse" << std::endl;
+    }
+
+    return result;
+}
+
+void Driver::getMassa()
+{
+    need_getMassa = true;
+}
+
+bool Driver::m_getMassa()
 {
     bool result = false;
 
@@ -69,6 +103,11 @@ bool Driver::getMassa()
 
 void Driver::setZero()
 {
+    need_setZero = true;
+}
+
+void Driver::m_setZero()
+{
     Data data;
     Protocol::setZero(data);
     Protocol::print(data);
@@ -76,11 +115,14 @@ void Driver::setZero()
 
 void Driver::setTare()
 {
-//    Data data;
-//    Protocol::setTare(data);
-//    Protocol::print(data);
+    need_setTare = true;
+}
 
-    Protocol::test_crc();
+void Driver::m_setTare()
+{
+    Data data;
+    Protocol::setTare(data);
+    Protocol::print(data);
 }
 
 void Driver::routine()
@@ -90,7 +132,7 @@ void Driver::routine()
 
     while (is_run)
     {
-        std::cout << "---------------------------------" << std::endl;        
+        //std::cout << "---------------------------------" << std::endl;
         if(array_ports.empty()) {
             CheckCOMPorts ports;
             ports.get_tty_ports(array_ports);
@@ -104,14 +146,38 @@ void Driver::routine()
             std::cout << "make controller port: " << array_ports.back() << std::endl;
             controller = std::make_unique<Controller>(array_ports.back());
             std::cout << "is_init: " << controller->isInit() << std::endl;
-            if(!controller->isInit()) {
+
+            if(controller->isInit() && getScalePar()) {
+                std::cout << "set connected" << std::endl;
+                controller->setConnected(true);
+            } else {
+                std::cout << "not connected" << std::endl;
                 array_ports.pop_back();
                 controller.reset();
                 controller = nullptr;
             }
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        if(controller && controller->isInit())
+        {
+            if(need_getMassa) {
+                need_getMassa = false;
+                if(!m_getMassa()) {
+                    std::cout << "need reconnected" << std::endl;
+                    array_ports.clear();
+                    controller.reset();
+                    controller = nullptr;
+                }
+            } else if(need_setZero) {
+                need_setZero = false;
+            } else if(need_setTare) {
+                need_setTare = false;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        } else {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        }
+
     }
 
     std::cout << "routine stop" << std::endl;

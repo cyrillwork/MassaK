@@ -14,7 +14,7 @@ public:
     void start();
     void stop();
 
-    bool getMassa();
+    void getMassa();
     void setZero();
     void setTare();
 
@@ -24,6 +24,15 @@ public:
 private:
     bool is_run;
     std::unique_ptr<std::thread> main_thread;
+
+    bool need_getMassa;
+    bool need_setZero;
+    bool need_setTare;
+
+    bool getScalePar();
+    bool m_getMassa();
+    void m_setZero();
+    void m_setTare();
 
     void routine();
 

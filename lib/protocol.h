@@ -27,7 +27,8 @@ public:
     static void getScalePar(Data& buff);
     static void print(const Data& buff);
 
-    static bool parseResponseGetMassa(Data& buff, ScalesParameters& params);
+    static bool parseResponseGetMassa(const Data& buff, ScalesParameters& params);
+    static bool parseResponseGetScalePar(const Data& buff);
 
     static void test_crc();
     static bool check_crc(const Data& buff);

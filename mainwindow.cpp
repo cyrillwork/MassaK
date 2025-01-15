@@ -20,11 +20,7 @@ void MainWindow::on_getMassa_released()
 {
     std::cout << "Get Massa" << std::endl;    
 
-    if(controller.getMassa()) {
-        std::cout << "Get Massa OK" << std::endl;
-    } else {
-        std::cout << "Get Massa Error" << std::endl;
-    }
+    controller.getMassa();
 
     show_info();
 }

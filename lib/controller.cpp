@@ -7,7 +7,8 @@
 #include <termios.h>
 #include <sstream>
 
-Controller::Controller(const std::string& port_name)
+Controller::Controller(const std::string& port_name):
+    is_connected{false}
 {
     std::cout << "Controller" << std::endl;
     is_init = open(port_name);
@@ -149,4 +150,14 @@ bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
         }
     }
     return result;
+}
+
+bool Controller::isConnected() const
+{
+    return is_connected;
+}
+
+void Controller::setConnected(bool connected)
+{
+    is_connected = connected;
 }
