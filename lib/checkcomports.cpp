@@ -56,15 +56,17 @@ void CheckCOMPorts::checkCOMPorts(const COMPorts& result_array, COMPorts& ports_
 void CheckCOMPorts::get_tty_ports(COMPorts& tty_ports)
 {
     COMPorts mask_array;
-
     tty_ports.clear();
 
     std::string directory = "/dev/";
+
     std::string mask1 = "ttyS";
     std::string mask2 = "ttyUSB";
+    std::string mask3 = "ttyACM";
 
     findFilesWithMask(directory, mask1, mask_array);
     findFilesWithMask(directory, mask2, mask_array);
+    findFilesWithMask(directory, mask3, mask_array);
 
     checkCOMPorts(mask_array, tty_ports);
 }

@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "controller.h"
+#include "checkcomports.h"
 
 std::unique_ptr<Controller> controller;
 
@@ -84,16 +85,27 @@ void Driver::setTare()
 
 void Driver::routine()
 {
-    std::cout << "routine start" << std::endl;    
+    std::cout << "routine start" << std::endl;
+    COMPorts array_ports;
 
     while (is_run)
     {
-        std::cout << "---------------------------------" << std::endl;
-        if(!controller) {
-            std::cout << "make controller" << std::endl;
-            controller = std::make_unique<Controller>("/dev/ttyACM0");
+        std::cout << "---------------------------------" << std::endl;        
+        if(array_ports.empty()) {
+            CheckCOMPorts ports;
+            ports.get_tty_ports(array_ports);
+            for(const auto& iii: array_ports) {
+                std::cout << "Found port: " << iii << std::endl;
+            }
+            std::cout << "---------------------------------" << std::endl;
+        }
+
+        if(!controller && !array_ports.empty()) {
+            std::cout << "make controller port: " << array_ports.back() << std::endl;
+            controller = std::make_unique<Controller>(array_ports.back());
             std::cout << "is_init: " << controller->isInit() << std::endl;
             if(!controller->isInit()) {
+                array_ports.pop_back();
                 controller.reset();
                 controller = nullptr;
             }
