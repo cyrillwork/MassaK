@@ -14,11 +14,14 @@ Driver::Driver():
   , need_setZero{false}
   , need_setTare{false}
 {
+    AixLog::Log::init( { std::make_shared<AixLog::SinkFile>(AixLog::Severity::DataCapture, "/tmp/libMassaK.log") } );
+    LOG(INFO) << "Driver start" << "\n";
     start();
 }
 
 Driver::~Driver()
 {
+    LOG(INFO) << "Driver stop" << "\n";
     stop();
 }
 
@@ -45,7 +48,7 @@ bool Driver::getScalePar()
     bool result = false;
 
     if(!(controller && controller->isInit())) {
-        std::cout << "Driver::getScalePar controller not init" << std::endl;
+        LOG(INFO) << "Driver::getScalePar controller not init" << std::endl;
         return result;
     }
 
@@ -60,7 +63,7 @@ bool Driver::getScalePar()
     }
 
     if(!result) {
-        std::cout << "Driver::getScalePar error parse" << std::endl;
+        LOG(INFO) << "Driver::getScalePar error parse" << std::endl;
     }
 
     return result;
@@ -127,7 +130,7 @@ void Driver::m_setTare()
 
 void Driver::routine()
 {
-    std::cout << "routine start" << std::endl;
+    LOG(INFO) << "routine start" << std::endl;
     COMPorts array_ports;
 
     while (is_run)
@@ -137,21 +140,21 @@ void Driver::routine()
             CheckCOMPorts ports;
             ports.get_tty_ports(array_ports);
             for(const auto& iii: array_ports) {
-                std::cout << "Found port: " << iii << std::endl;
+                LOG(INFO) << "Found port: " << iii << std::endl;
             }
-            std::cout << "---------------------------------" << std::endl;
+            LOG(INFO) << "---------------------------------" << std::endl;
         }
 
         if(!controller && !array_ports.empty()) {
-            std::cout << "make controller port: " << array_ports.back() << std::endl;
+            LOG(INFO) << "make controller port: " << array_ports.back() << std::endl;
             controller = std::make_unique<Controller>(array_ports.back());
-            std::cout << "is_init: " << controller->isInit() << std::endl;
+            LOG(INFO) << "is_init: " << controller->isInit() << std::endl;
 
             if(controller->isInit() && getScalePar()) {
-                std::cout << "set connected" << std::endl;
+                LOG(INFO) << "set connected" << std::endl;
                 controller->setConnected(true);
             } else {
-                std::cout << "not connected" << std::endl;
+                LOG(INFO) << "not connected" << std::endl;
                 array_ports.pop_back();
                 controller.reset();
                 controller = nullptr;
@@ -163,7 +166,7 @@ void Driver::routine()
             if(need_getMassa) {
                 need_getMassa = false;
                 if(!m_getMassa()) {
-                    std::cout << "need reconnected" << std::endl;
+                    LOG(INFO) << "need reconnected" << std::endl;
                     array_ports.clear();
                     controller.reset();
                     controller = nullptr;
@@ -180,7 +183,7 @@ void Driver::routine()
 
     }
 
-    std::cout << "routine stop" << std::endl;
+    LOG(INFO) << "routine stop" << std::endl;
 }
 
 void Driver::resetScaleParameters()

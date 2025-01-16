@@ -15,6 +15,7 @@ CONFIG += c++17
 LIBS += -lpthread
 
 HEADERS += \
+    aixlog.hpp \
     driver.h \
     controller.h \
     checkcomports.h \

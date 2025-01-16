@@ -32,7 +32,7 @@ void CheckCOMPorts::checkCOMPorts(const COMPorts& result_array, COMPorts& ports_
         int fd = ::open(_name, O_RDONLY | O_NOCTTY | O_NDELAY);
 
         if (fd < 0) {
-            std::cout << "IsPortAvailableByFile not open " << _name << std::endl;
+            LOG(INFO) << "IsPortAvailableByFile not open " << _name << std::endl;
             continue;
         }
 
@@ -45,7 +45,7 @@ void CheckCOMPorts::checkCOMPorts(const COMPorts& result_array, COMPorts& ports_
         close(fd);
 
         if(!result) {
-            std::cout << "IsPortAvailableByFile not ioctl " << _name << std::endl;
+            LOG(INFO) << "IsPortAvailableByFile not ioctl " << _name << std::endl;
             continue;
         }
         ports_array.push_back(str_port);

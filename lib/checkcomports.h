@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "aixlog.hpp"
+
 using COMPorts = std::vector<std::string>;
 
 class CheckCOMPorts

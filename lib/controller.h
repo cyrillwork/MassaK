@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "aixlog.hpp"
+
 class Controller
 {
 public:
