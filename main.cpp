@@ -22,8 +22,8 @@ void OnExit(int /*sig*/)
 
 int main(int argc, char *argv[])
 {
-    setDaemon();
-    ::signal(SIGTERM, OnExit);
+    //setDaemon();
+    //::signal(SIGTERM, OnExit);
 
     QApplication a(argc, argv);
     MainWindow w;

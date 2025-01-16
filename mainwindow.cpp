@@ -7,12 +7,18 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , is_run{true}
+    , main_thread{&MainWindow::routine, this}
 {
     ui->setupUi(this);
 }
 
 MainWindow::~MainWindow()
 {
+    if(main_thread.joinable()) {
+        is_run = false;
+        main_thread.join();
+    }
     delete ui;
 }
 
@@ -22,7 +28,7 @@ void MainWindow::on_getMassa_released()
 
     controller.getMassa();
 
-    show_info();
+    //show_info();
 }
 
 void MainWindow::on_setZero_released()
@@ -36,18 +42,6 @@ void MainWindow::on_setTare_released()
     std::cout << "Set Tare" << std::endl;
     controller.setTare();
 }
-
-//void MainWindow::on_startButton_released()
-//{
-//    std::cout << "Start" << std::endl;
-//    controller.start();
-//}
-
-//void MainWindow::on_stopButton_released()
-//{
-//    std::cout << "Stop" << std::endl;
-//    controller.stop();
-//}
 
 void MainWindow::show_info()
 {
@@ -63,4 +57,14 @@ void MainWindow::show_info()
 
     QString _temp(str_info.c_str());
     ui->scaleInfo->setText(_temp);
+}
+
+void MainWindow::routine()
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    while(is_run) {
+        //std::cout << "show_info" << std::endl;
+        show_info();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
 }

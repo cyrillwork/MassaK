@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QMainWindow>
+#include <thread>
+#include <memory>
 
 #include "driver.h"
 
@@ -20,13 +22,14 @@ private slots:
     void on_setZero_released();
     void on_setTare_released();
 
-    //void on_startButton_released();
-    //void on_stopButton_released();
-
 private:
     Ui::MainWindow *ui;
+    Driver controller;
 
     void show_info();
 
-    Driver controller;
+    void routine();
+
+    bool is_run;
+    std::thread main_thread;
 };
