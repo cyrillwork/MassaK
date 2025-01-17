@@ -38,5 +38,7 @@ private:
 
     ScalesParameters scalesParameters;
     void resetScaleParameters();
+    void setConnected();
+    void setScalesParameters(const ScalesParameters& params);
 };
 

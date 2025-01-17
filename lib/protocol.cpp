@@ -1,6 +1,5 @@
 #include "protocol.h"
 #include "messages.h"
-//#include "boost/crc.hpp"
 
 #include <algorithm>
 #include <iostream>

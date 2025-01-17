@@ -59,6 +59,9 @@ bool Driver::getScalePar()
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
            result = Protocol::parseResponseGetScalePar(recv_data);
+           if(result) {
+               setConnected();
+           }
        }
     }
 
@@ -90,9 +93,9 @@ bool Driver::m_getMassa()
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
-           ScalesParameters _temp;
-           Protocol::parseResponseGetMassa(recv_data, _temp);
-           scalesParameters = _temp;
+           ScalesParameters _params;
+           Protocol::parseResponseGetMassa(recv_data, _params);
+           setScalesParameters(_params);
            result = true;
        }
     }
@@ -195,6 +198,22 @@ void Driver::resetScaleParameters()
     scalesParameters.weight_overmax = false;
     scalesParameters.weight_net     = false;
     scalesParameters.weight_zero    = false;
+}
+
+void Driver::setConnected()
+{
+    scalesParameters.connection     = true;
+    scalesParameters.condition      = false;
+    scalesParameters.weight         = 0;
+    scalesParameters.weight_stable  = false;
+    scalesParameters.weight_overmax = false;
+    scalesParameters.weight_net     = false;
+    scalesParameters.weight_zero    = false;
+}
+
+void Driver::setScalesParameters(const ScalesParameters& params)
+{
+    scalesParameters = params;
 }
 
 const ScalesParameters& Driver::getScalesParameters() const
