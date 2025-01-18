@@ -128,7 +128,7 @@
 //#ifdef NTL_DEBUG
 //    #define MAX_SIZE_LOG_FILE 100000
 //#else
-    #define MAX_SIZE_LOG_FILE 2500000
+    #define MAX_SIZE_LOG_FILE 1000000
 //#endif
 /**
  * @brief

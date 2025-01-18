@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "aixlog.hpp"
+
 uint16_t CRC16(uint16_t crc, uint8_t* buf, size_t len)
 {
     uint16_t bits, k;
@@ -50,13 +52,14 @@ void Protocol::setZero(Data& buff)
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
 }
 
-void Protocol::setTare(Data& buff)
+void Protocol::setTare(Data& buff, int32_t tare)
 {
     size_t len_message = sizeof(SetTare);
     buff.clear();
     buff.reserve(len_message);
 
     SetTare message;
+    message.tare = tare;
     uint8_t* ptr1 = (uint8_t*)&message;
     addCRC(ptr1, len_message);
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
@@ -87,12 +90,12 @@ bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
     bool result = false;
     auto len = buff.size();
     if(len <= 7) {
-        std::cout << "Protocol::parseResponse Error too small len: " << len << std::endl;
+        LOG(INFO) << "Protocol::parseResponse Error too small len: " << len << std::endl;
         return result;
     }
 
     if(!((buff[0] == 0xf8) && (buff[1] == 0x55) && (buff[2] == 0xce))) {
-        std::cout << "Protocol::parseResponse Error header" << std::endl;
+        LOG(INFO) << "Protocol::parseResponse Error header" << std::endl;
         return result;
     }
 
@@ -101,11 +104,13 @@ bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
     std::copy(buff.data(), buff.data() + sizeof(CommonMessage),
               (uint8_t*)&commonMessage);
 
-    std::cout << std::hex << "parseResponseGetMassa command:" << (int)commonMessage.command << std::endl;
+    LOG(INFO) << std::hex << "parseResponseGetMassa command:" << (int)commonMessage.command << std::endl;
+
     if(commonMessage.command == CMD_ACK_MASSA)
     {
-        AckMassaTare ackMassa;
+        LOG(INFO) << "CMD_ACK_MASSA" << std::endl;
 
+        AckMassaTare ackMassa;
         if(commonMessage.length == 0x9) {
             std::copy(buff.data(), buff.data() + sizeof(AckMassa),
                       (uint8_t*)&ackMassa);
@@ -113,7 +118,7 @@ bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
             std::copy(buff.data(), buff.data() + sizeof(AckMassaTare),
                       (uint8_t*)&ackMassa);
         } else {
-            std::cout << std::dec << "len error:" << (int)commonMessage.length << std::endl;
+            LOG(INFO) << std::dec << "len error:" << (int)commonMessage.length << std::endl;
             return result;
         }
         result = true;
@@ -123,22 +128,51 @@ bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
         params.weight_net  = ackMassa.net;
         params.weight_zero = ackMassa.zero;
         params.weight_stable = ackMassa.stable;
+
+    } else if (commonMessage.command == CMD_ERROR) {
+        result = true;
+        LOG(INFO) << "CMD_ERROR" << std::endl;
+        ErrorMessage errorMessage;
+        std::copy(buff.data(), buff.data() + sizeof(ErrorMessage),
+                  (uint8_t*)&errorMessage);
+
+        LOG(INFO) << std::hex << "errorCode:" << (int)errorMessage.errorCode << std::endl;
+
+        if(errorMessage.errorCode == ErrorCodes::OVER_WEIRGHT) {
+            params.connection       = true;
+            params.condition        = true;
+            params.weight           = 0;//ackMassa.weight;
+            params.weight_net       = false;//ackMassa.net;
+            params.weight_zero      = false;
+            params.weight_stable    = false;//ackMassa.stable;
+            params.weight_overmax   = true;
+        } else {
+            params.connection       = true;
+            params.condition        = false;
+            params.weight           = 0;
+            params.weight_net       = false;
+            params.weight_zero      = false;
+            params.weight_stable    = false;
+            params.weight_overmax   = false;
+        }
+    } else {
+        LOG(INFO) << std::dec << "unknown command " << std::endl;
     }
 
     return result;
 }
 
-bool Protocol::parseResponseGetScalePar(const Data& buff)
+bool Protocol::parseResponseSetZero(const Data& buff, ScalesParameters& params)
 {
     bool result = false;
     auto len = buff.size();
     if(len <= 7) {
-        std::cout << "Protocol::parseResponseGetScalePar Error too small len: " << len << std::endl;
+        LOG(INFO) << "Protocol::parseSetZero Error too small len: " << len << std::endl;
         return result;
     }
 
     if(!((buff[0] == 0xf8) && (buff[1] == 0x55) && (buff[2] == 0xce))) {
-        std::cout << "Protocol::parseResponseGetScalePar Error header" << std::endl;
+        LOG(INFO) << "Protocol::parseSetZero Error header" << std::endl;
         return result;
     }
 
@@ -147,8 +181,126 @@ bool Protocol::parseResponseGetScalePar(const Data& buff)
     std::copy(buff.data(), buff.data() + sizeof(CommonMessage),
               (uint8_t*)&commonMessage);
 
-    std::cout << std::hex << "parseResponseGetScalePar command:" << (int)commonMessage.command << std::endl;
+    LOG(INFO) << std::hex << "parseResponseSetZero command:" << (int)commonMessage.command << std::endl;
+
+    if(commonMessage.command == CMD_ACK_SET_ZERO) {
+        LOG(INFO) << "CMD_ACK_SET_ZERO" << std::endl;
+        result = true;
+        params.connection       = true;
+        params.condition        = true;
+        params.weight           = 0;
+        params.weight_stable    = true;
+        params.weight_overmax   = false;
+        params.weight_net       = false;
+        params.weight_zero      = true;
+    } else if (commonMessage.command == CMD_ERROR) {
+        LOG(INFO) << "CMD_ERROR" << std::endl;
+        result = true;
+        ErrorMessage errorMessage;
+        std::copy(buff.data(), buff.data() + sizeof(ErrorMessage),
+                  (uint8_t*)&errorMessage);
+        LOG(INFO) << std::hex << "errorCode:" << (int)errorMessage.errorCode << std::endl;
+
+        if(errorMessage.errorCode == ErrorCodes::NONE_SET_ZERO) {
+            params.connection       = true;
+            params.condition        = true;
+            params.weight           = 0;//ackMassa.weight;
+            params.weight_stable    = false;//ackMassa.stable;
+            params.weight_overmax   = true;
+            params.weight_net       = false;//ackMassa.net;
+            params.weight_zero      = false;
+        } else {
+            params.connection       = true;
+            params.condition        = false;
+            params.weight           = 0;
+            params.weight_stable    = false;
+            params.weight_overmax   = false;
+            params.weight_net       = false;
+            params.weight_zero      = false;
+        }
+    } else {
+        LOG(INFO) << std::dec << "unknown command " << std::endl;
+    }
+    return result;
+}
+
+bool Protocol::parseResponseSetTare(const Data& buff, ScalesParameters& params)
+{
+    bool result = false;
+    auto len = buff.size();
+    if(len <= 7) {
+        LOG(INFO) << "Protocol::parseSetTare Error too small len: " << len << std::endl;
+        return result;
+    }
+
+    if(!((buff[0] == 0xf8) && (buff[1] == 0x55) && (buff[2] == 0xce))) {
+        LOG(INFO) << "Protocol::parseSetTare Error header" << std::endl;
+        return result;
+    }
+
+    CommonMessage commonMessage(CMD_NONE);
+    std::copy(buff.data(), buff.data() + sizeof(CommonMessage),
+              (uint8_t*)&commonMessage);
+    LOG(INFO) << std::hex << "parseResponseSetTare command:" << (int)commonMessage.command << std::dec << std::endl;
+
+    if(commonMessage.command == CMD_ACK_SET_TARE) {
+        LOG(INFO) << "CMD_ACK_SET_TARE" << std::endl;
+        result = true;
+        params.connection       = true;
+        params.condition        = true;
+        params.weight           = 0;
+        params.weight_stable    = true;
+        params.weight_overmax   = false;
+        params.weight_net       = true;
+        params.weight_zero      = false;
+    } else if (commonMessage.command == CMD_NACK_SET_TARE) {
+        LOG(INFO) << "CMD_NACK_SET_TARE" << std::endl;
+        result = true;
+        params.connection       = true;
+        params.condition        = true;
+        params.weight           = 0;//ackMassa.weight;
+        params.weight_stable    = false;//ackMassa.stable;
+        params.weight_overmax   = false;
+        params.weight_net       = false;//ackMassa.net;
+        params.weight_zero      = false;
+    } else {
+        LOG(INFO) << "Scale broken" << std::endl;
+        result = true;
+        params.connection       = true;
+        params.condition        = false;
+        params.weight           = 0;
+        params.weight_stable    = false;
+        params.weight_overmax   = false;
+        params.weight_net       = false;
+        params.weight_zero      = false;
+    }
+    return result;
+}
+
+
+
+bool Protocol::parseResponseGetScalePar(const Data& buff)
+{
+    bool result = false;
+    auto len = buff.size();
+    if(len <= 7) {
+        LOG(INFO) << "Protocol::parseResponseGetScalePar Error too small len: " << len << std::endl;
+        return result;
+    }
+
+    if(!((buff[0] == 0xf8) && (buff[1] == 0x55) && (buff[2] == 0xce))) {
+        LOG(INFO) << "Protocol::parseResponseGetScalePar Error header" << std::endl;
+        return result;
+    }
+
+    CommonMessage commonMessage(CMD_NONE);
+
+    std::copy(buff.data(), buff.data() + sizeof(CommonMessage),
+              (uint8_t*)&commonMessage);
+
+    LOG(INFO) << std::hex << "parseResponseGetScalePar command:" << (int)commonMessage.command << std::endl;
     if(commonMessage.command == CMD_ACK_SCALE_PAR) {
+        LOG(INFO) << "CMD_ACK_SCALE_PAR" << std::endl;
         result = true;
     }
 
@@ -178,7 +330,7 @@ bool Protocol::check_crc(const Data& buff)
     bool result = false;
     auto len = buff.size();
     if(len <= 7) {
-        std::cout << "Protocol::check_crc Error too small len: " << len << std::endl;
+        LOG(INFO) << "Protocol::check_crc Error too small len: " << len << std::endl;
         return result;
     }
 
@@ -187,10 +339,10 @@ bool Protocol::check_crc(const Data& buff)
     uint8_t *ptr1 = (uint8_t*)&_res;
 
     if((buff[len - 2] == ptr1[0]) && (buff[len - 1] == ptr1[1])) {
-        std::cout << "crc ok" << std::endl;
+        LOG(INFO) << "crc ok" << std::endl;
         result = true;
     } else {
-        std::cout << std::hex << "Protocol::check_crc error crc: " << (int)ptr1[0]
+        LOG(INFO) << std::hex << "Protocol::check_crc error crc: " << (int)ptr1[0]
                   << " " << (int)ptr1[1] << std::endl;
     }
     return result;

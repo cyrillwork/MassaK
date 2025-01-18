@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <memory>
+#include <mutex>
 
 #include "protocol.h"
 
@@ -14,28 +15,21 @@ public:
     void start();
     void stop();
 
-    void getMassa();
-    void setZero();
-    void setTare();
+    bool getScalePar();
+    bool getMassa();
+    bool setZero();
+    bool setTare(int32_t tare = 0);
 
-    const ScalesParameters& getScalesParameters() const;
-    void printScalesParameters() const;
+    void getScalesParameters(ScalesParameters& get_params);
+    void printScalesParameters();
 
 private:
     bool is_run;
     std::unique_ptr<std::thread> main_thread;
 
-    bool need_getMassa;
-    bool need_setZero;
-    bool need_setTare;
-
-    bool getScalePar();
-    bool m_getMassa();
-    void m_setZero();
-    void m_setTare();
-
     void routine();
 
+    std::mutex mutexParams;
     ScalesParameters scalesParameters;
     void resetScaleParameters();
     void setConnected();

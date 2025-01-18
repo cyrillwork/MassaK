@@ -14,7 +14,27 @@ enum ProtocolCommands: uint8_t
 
     CMD_ACK_MASSA       = 0x24,
     CMD_ACK_SCALE_PAR   = 0x76,
+    CMD_ACK_SET_ZERO    = 0x27,
+    CMD_ACK_SET_TARE    = 0x12,
+    CMD_NACK_SET_TARE   = 0x15,
     CMD_ERROR           = 0x28
+};
+
+enum ErrorCodes: uint8_t
+{
+    NONE                = 0x0,
+    UNSUPPORTED         = 0x7,
+    OVER_WEIRGHT        = 0x8,
+    OUT_WEIRGHT         = 0x9,
+    INPUT_DATA          = 0xA,
+    SAVE_DATA           = 0xB,
+    WIFI_UNSUPPORTED    = 0x10,
+    ETH_UNSUPPORTED     = 0x11,
+    NONE_SET_ZERO       = 0x15,
+    NONE_CONNECTION     = 0x17,
+    SET_WEIGHT_OFF      = 0x18,
+    SCALE_FAULTY        = 0x19,
+    UNKNOWN             = 0xF0
 };
 
 struct CommonMessage
@@ -36,6 +56,14 @@ struct GetMassa: public CommonMessage
     uint16_t crc;
 } __attribute__ ((packed));
 
+struct ErrorMessage: public CommonMessage
+{
+    ErrorMessage(): CommonMessage(CMD_ERROR)
+    { length = 0x0002; }
+    uint8_t     errorCode;
+    uint16_t    crc;
+} __attribute__ ((packed));
+
 struct SetZero: public CommonMessage
 {
     SetZero(): CommonMessage(CMD_SET_ZERO)
@@ -46,7 +74,8 @@ struct SetZero: public CommonMessage
 struct SetTare: public CommonMessage
 {
     SetTare(): CommonMessage(CMD_SET_TARE)
-    { length = 0x0001; }
+    { length = 0x0005; }
+    int32_t tare;
     uint16_t crc;
 } __attribute__ ((packed));
 

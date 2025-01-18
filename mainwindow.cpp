@@ -40,13 +40,18 @@ void MainWindow::on_setZero_released()
 void MainWindow::on_setTare_released()
 {
     std::cout << "Set Tare" << std::endl;
-    controller.setTare();
+
+    auto tare = ui->tareBox->value();
+    std::cout << "tare: " << tare << std::endl;
+
+    controller.setTare(tare);
 }
 
 void MainWindow::show_info()
 {
     std::string str_info;
-    auto params = controller.getScalesParameters();
+    ScalesParameters params;
+    controller.getScalesParameters(params);
     str_info =  "connection: "      + std::to_string(params.connection)     + "\n" +
                 "condition: "       + std::to_string(params.condition)      + "\n" +
                 "weigth: "          + std::to_string(params.weight)         + "\n" +
