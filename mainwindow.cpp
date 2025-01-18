@@ -52,13 +52,14 @@ void MainWindow::show_info()
     std::string str_info;
     ScalesParameters params;
     controller.getScalesParameters(params);
-    str_info =  "connection: "      + std::to_string(params.connection)     + "\n" +
-                "condition: "       + std::to_string(params.condition)      + "\n" +
-                "weigth: "          + std::to_string(params.weight)         + "\n" +
-                "weight_stable:"    + std::to_string(params.weight_stable)  + "\n" +
-                "weight_overmax:"   + std::to_string(params.weight_overmax) + "\n" +
-                "weight_net:"       + std::to_string(params.weight_net)     + "\n" +
-                "weight_zero:"      + std::to_string(params.weight_zero);
+    //std::string str1 = ((params.connection) ? "true" : "false");
+    str_info =  "connection:\t"       + std::string(params.connection ? "true" : "false") + "\n" +
+                "condition:\t"        + std::string(params.condition ? "true" : "false")      + "\n" +
+                "weigth:\t\t"         + std::to_string(params.weight)         + "\n" +
+                "weight_stable:\t"    + std::string(params.weight_stable ? "true" : "false")  + "\n" +
+                "weight_overmax:\t"   + std::string(params.weight_overmax ? "true" : "false") + "\n" +
+                "weight_net:\t"       + std::string(params.weight_net ? "true" : "false")     + "\n" +
+                "weight_zero:\t"      + std::string(params.weight_zero ? "true" : "false");
 
     QString _temp(str_info.c_str());
     ui->scaleInfo->setText(_temp);
