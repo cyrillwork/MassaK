@@ -21,6 +21,7 @@ HEADERS += \
     driver_plain.h \
     controller.h \
     checkcomports.h \
+    scales_parameters.h \
     protocol.h \
     messages.h
 

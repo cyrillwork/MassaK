@@ -3,16 +3,8 @@
 #include <cinttypes>
 #include <vector>
 
-struct ScalesParameters
-{
-    bool connection     = false;
-    bool condition      = false;
-    int32_t weight      = 0;
-    bool weight_stable  = false;
-    bool weight_overmax = false;
-    bool weight_net     = false;
-    bool weight_zero    = false;
-};
+#include "scales_parameters.h"
+#include "protocol.h"
 
 using Data = std::vector<uint8_t>;
 
