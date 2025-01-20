@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
     , is_run{true}
     , main_thread{&MainWindow::routine, this}
 {
+    std::cout << "version: " << Driver::instance().get_version() << "\n";
+
     ui->setupUi(this);
 }
 
@@ -25,16 +27,14 @@ MainWindow::~MainWindow()
 void MainWindow::on_getMassa_released()
 {
     std::cout << "Get Massa" << std::endl;    
-
-    controller.getMassa();
-
+    Driver::instance().getMassa();
     //show_info();
 }
 
 void MainWindow::on_setZero_released()
 {
     std::cout << "Set Zero" << std::endl;
-    controller.setZero();
+    Driver::instance().setZero();
 }
 
 void MainWindow::on_setTare_released()
@@ -44,14 +44,14 @@ void MainWindow::on_setTare_released()
     auto tare = ui->tareBox->value();
     std::cout << "tare: " << tare << std::endl;
 
-    controller.setTare(tare);
+    Driver::instance().setTare(tare);
 }
 
 void MainWindow::show_info()
 {
     std::string str_info;
     ScalesParameters params;
-    controller.getScalesParameters(params);
+    Driver::instance().getScalesParameters(params);
     //std::string str1 = ((params.connection) ? "true" : "false");
     str_info =  "connection:\t"       + std::string(params.connection ? "true" : "false") + "\n" +
                 "condition:\t"        + std::string(params.condition ? "true" : "false")      + "\n" +

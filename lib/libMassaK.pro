@@ -3,8 +3,9 @@ TEMPLATE = lib
 
 SOURCES += \
     driver.cpp \
+    driver_plain.cpp \
     controller.cpp \
-    checkcomports.cpp \    
+    checkcomports.cpp \
     protocol.cpp
     
 #QMAKE_CXXFLAGS += -O2 -fPIC
@@ -17,6 +18,7 @@ LIBS += -lpthread
 HEADERS += \
     aixlog.hpp \
     driver.h \
+    driver_plain.h \
     controller.h \
     checkcomports.h \
     protocol.h \

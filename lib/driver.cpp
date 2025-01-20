@@ -294,3 +294,8 @@ void Driver::printScalesParameters()
     (void)_lck;
 }
 
+std::string Driver::get_version() const
+{
+    return "1.0";
+}
+

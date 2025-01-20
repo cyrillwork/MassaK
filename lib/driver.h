@@ -8,8 +8,12 @@
 
 class Driver
 {
-public:
-    Driver();
+public:    
+    static Driver& instance() {
+        static Driver _instance;
+        return _instance;
+    }
+
     ~Driver();
 
     void start();
@@ -23,7 +27,11 @@ public:
     void getScalesParameters(ScalesParameters& get_params);
     void printScalesParameters();
 
+    std::string get_version() const;
+
 private:
+    Driver();
+
     bool is_run;
     std::unique_ptr<std::thread> main_thread;
 
