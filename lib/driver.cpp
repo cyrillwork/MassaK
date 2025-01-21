@@ -160,7 +160,7 @@ bool Driver::setTare(int32_t tare)
     Data data;
     Data recv_data;
     Protocol::setTare(data, tare);
-    Protocol::print(data);
+    //Protocol::print(data);
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
