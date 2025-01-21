@@ -138,13 +138,14 @@ bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
         int bytesRead = ::read(fd, response, sizeof(response));
         if (bytesRead > 0) {
             if(print) {
-                std::cout << "IN: ";
+                std::stringbuf buffer;
+                std::ostream os (&buffer);
+                os << "IN: ";
                 for (int i = 0; i < bytesRead; ++i) {
-                    std::cout << std::hex << (int)response[i] << " ";
+                    os << std::hex << (int)response[i] << " ";
                 }
-                std::cout << "\n";
+                LOG(INFO) << buffer.str() << "\n";
             }
-
             std::copy(response, response + bytesRead, back_inserter(buff));
             result = true;
         }
