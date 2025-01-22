@@ -10,6 +10,8 @@
 Controller::Controller(const std::string& port_name):
     is_connected{false}
 {
+    ptrSerial = serial_factory();
+
     //std::cout << "Controller" << std::endl;
     is_init = open(port_name);
 }
@@ -30,7 +32,8 @@ bool Controller::isInit() const
 bool Controller::open(const std::string& port_name)
 {
     bool result = false;
-    fd = ::open(port_name.c_str(), O_RDWR | O_NONBLOCK /*O_NOCTTY | O_NDELAY*/);
+    int flags = O_RDWR | O_NONBLOCK;
+    fd = ptrSerial->open(port_name.c_str(), flags);
     if (fd == -1) {
         LOG(INFO) << "Error open port: " << port_name << std::endl;
         return result;

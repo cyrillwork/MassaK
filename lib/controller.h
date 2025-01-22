@@ -5,6 +5,8 @@
 
 #include "aixlog.hpp"
 
+#include "serial_factory.h"
+
 class Controller
 {
 public:
@@ -26,4 +28,6 @@ private:
 
     bool open(const std::string& port_name);
     bool set_params(uint32_t baud_rate);
+
+    PtrSerial ptrSerial;
 };
