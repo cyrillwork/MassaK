@@ -10,6 +10,10 @@
 
 #include <iostream>
 
+#ifdef MASSAK_WINDOWS
+    #include <windows.h>
+#endif
+
 CheckCOMPorts::CheckCOMPorts()
 {
 }
@@ -55,6 +59,20 @@ void CheckCOMPorts::checkCOMPorts(const COMPorts& result_array, COMPorts& ports_
 
 void CheckCOMPorts::get_tty_ports(COMPorts& tty_ports)
 {
+#ifdef MASSAK_WINDOWS
+    {
+        // Get the number of available COM ports
+        for (int i = 0; i < 256; i++) {
+            char portName[64];
+            sprintf_s(portName, "\\\\.\\COM%d", i);
+            HANDLE hPort = ::CreateFile(portName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+            if (hPort != INVALID_HANDLE_VALUE) {
+                ::CloseHandle(hPort);
+                tty_ports.push_back(std::string(portName));
+            }
+        }
+    }
+#else
     COMPorts mask_array;
     tty_ports.clear();
 
@@ -69,5 +87,6 @@ void CheckCOMPorts::get_tty_ports(COMPorts& tty_ports)
     findFilesWithMask(directory, mask3, mask_array);
 
     checkCOMPorts(mask_array, tty_ports);
+#endif
 }
 

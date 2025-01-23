@@ -201,10 +201,7 @@ size_t WinSerial::read(char *buff, size_t len)
         counter=0;
     }
 
-
     return feedback;
-
-
 }
 
 /*nbyte 0->7*/
