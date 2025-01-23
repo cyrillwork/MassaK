@@ -26,8 +26,7 @@ Controller::Controller(const std::string& port_name):
     //fcntl(fd, F_SETFL, FNDELAY);	//read with no delay
     //is_init = ptrSerial->set_params(B57600 /*baud_rate*/);
     is_init = ptrSerial->set_params(B4800 /*baud_rate*/);
-
-    std::cout << "set_params is_init: " << is_init << std::endl;
+    //std::cout << "set_params is_init: " << is_init << std::endl;
 }
 
 Controller::~Controller()

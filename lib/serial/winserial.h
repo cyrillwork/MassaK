@@ -1,14 +1,11 @@
-#ifndef WINSERIAL_H
-#define WINSERIAL_H
+#pragma once
 
 #include "iserial.h"
 
-
-
 namespace win_serial
 {
-#define MAX_BUFSIZE 255
 
+#define MAX_BUFSIZE 255
 
 class WinSerial: public ISerial
 {
@@ -19,27 +16,27 @@ public:
 
     bool IsOK() const;
 
-    virtual int open(const char *pathname, int flags) override;
-    virtual int close() override;
+    bool open(const char *pathname, int flags) override;
+    void close() override;
 
-    virtual size_t read(char* buff, size_t len) override;
-    virtual size_t write(const char* buff, size_t len) override;
+    bool set_params(uint32_t baud_rate) override;
 
-    virtual int select(size_t timeout) override;
+    size_t read(char* buff, size_t len) override;
+    size_t write(const char* buff, size_t len) override;
 
-    virtual int tcsetattr(int optional_actions, const termios* termios_p) override;
-    virtual int cfsetispeed(speed_t speed) override;
-    virtual int cfsetospeed(speed_t speed) override;
+    int select(size_t timeout) override;
+
+    int tcsetattr(int optional_actions, const termios* termios_p) override;
+    int cfsetispeed(speed_t speed) override;
+    int cfsetospeed(speed_t speed) override;
 
 private:
     HANDLE m_Handle;
 
-unsigned char in_buffer[MAX_BUFSIZE];
-unsigned long counter={0};
+    unsigned char in_buffer[MAX_BUFSIZE];
+    unsigned long counter={0};
 
     DCB ComDCM = {}; //Initializing DCB structure
 };
 
 }
-
-#endif // WINSERIAL_H

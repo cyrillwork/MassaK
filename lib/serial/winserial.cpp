@@ -1,5 +1,4 @@
 #include "winserial.h"
-#include "logmessage.h"
 
 using namespace win_serial;
 
@@ -21,92 +20,35 @@ bool WinSerial::IsOK() const
     return m_Handle != INVALID_HANDLE_VALUE;
 }
 
-int WinSerial::open(const char *pathname, int flags)
+bool WinSerial::open(const char *pathname, int flags)
 {
+    bool result = false;
 
-    DWORD baudrate = 19200;
     ++fd;
 
     std::string port(pathname);
-     std::wstring str1(port.begin(), port.end());
-     m_Handle = CreateFile( str1.c_str(),
-                        GENERIC_READ | GENERIC_WRITE,
-                            0,
-                            nullptr,
-                            OPEN_EXISTING,
-                            FILE_FLAG_OVERLAPPED,
-                            nullptr
-                            );
+    std::wstring str1(port.begin(), port.end());
+    m_Handle = CreateFile( str1.c_str(),
+                           GENERIC_READ | GENERIC_WRITE,
+                           0,
+                           nullptr,
+                           OPEN_EXISTING,
+                           FILE_FLAG_OVERLAPPED,
+                           nullptr
+                           );
 
-     if(m_Handle == INVALID_HANDLE_VALUE)
-      {
-         std::cout << "!!! Invalid open port" << std::endl;
-         return -1;
-      }
+    if(m_Handle == INVALID_HANDLE_VALUE) {
+        std::cout << "!!! Invalid open port" << std::endl;
+        return -1;
+    }
 
-     //инициализация порта
+    return result;
 
-     ComDCM.DCBlength = sizeof(ComDCM);
-
-     if(!GetCommState(m_Handle, &ComDCM))
-      {
-         CloseHandle(m_Handle);
-         m_Handle = static_cast<HANDLE>(INVALID_HANDLE_VALUE);
-         return -1;
-      }
-
-
-     ComDCM.BaudRate = baudrate;
-     ComDCM.fBinary = TRUE;
-     ComDCM.fOutxCtsFlow = FALSE;
-     ComDCM.fOutxDsrFlow = FALSE;
-     ComDCM.fDtrControl = DTR_CONTROL_DISABLE;
-     ComDCM.fDsrSensitivity = FALSE;
-     ComDCM.fNull = FALSE;
-     ComDCM.fRtsControl = RTS_CONTROL_DISABLE;
-     ComDCM.fAbortOnError = FALSE;
-     ComDCM.ByteSize = 8;
-     ComDCM.Parity = SPACEPARITY;
-     ComDCM.fParity = TRUE;
-     ComDCM.StopBits = ONESTOPBIT;
-
-
-     if(!SetCommState(m_Handle, &ComDCM))
-      {
-         CloseHandle(m_Handle);
-         m_Handle = static_cast<HANDLE>(INVALID_HANDLE_VALUE);
-         return -1;
-      }
-
-
-     COMMTIMEOUTS CommTimeOuts;
-
-     CommTimeOuts.ReadIntervalTimeout = 0;	 	//таймаут между двумя символами
-     CommTimeOuts.ReadTotalTimeoutMultiplier = 0;	//общий таймаут операции чтения
-     CommTimeOuts.ReadTotalTimeoutConstant = 0;         //константа для общего таймаута операции чтения
-     CommTimeOuts.WriteTotalTimeoutMultiplier = 0;      //общий таймаут операции записи
-     CommTimeOuts.WriteTotalTimeoutConstant = 0;        //константа для общего таймаута операции записи
-
-     //записать структуру таймаутов в порт
-     if(!SetCommTimeouts(m_Handle, &CommTimeOuts))	//если не удалось - закрыть порт и вывести сообщение об ошибке в строке состояния
-      {
-         CloseHandle(m_Handle);
-         m_Handle = static_cast<HANDLE>(INVALID_HANDLE_VALUE);
-         return -1;
-     }
-
-     SetupComm(m_Handle,2000,2000);
-     PurgeComm(m_Handle, PURGE_RXCLEAR);
-
-     overlapped.hEvent = CreateEvent(nullptr, true, true, nullptr);
-     overlappedwr.hEvent = CreateEvent(nullptr, true, true, nullptr);
-
-     SetCommMask(m_Handle, EV_RXCHAR|EV_TXEMPTY);
 
     return fd;
 }
 
-int WinSerial::close()
+void WinSerial::close()
 {
     CloseHandle(overlappedwr.hEvent);
     CloseHandle(overlapped.hEvent);
@@ -117,35 +59,95 @@ int WinSerial::close()
     }
 }
 
+bool WinSerial::set_params(uint32_t baud_rate)
+{
+    bool result = false;
+
+    //инициализация порта
+    ComDCM.DCBlength = sizeof(ComDCM);
+
+    if(!GetCommState(m_Handle, &ComDCM)) {
+        CloseHandle(m_Handle);
+        m_Handle = static_cast<HANDLE>(INVALID_HANDLE_VALUE);
+        return result;
+    }
+
+    ComDCM.BaudRate = baudrate;
+    ComDCM.fBinary = TRUE;
+    ComDCM.fOutxCtsFlow = FALSE;
+    ComDCM.fOutxDsrFlow = FALSE;
+    ComDCM.fDtrControl = DTR_CONTROL_DISABLE;
+    ComDCM.fDsrSensitivity = FALSE;
+    ComDCM.fNull = FALSE;
+    ComDCM.fRtsControl = RTS_CONTROL_DISABLE;
+    ComDCM.fAbortOnError = FALSE;
+    ComDCM.ByteSize = 8;
+    ComDCM.Parity = SPACEPARITY;
+    ComDCM.fParity = TRUE;
+    ComDCM.StopBits = ONESTOPBIT;
+
+    if(!SetCommState(m_Handle, &ComDCM)) {
+        CloseHandle(m_Handle);
+        m_Handle = static_cast<HANDLE>(INVALID_HANDLE_VALUE);
+        return result;
+    }
+
+    COMMTIMEOUTS CommTimeOuts;
+
+    CommTimeOuts.ReadIntervalTimeout = 0;	 	//таймаут между двумя символами
+    CommTimeOuts.ReadTotalTimeoutMultiplier = 0;	//общий таймаут операции чтения
+    CommTimeOuts.ReadTotalTimeoutConstant = 0;         //константа для общего таймаута операции чтения
+    CommTimeOuts.WriteTotalTimeoutMultiplier = 0;      //общий таймаут операции записи
+    CommTimeOuts.WriteTotalTimeoutConstant = 0;        //константа для общего таймаута операции записи
+
+    //записать структуру таймаутов в порт
+    if(!SetCommTimeouts(m_Handle, &CommTimeOuts))	//если не удалось - закрыть порт и вывести сообщение об ошибке в строке состояния
+    {
+        CloseHandle(m_Handle);
+        m_Handle = static_cast<HANDLE>(INVALID_HANDLE_VALUE);
+        return result;
+    }
+
+    SetupComm(m_Handle,2000,2000);
+    PurgeComm(m_Handle, PURGE_RXCLEAR);
+
+    overlapped.hEvent = CreateEvent(nullptr, true, true, nullptr);
+    overlappedwr.hEvent = CreateEvent(nullptr, true, true, nullptr);
+
+    SetCommMask(m_Handle, EV_RXCHAR|EV_TXEMPTY);
+
+    result = true;
+
+    return result;
+}
+
 int WinSerial::select(size_t timeout)
 {
     COMSTAT comstat;
-     DWORD btr, temp, mask, signal;
-     unsigned char bufrd[MAX_BUFSIZE];
+    DWORD btr, temp, mask, signal;
+    unsigned char bufrd[MAX_BUFSIZE];
 
+    WaitCommEvent(m_Handle, &mask, &overlapped);
 
-       WaitCommEvent(m_Handle, &mask, &overlapped);
-
-       signal = WaitForSingleObject(overlapped.hEvent, static_cast<DWORD>(timeout*0.001));
-       if(signal == WAIT_OBJECT_0)
-        {
-         if(GetOverlappedResult(m_Handle, &overlapped, &temp, true))
-          if((mask & EV_RXCHAR)!=0)
-           {
-            ClearCommError(m_Handle, &temp, &comstat);
-            btr = comstat.cbInQue;
-            if(btr)
+    signal = WaitForSingleObject(overlapped.hEvent, static_cast<DWORD>(timeout*0.001));
+    if(signal == WAIT_OBJECT_0)
+    {
+        if(GetOverlappedResult(m_Handle, &overlapped, &temp, true))
+            if((mask & EV_RXCHAR)!=0)
             {
-             ReadFile(m_Handle, in_buffer, btr, &temp, &overlapped);
-             counter=btr;
-             //std::cout<<"read pack"<<std::endl;
-             return fd;
+                ClearCommError(m_Handle, &temp, &comstat);
+                btr = comstat.cbInQue;
+                if(btr)
+                {
+                    ReadFile(m_Handle, in_buffer, btr, &temp, &overlapped);
+                    counter=btr;
+                    //std::cout<<"read pack"<<std::endl;
+                    return fd;
+                }
             }
-           }
-        }
+    }
 
-  return -1;
-
+    return -1;
 }
 
 
@@ -160,26 +162,26 @@ size_t WinSerial::write(const char* buff, size_t len)
     DWORD temp, signal;
 
 #ifdef DEBUG_QCOM_SERIAL
-DEBUG_LOG(1,"start write data\n");
+    DEBUG_LOG(1,"start write data\n");
 #endif
     WriteFile(m_Handle, buff, static_cast<DWORD>(len), &feedback, &overlappedwr);
     signal = WaitForSingleObject(overlappedwr.hEvent, INFINITE);
     if((signal == WAIT_OBJECT_0) && (GetOverlappedResult(m_Handle, &overlappedwr, &temp, true)))
     {
 
-    #ifdef DEBUG_QCOM_SERIAL
-    DEBUG_LOG(1,"write data OK\n");
-    #endif
+#ifdef DEBUG_QCOM_SERIAL
+        DEBUG_LOG(1,"write data OK\n");
+#endif
 
     } else
     {
-        #ifdef DEBUG_QCOM_SERIAL
-            DEBUG_LOG(1,"write data Error\n");
-        #endif
+#ifdef DEBUG_QCOM_SERIAL
+        DEBUG_LOG(1,"write data Error\n");
+#endif
 
     }
 
-     return feedback;
+    return feedback;
 }
 
 size_t WinSerial::read(char *buff, size_t len)
@@ -194,9 +196,9 @@ size_t WinSerial::read(char *buff, size_t len)
 
     if (counter)
     {
-    feedback=counter;
-    memcpy(buff,in_buffer,counter);
-    counter=0;
+        feedback=counter;
+        memcpy(buff,in_buffer,counter);
+        counter=0;
     }
 
 
@@ -299,23 +301,23 @@ int getCharSet(tcflag_t flag)
 
     switch (byte) {
 
-    case 0X0:
+        case 0X0:
         return CS5;
         break;
 
-    case 0X4:
+        case 0X4:
         return CS6;
         break;
 
-    case 0X8:
+        case 0X8:
         return CS7;
         break;
 
-    case 0Xc:
+        case 0Xc:
         return CS8;
         break;
 
-    default:
+        default:
         return CS8;
         break;
     }
