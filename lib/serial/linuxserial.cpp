@@ -7,6 +7,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "aixlog.hpp"
+
 LinuxSerial::LinuxSerial()
 {
 }
@@ -15,29 +17,94 @@ LinuxSerial::~LinuxSerial()
 {
 }
 
-int LinuxSerial::open(const char*pathname, int flags)
+bool LinuxSerial::open(const char* pathname, int flags)
 {
-    return fd = ::open(pathname, flags);
+    fd = ::open(pathname, flags);
+    return (fd != -1);
 }
 
-int LinuxSerial::close()
+void LinuxSerial::close()
 {
-    return (fd > 0) ? (::close(fd)) : 0;
+    if(fd != -1) {
+        ::close(fd);
+    }
 }
 
-size_t LinuxSerial::read(char* buff, size_t len)
+bool LinuxSerial::set_params(uint32_t baud_rate)
+{
+    bool result = false;
+
+    struct termios tty;
+    memset(&tty, 0, sizeof(tty));
+    if (tcgetattr(fd, &tty) != 0) {
+        LOG(INFO) << "Erro get attr port" << std::endl;
+        return result;
+    } else {
+        LOG(INFO) << "tcgetattr OK" << std::endl;
+    }
+
+    {
+        cfsetispeed(baud_rate);
+        cfsetospeed(baud_rate);
+        {
+            tty.c_cflag |= (CLOCAL | CREAD);
+
+            if(baud_rate == B57600) {
+                LOG(INFO) << "Set speed B57600" << std::endl;
+                tty.c_cflag |= PARENB; // Enable parity
+                tty.c_cflag |= PARODD; // Set odd parity                
+            } else if(baud_rate == B19200) {
+                LOG(INFO) << "Set speed B19200" << std::endl;
+                // clear mark/space parity
+                tty.c_cflag &= ~CMSPAR;
+            } else if(baud_rate == B4800) {
+                LOG(INFO) << "Set speed B4800" << std::endl;
+                tty.c_cflag |= PARENB; // Enable parity
+            } else {
+                LOG(INFO) << "Error unsupported speed" << std::endl;
+            }
+
+            tty.c_cflag &= ~CSTOPB; // 1 stop bit
+            tty.c_cflag &= ~CSIZE;
+            tty.c_cflag |= CS8;	//8 data bits
+            tty.c_cflag &= ~CRTSCTS;	//disable hardware flow control
+            tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);	//raw mode!
+            tty.c_iflag &= ~(INPCK | ISTRIP | IUCLC | IGNCR | ICRNL | INLCR | PARMRK);	//raw mode!
+            tty.c_iflag &= ~(IXON | IXOFF | IXANY);	//disable software flow control
+            tty.c_oflag &= ~OPOST;
+
+            tty.c_cc[VMIN] = 0;
+            tty.c_cc[VTIME]= 0;
+        }
+        tty.c_cflag &= ~CBAUD;
+        tty.c_cflag |= baud_rate;	//9600BAUD
+    }
+
+    if (tcsetattr(TCSANOW, &tty) != 0) {
+        LOG(INFO) << "Error tcsetattr" << std::endl;
+        return result;
+    } else {
+        LOG(INFO) << "tcsetattr OK" << std::endl;
+    }
+
+    result = true;
+    return result;
+
+}
+
+int64_t LinuxSerial::read(uint8_t* buff, uint64_t len)
 {	
     return ::read(fd, buff, len);
 }
 
-size_t LinuxSerial::write(const char*buff, size_t len)
+int64_t LinuxSerial::write(const uint8_t* buff, uint64_t len)
 {
     auto res = ::write(fd, buff, len);
     fsync(fd);
     return res;
 }
 
-int LinuxSerial::select(size_t timeout)
+int LinuxSerial::select(uint64_t timeout)
 {
     struct timeval tv;
     fd_set fds;

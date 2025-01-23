@@ -13,6 +13,14 @@ Driver::Driver():
 {
     AixLog::Log::init( { std::make_shared<AixLog::SinkFile>(AixLog::Severity::DataCapture, "/tmp/libMassaK.log") } );
     LOG(INFO) << "Driver start" << "\n";
+
+    {
+        Data data;
+        Protocol::getMassa(data);
+        Protocol::print(data);
+    }
+
+
     start();
 }
 
@@ -52,6 +60,7 @@ bool Driver::getScalePar()
     Data data;
     Data recv_data;
     Protocol::getScalePar(data);
+    Protocol::print(data);
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {

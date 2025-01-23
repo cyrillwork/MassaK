@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef LINUXSERIAL_H
-#define LINUXSERIAL_H
-
 #include "iserial.h"
 #include <memory>
 
@@ -12,29 +9,27 @@ class LinuxSerial: public ISerial
 public:
     LinuxSerial();
 
-    virtual ~LinuxSerial() override;
+    ~LinuxSerial() override;
 
-    virtual int open(const char *pathname, int flags) override;
+    bool open(const char* pathname, int flags) override;
 
-    virtual int close() override;
+    bool set_params(uint32_t baud_rate) override;
 
-    virtual size_t read(char* buff, size_t len) override;
+    void close() override;
 
-    virtual size_t write(const char* buff, size_t len) override;
+    int64_t read(uint8_t* buff, uint64_t len) override;
 
-    virtual int select(size_t timeout) override;
+    int64_t write(const uint8_t* buff, uint64_t len) override;
 
-    virtual int tcsetattr(int optional_actions, const termios* termios_p) override;
+    int select(uint64_t timeout) override;
 
-    virtual int cfsetispeed(speed_t speed) override;
+    int tcsetattr(int optional_actions, const termios* termios_p) override;
 
-    virtual int cfsetospeed(speed_t speed) override;
+    int cfsetispeed(speed_t speed) override;
+
+    int cfsetospeed(speed_t speed) override;
 
 private:
     speed_t ispeed={0};
     speed_t ospeed={0};
 };
-
-
-
-#endif // LINUXSERIAL_H

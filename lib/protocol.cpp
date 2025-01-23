@@ -302,6 +302,9 @@ bool Protocol::parseResponseGetScalePar(const Data& buff)
     if(commonMessage.command == CMD_ACK_SCALE_PAR) {
         LOG(INFO) << "CMD_ACK_SCALE_PAR" << std::endl;
         result = true;
+    } else if(commonMessage.command == CMD_ERROR) {
+        LOG(INFO) << "CMD_ERROR" << std::endl;
+        result = true;
     }
 
     return result;

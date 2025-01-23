@@ -1,9 +1,9 @@
-#ifndef ISERIAL_H
-#define ISERIAL_H
+#pragma once
 
 #include <iostream>
 #include <cstring>
 #include <memory>
+#include <cinttypes>
 
 #ifdef MASSAK_WINDOWS
     //#define NOMINMAX //иначе API windows определит макросы min и max, конфликтующие с std::max и std::min в vector
@@ -25,34 +25,35 @@ class ISerial
 public:
     virtual ~ISerial() = default;
 
-    virtual int open (const char *pathname, int flags) = 0;
+    virtual bool open (const char* pathname, int flags) = 0;
 
-    virtual int close () = 0;
-    virtual size_t read(char* buff, size_t len) = 0;
+    virtual void close () = 0;
 
-    virtual size_t write(const char* buff, size_t len) = 0;
+    virtual bool set_params(uint32_t baud_rate) = 0;
+
+    virtual int64_t read(uint8_t* buff, uint64_t len) = 0;
+
+    virtual int64_t write(const uint8_t* buff, uint64_t len) = 0;
 
     virtual int tcsetattr(int optional_actions, const termios* termios_p) = 0;
 
     /* Put the state of FD into *TERMIOS_P.  */
-    int tcgetattr (termios *termios_p)
-    {
-        if(!termios_p) return -1;
-        ::memcpy(termios_p, &(this->termios_p), sizeof(termios));
-        return 0;
-    }
+//    int tcgetattr (termios *termios_p)
+//    {
+//        if(!termios_p) return -1;
+//        ::memcpy(termios_p, &(this->termios_p), sizeof(termios));
+//        return 0;
+//    }
 
     virtual int cfsetispeed(speed_t speed) = 0;
 
     virtual int cfsetospeed(speed_t speed) = 0;
 
     /** timeout milliseconds */
-    virtual int select(size_t timeout) = 0;
+    virtual int select(uint64_t timeout) = 0;
 
-protected:
+protected:    
     int fd{0};
 
     termios termios_p = {};
 };
-
-#endif

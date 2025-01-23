@@ -5,7 +5,7 @@ INCLUDEPATH += ./serial
 
 SOURCES += \
     serial/serial_factory.cpp \
-    serial/rsinterface.cpp \
+    #serial/rsinterface.cpp \
     serial/paramsrs.cpp \
     driver.cpp \
     driver_plain.cpp \
@@ -34,10 +34,10 @@ windows {
 LIBS += -lpthread
 
 HEADERS += \
-    serial/iinterface.h \
+    #serial/iinterface.h \
     serial/iserial.h \
     serial/serial_factory.h \
-    serial/rsinterface.h \
+    #serial/rsinterface.h \
     serial/paramsrs.h \
     aixlog.hpp \
     driver.h \

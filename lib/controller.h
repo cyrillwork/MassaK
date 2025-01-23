@@ -22,12 +22,11 @@ public:
     void setConnected(bool connected);
 
 private:
-    int fd;
+    //int fd;
     bool is_connected;
     bool is_init;    
 
-    bool open(const std::string& port_name);
-    bool set_params(uint32_t baud_rate);
+    //bool open(const std::string& port_name);
 
     PtrSerial ptrSerial;
 };
