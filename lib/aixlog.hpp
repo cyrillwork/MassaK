@@ -18,6 +18,8 @@
 #ifndef AIX_LOG_HPP
 #define AIX_LOG_HPP
 
+#ifndef MASSAK_WINDOWS
+
 //#ifndef _WIN32
 //#define HAS_SYSLOG_ 1
 //#endif
@@ -1291,6 +1293,12 @@ static std::ostream& operator<<(std::ostream& os, const Color& color)
 // We restore the ERROR Windows macro
 #pragma pop_macro("ERROR")
 #pragma pop_macro("DEBUG")
+#endif
+
+#else
+
+#define LOG(...) std::cout
+
 #endif
 
 #endif // AIX_LOG_HPP

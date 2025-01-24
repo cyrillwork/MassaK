@@ -21,8 +21,8 @@ public:
 
     bool set_params(uint32_t baud_rate) override;
 
-    size_t read(char* buff, size_t len) override;
-    size_t write(const char* buff, size_t len) override;
+    int64_t read(uint8_t* buff, uint64_t len) override;
+    int64_t write(const uint8_t* buff, uint64_t len) override;
 
     int select(size_t timeout) override;
 

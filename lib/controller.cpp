@@ -4,7 +4,6 @@
 #include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
-#include <termios.h>
 #include <sstream>
 
 Controller::Controller(const std::string& port_name):
@@ -14,7 +13,7 @@ Controller::Controller(const std::string& port_name):
     //std::cout << "Controller" << std::endl;
 
     is_init = false;
-    int flags = O_RDWR | O_NONBLOCK;
+    int flags = O_RDWR /*| O_NONBLOCK*/;
 
     is_init = ptrSerial->open(port_name.c_str(), flags);
     if (!is_init) {

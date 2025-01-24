@@ -12,7 +12,7 @@ WinSerial::WinSerial():
 
 WinSerial::~WinSerial()
 {
-    //close();
+    close();
 }
 
 bool WinSerial::IsOK() const
@@ -43,9 +43,6 @@ bool WinSerial::open(const char *pathname, int flags)
     }
 
     return result;
-
-
-    return fd;
 }
 
 void WinSerial::close()
@@ -72,7 +69,7 @@ bool WinSerial::set_params(uint32_t baud_rate)
         return result;
     }
 
-    ComDCM.BaudRate = baudrate;
+    ComDCM.BaudRate = baud_rate;
     ComDCM.fBinary = TRUE;
     ComDCM.fOutxCtsFlow = FALSE;
     ComDCM.fOutxDsrFlow = FALSE;
@@ -82,7 +79,7 @@ bool WinSerial::set_params(uint32_t baud_rate)
     ComDCM.fRtsControl = RTS_CONTROL_DISABLE;
     ComDCM.fAbortOnError = FALSE;
     ComDCM.ByteSize = 8;
-    ComDCM.Parity = SPACEPARITY;
+    ComDCM.Parity = NOPARITY;
     ComDCM.fParity = TRUE;
     ComDCM.StopBits = ONESTOPBIT;
 
@@ -108,7 +105,7 @@ bool WinSerial::set_params(uint32_t baud_rate)
         return result;
     }
 
-    SetupComm(m_Handle,2000,2000);
+    SetupComm(m_Handle, 2000, 2000);
     PurgeComm(m_Handle, PURGE_RXCLEAR);
 
     overlapped.hEvent = CreateEvent(nullptr, true, true, nullptr);
@@ -151,7 +148,7 @@ int WinSerial::select(size_t timeout)
 }
 
 
-size_t WinSerial::write(const char* buff, size_t len)
+int64_t WinSerial::write(const uint8_t* buff, uint64_t len)
 {
     DWORD feedback = 0;
 
@@ -161,30 +158,22 @@ size_t WinSerial::write(const char* buff, size_t len)
     }
     DWORD temp, signal;
 
-#ifdef DEBUG_QCOM_SERIAL
-    DEBUG_LOG(1,"start write data\n");
-#endif
     WriteFile(m_Handle, buff, static_cast<DWORD>(len), &feedback, &overlappedwr);
     signal = WaitForSingleObject(overlappedwr.hEvent, INFINITE);
     if((signal == WAIT_OBJECT_0) && (GetOverlappedResult(m_Handle, &overlappedwr, &temp, true)))
     {
 
-#ifdef DEBUG_QCOM_SERIAL
-        DEBUG_LOG(1,"write data OK\n");
-#endif
 
-    } else
+    }
+    else
     {
-#ifdef DEBUG_QCOM_SERIAL
-        DEBUG_LOG(1,"write data Error\n");
-#endif
 
     }
 
     return feedback;
 }
 
-size_t WinSerial::read(char *buff, size_t len)
+int64_t WinSerial::read(uint8_t *buff, uint64_t len)
 {
     if(m_Handle == INVALID_HANDLE_VALUE)
     {

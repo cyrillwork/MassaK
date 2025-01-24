@@ -11,7 +11,9 @@ std::unique_ptr<Controller> controller;
 Driver::Driver():
     is_run{false}
 {
-    AixLog::Log::init( { std::make_shared<AixLog::SinkFile>(AixLog::Severity::DataCapture, "/tmp/libMassaK.log") } );
+#ifndef MASSAK_WINDOWS
+    AixLog::Log::init( { std::make_shared<AixLog::SinkFile>(AixLog::Severity::DataCapture, "/tmp/libMassaK.log") } ); 
+#endif
     LOG(INFO) << "Driver start" << "\n";
 
     start();

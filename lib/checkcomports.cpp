@@ -1,8 +1,5 @@
 #include "checkcomports.h"
 
-#include <filesystem>
-
-#include <sys/ioctl.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -12,11 +9,16 @@
 
 #ifdef MASSAK_WINDOWS
     #include <windows.h>
+#else
+    #include <filesystem>
+    #include <sys/ioctl.h>
 #endif
 
 CheckCOMPorts::CheckCOMPorts()
 {
 }
+
+#ifndef MASSAK_WINDOWS
 
 void CheckCOMPorts::findFilesWithMask(const std::string& directory, const std::string& mask, COMPorts& result_array)
 {
@@ -55,7 +57,7 @@ void CheckCOMPorts::checkCOMPorts(const COMPorts& result_array, COMPorts& ports_
         ports_array.push_back(str_port);
     }
 }
-
+#endif
 
 void CheckCOMPorts::get_tty_ports(COMPorts& tty_ports)
 {
@@ -63,9 +65,10 @@ void CheckCOMPorts::get_tty_ports(COMPorts& tty_ports)
     {
         // Get the number of available COM ports
         for (int i = 0; i < 256; i++) {
-            char portName[64];
-            sprintf_s(portName, "\\\\.\\COM%d", i);
-            HANDLE hPort = ::CreateFile(portName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+            std::string portName;
+            portName = "\\\\.\\COM" + std::to_string(i);
+            std::wstring str1(portName.begin(), portName.end());
+            HANDLE hPort = ::CreateFile(str1.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
             if (hPort != INVALID_HANDLE_VALUE) {
                 ::CloseHandle(hPort);
                 tty_ports.push_back(std::string(portName));
