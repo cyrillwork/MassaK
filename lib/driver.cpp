@@ -188,6 +188,7 @@ void Driver::routine()
 {
     LOG(INFO) << "routine start" << std::endl;
     COMPorts array_ports;
+    bool high_speed = false;
 
     while (is_run)
     {
@@ -198,12 +199,13 @@ void Driver::routine()
             for(const auto& iii: array_ports) {
                 LOG(INFO) << "Found port: " << iii << std::endl;
             }
+            high_speed = !high_speed;
             LOG(INFO) << "---------------------------------" << std::endl;
         }
 
         if(!controller && !array_ports.empty()) {
             LOG(INFO) << "make controller port: " << array_ports.back() << std::endl;
-            controller = std::make_unique<Controller>(array_ports.back());
+            controller = std::make_unique<Controller>(array_ports.back(), high_speed);
             LOG(INFO) << "is_init: " << controller->isInit() << std::endl;
 
             if(controller->isInit() && getScalePar()) {

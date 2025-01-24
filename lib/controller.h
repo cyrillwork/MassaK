@@ -10,7 +10,7 @@
 class Controller
 {
 public:
-    Controller(const std::string& port_name);
+    Controller(const std::string& port_name, bool high_speed);
     ~Controller();
 
     bool isInit() const;

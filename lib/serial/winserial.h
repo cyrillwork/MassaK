@@ -19,7 +19,7 @@ public:
     bool open(const char *pathname, int flags) override;
     void close() override;
 
-    bool set_params(uint32_t baud_rate) override;
+    bool set_params(const std::string& baud_rate) override;
 
     int64_t read(uint8_t* buff, uint64_t len) override;
     int64_t write(const uint8_t* buff, uint64_t len) override;

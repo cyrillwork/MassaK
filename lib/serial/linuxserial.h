@@ -13,7 +13,7 @@ public:
 
     bool open(const char* pathname, int flags) override;
 
-    bool set_params(uint32_t baud_rate) override;
+    bool set_params(const std::string& baud_rate) override;
 
     void close() override;
 

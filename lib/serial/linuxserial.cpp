@@ -30,7 +30,7 @@ void LinuxSerial::close()
     }
 }
 
-bool LinuxSerial::set_params(uint32_t baud_rate)
+bool LinuxSerial::set_params(const std::string& baud_rate)
 {
     bool result = false;
 
@@ -43,41 +43,47 @@ bool LinuxSerial::set_params(uint32_t baud_rate)
         LOG(INFO) << "tcgetattr OK" << std::endl;
     }
 
-    {
-        cfsetispeed(baud_rate);
-        cfsetospeed(baud_rate);
-        {
-            tty.c_cflag |= (CLOCAL | CREAD);
+    {        
+        speed_t _baud_rate = B57600;
 
-            if(baud_rate == B57600) {
-                LOG(INFO) << "Set speed B57600" << std::endl;
-                tty.c_cflag |= PARENB; // Enable parity
-                tty.c_cflag |= PARODD; // Set odd parity                
-            } else if(baud_rate == B19200) {
-                LOG(INFO) << "Set speed B19200" << std::endl;
-                // clear mark/space parity
-                tty.c_cflag &= ~CMSPAR;
-            } else if(baud_rate == B4800) {
-                LOG(INFO) << "Set speed B4800" << std::endl;
-                tty.c_cflag |= PARENB; // Enable parity
-            } else {
-                LOG(INFO) << "Error unsupported speed" << std::endl;
-            }
+        tty.c_cflag |= (CLOCAL | CREAD);
 
-            tty.c_cflag &= ~CSTOPB; // 1 stop bit
-            tty.c_cflag &= ~CSIZE;
-            tty.c_cflag |= CS8;	//8 data bits
-            tty.c_cflag &= ~CRTSCTS;	//disable hardware flow control
-            tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);	//raw mode!
-            tty.c_iflag &= ~(INPCK | ISTRIP | IUCLC | IGNCR | ICRNL | INLCR | PARMRK);	//raw mode!
-            tty.c_iflag &= ~(IXON | IXOFF | IXANY);	//disable software flow control
-            tty.c_oflag &= ~OPOST;
-
-            tty.c_cc[VMIN] = 0;
-            tty.c_cc[VTIME]= 0;
+        if(baud_rate == "57600") {
+            LOG(INFO) << "Set speed B57600" << std::endl;
+            tty.c_cflag |= PARENB; // Enable parity
+            tty.c_cflag |= PARODD; // Set odd parity
+            _baud_rate = B57600;
+        } else if(baud_rate == "19200") {
+            LOG(INFO) << "Set speed B19200" << std::endl;
+            // clear mark/space parity
+            tty.c_cflag &= ~CMSPAR;
+            _baud_rate = B19200;
+        } else if(baud_rate == "4800") {
+            LOG(INFO) << "Set speed B4800" << std::endl;
+            tty.c_cflag |= PARENB; // Enable parity
+            _baud_rate = B4800;
+        } else {
+            LOG(INFO) << "Error unsupported speed" << std::endl;
         }
+
+        cfsetispeed(_baud_rate);
+        cfsetospeed(_baud_rate);
+
+
+        tty.c_cflag &= ~CSTOPB; // 1 stop bit
+        tty.c_cflag &= ~CSIZE;
+        tty.c_cflag |= CS8;	//8 data bits
+        tty.c_cflag &= ~CRTSCTS;	//disable hardware flow control
+        tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);	//raw mode!
+        tty.c_iflag &= ~(INPCK | ISTRIP | IUCLC | IGNCR | ICRNL | INLCR | PARMRK);	//raw mode!
+        tty.c_iflag &= ~(IXON | IXOFF | IXANY);	//disable software flow control
+        tty.c_oflag &= ~OPOST;
+
+        tty.c_cc[VMIN] = 0;
+        tty.c_cc[VTIME]= 0;
+
         tty.c_cflag &= ~CBAUD;
-        tty.c_cflag |= baud_rate;	//9600BAUD
+        tty.c_cflag |= _baud_rate;	//9600BAUD
     }
 
     if (tcsetattr(TCSANOW, &tty) != 0) {

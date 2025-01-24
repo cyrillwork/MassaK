@@ -4,6 +4,7 @@
 #include <cstring>
 #include <memory>
 #include <cinttypes>
+#include <string>
 
 #ifdef MASSAK_WINDOWS
     //#define NOMINMAX //иначе API windows определит макросы min и max, конфликтующие с std::max и std::min в vector
@@ -29,7 +30,7 @@ public:
 
     virtual void close () = 0;
 
-    virtual bool set_params(uint32_t baud_rate) = 0;
+    virtual bool set_params(const std::string& baud_rate) = 0;
 
     virtual int64_t read(uint8_t* buff, uint64_t len) = 0;
 

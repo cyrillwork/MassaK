@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <sstream>
 
-Controller::Controller(const std::string& port_name):
+Controller::Controller(const std::string& port_name, bool high_speed):
     is_connected{false}
 {
     ptrSerial = serial_factory();
@@ -22,9 +22,8 @@ Controller::Controller(const std::string& port_name):
         LOG(INFO) << "port opened OK " << std::endl;
     }
 
-    //fcntl(fd, F_SETFL, FNDELAY);	//read with no delay
-    //is_init = ptrSerial->set_params(B57600 /*baud_rate*/);
-    is_init = ptrSerial->set_params(B4800 /*baud_rate*/);
+    //fcntl(fd, F_SETFL, FNDELAY);	//read with no delay    
+    is_init = ptrSerial->set_params(high_speed ? "57600" : "4800"/*baud_rate*/);
     //std::cout << "set_params is_init: " << is_init << std::endl;
 }
 
