@@ -25,7 +25,6 @@ bool WinSerial::IsOK() const
 bool WinSerial::open(const char *pathname, int flags)
 {
     bool result = false;
-
     ++fd;
 
     std::string port(pathname);
@@ -41,7 +40,9 @@ bool WinSerial::open(const char *pathname, int flags)
 
     if(m_Handle == INVALID_HANDLE_VALUE) {
         std::cout << "!!! Invalid open port" << std::endl;
-        return -1;
+        result = false;
+    } else {
+        result = true;
     }
 
     return result;
@@ -91,16 +92,19 @@ bool WinSerial::set_params(const std::string& baud_rate)
         ComDCM.ByteSize = 8;
         ComDCM.Parity   = NOPARITY;
         ComDCM.StopBits = ONESTOPBIT;
+        std::cout << "57600" << std::endl;
     } else if(baud_rate == "4800") {
         ComDCM.BaudRate = CBR_4800;
         ComDCM.ByteSize = 8;
-        ComDCM.Parity   = EVEN;
+        ComDCM.Parity   = EVENPARITY;
         ComDCM.StopBits = ONESTOPBIT;
+        std::cout << "4800" << std::endl;
     } else if(baud_rate == "19200") {
         ComDCM.BaudRate = CBR_19200;
         ComDCM.ByteSize = 8;
-        ComDCM.Parity   = SPACE;
+        ComDCM.Parity   = SPACEPARITY;
         ComDCM.StopBits = ONESTOPBIT;
+        std::cout << "19200" << std::endl;
     } else {
         std::cout << "!!! Invalid baud_rate: " << baud_rate << std::endl;
         return result;
@@ -114,11 +118,11 @@ bool WinSerial::set_params(const std::string& baud_rate)
 
     COMMTIMEOUTS CommTimeOuts;
 
-    CommTimeOuts.ReadIntervalTimeout         = 100;	 	//таймаут между двумя символами
-    CommTimeOuts.ReadTotalTimeoutMultiplier  = 100;	//общий таймаут операции чтения
-    CommTimeOuts.ReadTotalTimeoutConstant    = 100;         //константа для общего таймаута операции чтения
-    CommTimeOuts.WriteTotalTimeoutMultiplier = 100;      //общий таймаут операции записи
-    CommTimeOuts.WriteTotalTimeoutConstant   = 100;        //константа для общего таймаута операции записи
+    CommTimeOuts.ReadIntervalTimeout         = 1;	 	//таймаут между двумя символами
+    CommTimeOuts.ReadTotalTimeoutMultiplier  = 1;	//общий таймаут операции чтения
+    CommTimeOuts.ReadTotalTimeoutConstant    = 1;         //константа для общего таймаута операции чтения
+    CommTimeOuts.WriteTotalTimeoutMultiplier = 1;      //общий таймаут операции записи
+    CommTimeOuts.WriteTotalTimeoutConstant   = 1;        //константа для общего таймаута операции записи
 
     //записать структуру таймаутов в порт
     if(!SetCommTimeouts(m_Handle, &CommTimeOuts))	//если не удалось - закрыть порт и вывести сообщение об ошибке в строке состояния
@@ -128,8 +132,8 @@ bool WinSerial::set_params(const std::string& baud_rate)
         return result;
     }
 
-//    SetupComm(m_Handle, 2000, 2000);
-//    PurgeComm(m_Handle, PURGE_RXCLEAR);
+    //SetupComm(m_Handle, 2000, 2000);
+    PurgeComm(m_Handle, PURGE_RXCLEAR);
 //    overlapped.hEvent = CreateEvent(nullptr, true, true, nullptr);
 //    overlappedwr.hEvent = CreateEvent(nullptr, true, true, nullptr);
 //    SetCommMask(m_Handle, EV_RXCHAR|EV_TXEMPTY);
@@ -141,8 +145,8 @@ bool WinSerial::set_params(const std::string& baud_rate)
 
 int WinSerial::select(size_t timeout)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(timeout*0.001));
-
+    //std::this_thread::sleep_for(std::chrono::milliseconds( (int)(timeout*0.001) );
+    (void)timeout;
     return 1;
 /*
     COMSTAT comstat;
@@ -200,12 +204,16 @@ int64_t WinSerial::read(uint8_t *buff, uint64_t len)
 {
     DWORD bytesRead = 0;
 
+    //std::cout << "read begin len: " << len << std::endl;
+
     if(m_Handle == INVALID_HANDLE_VALUE) {
         std::cout << "!!! WinSerial::read INVALID_HANDLE_VALUE" << std::endl;
         return bytesRead;
     }
 
     ReadFile(m_Handle, buff, len, &bytesRead, NULL);
+
+    //std::cout << "read end bytesRead: " << bytesRead << std::endl;
 
 //    DWORD feedback = 0;
 //    if (!counter)this->select(1500); //time out 3 byte* from 19200 = 1500

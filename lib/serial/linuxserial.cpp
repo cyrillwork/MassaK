@@ -43,6 +43,9 @@ bool LinuxSerial::set_params(const std::string& baud_rate)
         LOG(INFO) << "tcgetattr OK" << std::endl;
     }
 
+    // Reset the input and output queues
+    tcflush(fd, TCIOFLUSH);
+
     {        
         speed_t _baud_rate = B57600;
 

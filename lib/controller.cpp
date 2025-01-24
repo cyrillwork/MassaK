@@ -72,7 +72,8 @@ bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
     uint64_t timeout = 500000;
     buff.clear();
     while (true) {
-        if(ptrSerial->select(timeout) > 0) {
+        if(ptrSerial->select(timeout) > 0)
+        {
             uint8_t response[256];
             int bytesRead = ptrSerial->read(response, sizeof(response));
             if (bytesRead > 0) {
@@ -80,7 +81,7 @@ bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
             } else {
                 LOG(INFO) << "Controller::read_fd bytesRead: " << bytesRead << "\n";
                 break;
-            }
+            }           
         } else {
             break;
         }
