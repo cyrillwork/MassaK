@@ -25,4 +25,11 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+#LIBS += D:\cyrill\MassaK\lib\debug\MassaK.dll
+
+windows {
+LIBS += MassaK.dll
+} else {
 LIBS += ./lib/libMassaK.so
+}
+
