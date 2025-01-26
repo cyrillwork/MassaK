@@ -13,7 +13,7 @@ Controller::Controller(const std::string& port_name, bool high_speed):
     //std::cout << "Controller" << std::endl;
 
     is_init = false;
-    int flags = O_RDWR /*| O_NONBLOCK*/;
+    int flags = O_RDWR | O_NONBLOCK;
 
     is_init = ptrSerial->open(port_name.c_str(), flags);
     if (!is_init) {
@@ -22,8 +22,13 @@ Controller::Controller(const std::string& port_name, bool high_speed):
         LOG(INFO) << "port opened OK " << std::endl;
     }
 
-    //fcntl(fd, F_SETFL, FNDELAY);	//read with no delay    
-    is_init = ptrSerial->set_params(high_speed ? "57600" : "4800"/*baud_rate*/);
+    std::string _baud = "4800";
+    if(port_name.find("ttyACM") != std::string::npos ) {
+        _baud = "57600";
+    }
+
+    //fcntl(fd, F_SETFL, FNDELAY);	//read with no delay
+    is_init = ptrSerial->set_params( _baud );
     //std::cout << "set_params is_init: " << is_init << std::endl;
 }
 
@@ -69,7 +74,7 @@ bool Controller::read(std::vector<uint8_t>& buff)
 bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
 {
     bool result = false;
-    uint64_t timeout = 500000;
+    uint64_t timeout = 1000000;
     buff.clear();
     while (true) {
         if(ptrSerial->select(timeout) > 0)
