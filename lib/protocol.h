@@ -2,7 +2,7 @@
 
 #include <cinttypes>
 #include <vector>
-
+#include <stdio.h>
 #include "scales_parameters.h"
 #include "protocol.h"
 
