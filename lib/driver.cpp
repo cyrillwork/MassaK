@@ -172,6 +172,13 @@ bool Driver::SetTare(int32_t tare)
     return result;
 }
 
+void Driver::GetScalesParameters(ScalesParameters& get_params)
+{
+    std::lock_guard<std::mutex> _lck(mutexParams);
+    get_params = scalesParameters;
+    (void)_lck;
+}
+
 bool Driver::checkPortGetMassa()
 {
     bool result = false;
@@ -195,7 +202,7 @@ bool Driver::checkPortGetMassa()
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
            ScalesParameters _params;
            _params.connection = true;
-           //Protocol::parseResponseGetMassa(recv_data, _params);
+           Protocol::parseResponseGetMassa(recv_data, _params);
            setScalesParameters(_params);
            result = true;
        }

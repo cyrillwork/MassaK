@@ -3,6 +3,7 @@
 *.1
 *.0
 *.so
+*.dll
 Makefile
 Makefile.*
 *.user

@@ -6,8 +6,6 @@
 
 #include "protocol.h"
 
-ScalesParameters scalesParameters;
-
 class Driver
 {
 public:    
@@ -17,10 +15,9 @@ public:
     bool GetScalesParameters();
     bool SetZero();
     bool SetTare(int32_t tare = 0);
+    void GetScalesParameters(ScalesParameters& get_params);
 
 private:
-    bool getScalePar();
-
     void start();
     void stop();
 
@@ -35,5 +32,7 @@ private:
     void resetScaleParameters();
     void setConnected();
     void setScalesParameters(const ScalesParameters& params);
+
+    ScalesParameters scalesParameters;
 };
 

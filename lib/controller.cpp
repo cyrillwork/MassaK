@@ -46,7 +46,6 @@ bool Controller::send(const std::vector<uint8_t>& buff)
     } else {
         LOG(INFO) << "Error Controller::send size_w: " << size_w << std::endl;
     }
-
     return result;
 }
 
@@ -111,7 +110,12 @@ void Controller::setConnected(bool connected)
 bool Controller::open()
 {
     bool result;
-    int flags = O_RDWR | O_NONBLOCK;
+
+    #ifdef MASSAK_WINDOWS
+        int flags = O_RDWR;
+    #else
+        int flags = O_RDWR | O_NONBLOCK;
+    #endif
 
     result = ptrSerial->open(name.c_str(), flags);
     if (!result) {

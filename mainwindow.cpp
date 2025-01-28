@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     //std::cout << "version: " << Driver::instance().get_version() << "\n";
 
     ui->setupUi(this);
+    //driver = std::make_unique<Driver>();
 }
 
 MainWindow::~MainWindow()
@@ -37,23 +38,23 @@ void MainWindow::on_getMassa_released()
 void MainWindow::on_setZero_released()
 {
     std::cout << "Set Zero" << std::endl;
+   // driver>SetZero();
     driver.SetZero();
 }
 
 void MainWindow::on_setTare_released()
 {
     std::cout << "Set Tare" << std::endl;
-
     auto tare = ui->tareBox->value();
     std::cout << "tare: " << tare << std::endl;
-
     driver.SetTare(tare);
 }
 
 void MainWindow::show_info()
 {
     std::string str_info;
-    ScalesParameters params = scalesParameters;
+    ScalesParameters params;
+    driver.GetScalesParameters(params);
     str_info =  "connection:\t"       + std::string(params.connection ? "true" : "false") + "\n" +
                 "condition:\t"        + std::string(params.condition ? "true" : "false")      + "\n" +
                 "weigth:\t\t"         + std::to_string(params.weight)         + "\n" +
@@ -68,9 +69,8 @@ void MainWindow::show_info()
 
 void MainWindow::routine()
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     while(is_run) {
-        //std::cout << "show_info" << std::endl;
         show_info();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
