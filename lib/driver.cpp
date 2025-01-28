@@ -43,37 +43,7 @@ void Driver::stop()
     }
 }
 
-bool Driver::getScalePar()
-{
-    bool result = false;
-
-    if(!(controller && controller->isInit())) {
-        LOG(INFO) << "Driver::getScalePar controller not init" << std::endl;
-        return result;
-    }
-
-    Data data;
-    Data recv_data;
-    Protocol::getScalePar(data);
-    //Protocol::print(data);
-
-    if(controller->send(data)) {
-       if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
-           result = Protocol::parseResponseGetScalePar(recv_data);
-           if(result) {
-               setConnected();
-           }
-       }
-    }
-
-    if(!result) {
-        LOG(INFO) << "Driver::getScalePar error parse" << std::endl;
-    }
-
-    return result;
-}
-
-bool Driver::getMassa()
+bool Driver::GetScalesParameters()
 {
     bool result = false;
 
@@ -110,7 +80,7 @@ bool Driver::getMassa()
     return result;
 }
 
-bool Driver::setZero()
+bool Driver::SetZero()
 {
     bool result = false;
 
@@ -131,9 +101,9 @@ bool Driver::setZero()
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
-           ScalesParameters _params;
-           Protocol::parseResponseSetZero(recv_data, _params);
-           setScalesParameters(_params);
+           //ScalesParameters _params;
+           //Protocol::parseResponseSetZero(recv_data, _params);
+           //setScalesParameters(_params);
            result = true;
        }
     }
@@ -147,7 +117,7 @@ bool Driver::setZero()
     return result;
 }
 
-bool Driver::setTare(int32_t tare)
+bool Driver::SetTare(int32_t tare)
 {
     bool result = false;
 
@@ -168,9 +138,9 @@ bool Driver::setTare(int32_t tare)
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
-           ScalesParameters _params;
-           Protocol::parseResponseSetTare(recv_data, _params);
-           setScalesParameters(_params);
+           //ScalesParameters _params;
+           //Protocol::parseResponseSetTare(recv_data, _params);
+           //setScalesParameters(_params);
            result = true;
        }
     }
@@ -184,62 +154,74 @@ bool Driver::setTare(int32_t tare)
     return result;
 }
 
+bool Driver::checkPortGetMassa()
+{
+    bool result = false;
+
+    if(!(controller && controller->isInit())) {
+        std::cout << "Driver::getMassa controller not init" << std::endl;
+        return result;
+    }
+
+    Data data;
+    Data recv_data;
+    Protocol::getMassa(data);
+    //Protocol::print(data);
+
+    if(controller->send(data)) {
+       if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
+           ScalesParameters _params;
+           _params.connection = true;
+           //Protocol::parseResponseGetMassa(recv_data, _params);
+           setScalesParameters(_params);
+           result = true;
+       }
+    }
+
+    return result;
+}
+
+
+
 void Driver::routine()
 {
     LOG(INFO) << "routine start" << std::endl;
     COMPorts array_ports;
     bool high_speed = false;
+    bool get_port   = false;
 
     while (is_run)
-    {
-        //std::cout << "---------------------------------" << std::endl;
-        if(array_ports.empty()) {
-            CheckCOMPorts ports;
-            ports.get_tty_ports(array_ports);
-            for(const auto& iii: array_ports) {
-                LOG(INFO) << "Found port: " << iii << std::endl;
+    {        
+        if(!get_port) {
+            if(array_ports.empty()) {
+                CheckCOMPorts ports;
+                ports.get_tty_ports(array_ports);
+                for(const auto& iii: array_ports) {
+                    LOG(INFO) << "Found port: " << iii << std::endl;
+                }
+                high_speed = !high_speed;
+                LOG(INFO) << "---------------------------------" << std::endl;
             }
-            high_speed = !high_speed;
-            LOG(INFO) << "---------------------------------" << std::endl;
-        }
 
-        if(!controller && !array_ports.empty()) {
-            LOG(INFO) << "make controller port: " << array_ports.back() << std::endl;
-            controller = std::make_unique<Controller>(array_ports.back(), high_speed);
-            LOG(INFO) << "is_init: " << controller->isInit() << std::endl;
+            if(!controller && !array_ports.empty()) {
+                LOG(INFO) << "make controller port: " << array_ports.back() << std::endl;
+                controller = std::make_unique<Controller>(array_ports.back(), high_speed);
+                LOG(INFO) << "is_init: " << controller->isInit() << std::endl;
 
-            if(controller->isInit() && getScalePar()) {
-                LOG(INFO) << "set connected" << std::endl;
-                controller->setConnected(true);
-            } else {
-                LOG(INFO) << "not connected" << std::endl;
-                array_ports.pop_back();
-                controller.reset();
-                controller = nullptr;
+                if(controller->isInit() && checkPortGetMassa()) {
+                    LOG(INFO) << "set connected" << std::endl;
+                    controller->setConnected(true);
+                    get_port = true;
+                } else {
+                    LOG(INFO) << "not connected" << std::endl;
+                    array_ports.pop_back();
+                    controller.reset();
+                    controller = nullptr;
+                }
             }
         }
 
-//        if(controller && controller->isInit())
-//        {
-//            if(need_getMassa) {
-//                need_getMassa = false;
-//                if(!m_getMassa()) {
-//                    LOG(INFO) << "need reconnected" << std::endl;
-//                    array_ports.clear();
-//                    controller.reset();
-//                    controller = nullptr;
-//                }
-//            } else if(need_setZero) {
-//                need_setZero = false;
-//            } else if(need_setTare) {
-//                need_setTare = false;
-//            }
-//            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-//        } else
-
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     }
 
@@ -279,29 +261,24 @@ void Driver::setScalesParameters(const ScalesParameters& params)
     (void)_lck;
 }
 
-void Driver::getScalesParameters(ScalesParameters& get_params)
-{
-    std::lock_guard<std::mutex> _lck(mutexParams);
-    get_params = scalesParameters;
-    (void)_lck;
-}
+//void Driver::getScalesParameters(ScalesParameters& get_params)
+//{
+//    std::lock_guard<std::mutex> _lck(mutexParams);
+//    get_params = scalesParameters;
+//    (void)_lck;
+//}
 
-void Driver::printScalesParameters()
-{
-    std::lock_guard<std::mutex> _lck(mutexParams);
-    std::cout << "connection: " << scalesParameters.connection << std::endl;
-    std::cout << "condition: "  << scalesParameters.condition << std::endl;
-    std::cout << std::dec << "weight: "     << (int)scalesParameters.weight << std::endl;
+//void Driver::printScalesParameters()
+//{
+//    std::lock_guard<std::mutex> _lck(mutexParams);
+//    std::cout << "connection: " << scalesParameters.connection << std::endl;
+//    std::cout << "condition: "  << scalesParameters.condition << std::endl;
+//    std::cout << std::dec << "weight: "     << (int)scalesParameters.weight << std::endl;
 
-    std::cout << "weight_stable: "  << scalesParameters.weight_stable << std::endl;
-    std::cout << "weight_overmax: " << scalesParameters.weight_overmax << std::endl;
-    std::cout << "weight_net: "     << scalesParameters.weight_net << std::endl;
-    std::cout << "weight_zero: "    << scalesParameters.weight_zero << std::endl;
-    (void)_lck;
-}
-
-std::string Driver::get_version() const
-{
-    return "1.0";
-}
+//    std::cout << "weight_stable: "  << scalesParameters.weight_stable << std::endl;
+//    std::cout << "weight_overmax: " << scalesParameters.weight_overmax << std::endl;
+//    std::cout << "weight_net: "     << scalesParameters.weight_net << std::endl;
+//    std::cout << "weight_zero: "    << scalesParameters.weight_zero << std::endl;
+//    (void)_lck;
+//}
 

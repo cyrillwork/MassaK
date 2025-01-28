@@ -6,31 +6,25 @@
 
 #include "protocol.h"
 
+ScalesParameters scalesParameters;
+
 class Driver
 {
 public:    
-    static Driver& instance() {
-        static Driver _instance;
-        return _instance;
-    }
+    Driver();
+    virtual ~Driver();
 
-    ~Driver();
+    bool GetScalesParameters();
+    bool SetZero();
+    bool SetTare(int32_t tare = 0);
+
+private:
+    bool getScalePar();
 
     void start();
     void stop();
 
-    bool getScalePar();
-    bool getMassa();
-    bool setZero();
-    bool setTare(int32_t tare = 0);
-
-    void getScalesParameters(ScalesParameters& get_params);
-    void printScalesParameters();
-
-    std::string get_version() const;
-
-private:
-    Driver();
+    bool checkPortGetMassa();
 
     bool is_run;
     std::unique_ptr<std::thread> main_thread;
@@ -38,7 +32,6 @@ private:
     void routine();
 
     std::mutex mutexParams;
-    ScalesParameters scalesParameters;
     void resetScaleParameters();
     void setConnected();
     void setScalesParameters(const ScalesParameters& params);

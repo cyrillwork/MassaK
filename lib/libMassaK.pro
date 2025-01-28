@@ -8,7 +8,7 @@ SOURCES += \
     #serial/rsinterface.cpp \
     serial/paramsrs.cpp \
     driver.cpp \
-    driver_plain.cpp \
+    #driver_plain.cpp \
     controller.cpp \
     checkcomports.cpp \
     protocol.cpp
@@ -41,7 +41,7 @@ HEADERS += \
     serial/paramsrs.h \
     aixlog.hpp \
     driver.h \
-    driver_plain.h \
+    #driver_plain.h \
     controller.h \
     checkcomports.h \
     scales_parameters.h \
