@@ -7,36 +7,26 @@
 #include <sstream>
 
 Controller::Controller(const std::string& port_name, bool high_speed):
-    is_connected{false}
+        name{port_name}
+      , is_connected{false}
 {
     ptrSerial = serial_factory();
     //std::cout << "Controller" << std::endl;
 
-    is_init = false;
-    int flags = O_RDWR | O_NONBLOCK;
-
-    is_init = ptrSerial->open(port_name.c_str(), flags);
-    if (!is_init) {
-        LOG(INFO) << "Error open port: " << port_name << std::endl;
-    } else {
-        LOG(INFO) << "port opened OK " << std::endl;
+    baud = "4800";
+    if(name.find("ttyACM") != std::string::npos ) {
+        baud = "57600";
     }
 
-    std::string _baud = "4800";
-    if(port_name.find("ttyACM") != std::string::npos ) {
-        _baud = "57600";
+    is_init = open();
+    if(is_init) {
+        ptrSerial->close();
     }
-
-    //fcntl(fd, F_SETFL, FNDELAY);	//read with no delay
-    is_init = ptrSerial->set_params( _baud );
-    //std::cout << "set_params is_init: " << is_init << std::endl;
 }
 
 Controller::~Controller()
 {
-    if(ptrSerial) {
-        ptrSerial->close();
-    }
+    close();
 }
 
 bool Controller::isInit() const
@@ -116,4 +106,29 @@ bool Controller::isConnected() const
 void Controller::setConnected(bool connected)
 {
     is_connected = connected;
+}
+
+bool Controller::open()
+{
+    bool result;
+    int flags = O_RDWR | O_NONBLOCK;
+
+    result = ptrSerial->open(name.c_str(), flags);
+    if (!result) {
+        LOG(INFO) << "Error open port: " << name << std::endl;
+        result = false;
+    } else {
+        LOG(INFO) << "port opened OK " << std::endl;
+        //fcntl(fd, F_SETFL, FNDELAY);	//read with no delay
+        result = ptrSerial->set_params( baud );
+    }
+
+    return result;
+}
+
+void Controller::close()
+{
+    if(ptrSerial && is_init) {
+        ptrSerial->close();
+    }
 }
