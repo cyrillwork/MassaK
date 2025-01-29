@@ -15,7 +15,7 @@ public:
     bool GetScalesParameters();
     bool SetZero();
     bool SetTare(int32_t tare = 0);
-    void GetScalesParameters(ScalesParameters& get_params);
+    void getScalesParameters(ScalesParameters& get_params);
 
 private:
     void start();

@@ -172,7 +172,7 @@ bool Driver::SetTare(int32_t tare)
     return result;
 }
 
-void Driver::GetScalesParameters(ScalesParameters& get_params)
+void Driver::getScalesParameters(ScalesParameters& get_params)
 {
     std::lock_guard<std::mutex> _lck(mutexParams);
     get_params = scalesParameters;

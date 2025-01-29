@@ -17,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
     //std::cout << "version: " << Driver::instance().get_version() << "\n";
 
     ui->setupUi(this);
-    //driver = std::make_unique<Driver>();
 }
 
 MainWindow::~MainWindow()
@@ -54,7 +53,7 @@ void MainWindow::show_info()
 {
     std::string str_info;
     ScalesParameters params;
-    driver.GetScalesParameters(params);
+    driver.getScalesParameters(params);
     str_info =  "connection:\t"       + std::string(params.connection ? "true" : "false") + "\n" +
                 "condition:\t"        + std::string(params.condition ? "true" : "false")      + "\n" +
                 "weigth:\t\t"         + std::to_string(params.weight)         + "\n" +
@@ -69,7 +68,7 @@ void MainWindow::show_info()
 
 void MainWindow::routine()
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     while(is_run) {
         show_info();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
