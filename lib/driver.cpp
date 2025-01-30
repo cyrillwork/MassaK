@@ -8,48 +8,27 @@
 
 std::unique_ptr<Controller> controller;
 
-Driver::Driver():
-    is_run{false}
+Driver::Driver()
 {
 #ifndef MASSAK_WINDOWS
     AixLog::Log::init( { std::make_shared<AixLog::SinkFile>(AixLog::Severity::DataCapture, "/tmp/libMassaK.log") } ); 
 #endif
     LOG(INFO) << "Driver start" << "\n";
-
-    start();
 }
 
 Driver::~Driver()
 {
     LOG(INFO) << "Driver stop" << "\n";
-    stop();
-}
-
-void Driver::start()
-{
-    if(main_thread) {
-        stop();
-    }
-    is_run = true;
-    main_thread = std::make_unique<std::thread>(&Driver::routine, this);
-}
-
-void Driver::stop()
-{
-    if(main_thread && main_thread->joinable()) {
-        is_run = false;
-        main_thread->join();
-        main_thread.reset();
-    }
 }
 
 bool Driver::GetScalesParameters()
 {
     bool result = false;
 
-    if(!(controller && controller->isInit())) {
-        //std::cout << "Driver::GetScalesParameters controller not init" << std::endl;
-        return result;
+    if (!(controller && controller->isInit()))  {
+        if(!search_port()) {
+            return result;
+        }
     }
 
     if(!controller->isConnected()) {
@@ -91,8 +70,10 @@ bool Driver::SetZero()
     bool result = false;
 
     if(!(controller && controller->isInit())) {
-        std::cout << "Driver::setZero controller not init" << std::endl;
-        return result;
+        if(!search_port()) {
+            std::cout << "Driver::setZero controller not init" << std::endl;
+            return result;
+        }
     }
 
     if(!controller->isConnected()) {
@@ -133,9 +114,11 @@ bool Driver::SetTare(int32_t tare)
 {
     bool result = false;
 
-    if(!(controller && controller->isInit())) {
-        std::cout << "Driver::setTare controller not init" << std::endl;
-        return result;
+    if(!(controller && controller->isInit())) {        
+        if(!search_port()) {
+            std::cout << "Driver::setZero controller not init" << std::endl;
+            return result;
+        }
     }
 
     if(!controller->isConnected()) {
@@ -213,51 +196,39 @@ bool Driver::checkPortGetMassa()
     return result;
 }
 
-
-
-void Driver::routine()
+bool Driver::search_port()
 {
-    LOG(INFO) << "routine start" << std::endl;
-    COMPorts array_ports;
+    bool result = false;
     bool high_speed = false;
-    bool get_port   = false;
 
-    while (is_run)
-    {        
-        if(!get_port) {
-            if(array_ports.empty()) {
-                CheckCOMPorts ports;
-                ports.get_tty_ports(array_ports);
-                for(const auto& iii: array_ports) {
-                    LOG(INFO) << "Found port: " << iii << std::endl;
-                }
-                high_speed = !high_speed;
-                LOG(INFO) << "---------------------------------" << std::endl;
-            }
+    LOG(INFO) << "search_port begin" << std::endl;
+    COMPorts array_ports;       
 
-            if(!controller && !array_ports.empty()) {
-                LOG(INFO) << "make controller port: " << array_ports.back() << std::endl;
-                controller = std::make_unique<Controller>(array_ports.back(), high_speed);
-                LOG(INFO) << "is_init: " << controller->isInit() << std::endl;
-
-                if(controller->isInit() && checkPortGetMassa()) {
-                    LOG(INFO) << "set connected" << std::endl;
-                    controller->setConnected(true);
-                    get_port = true;
-                } else {
-                    LOG(INFO) << "not connected" << std::endl;
-                    array_ports.pop_back();
-                    controller.reset();
-                    controller = nullptr;
-                }
+    //if(array_ports.empty())
+    {
+        CheckCOMPorts ports;
+        ports.get_tty_ports(array_ports);
+        for(const auto& iii: array_ports) {
+            LOG(INFO) << "Found port: " << iii << std::endl;
+            controller = std::make_unique<Controller>(array_ports.back(), high_speed);
+            LOG(INFO) << "is_init: " << controller->isInit() << std::endl;
+            if(controller->isInit() && checkPortGetMassa()) {
+                LOG(INFO) << "set connected" << std::endl;
+                controller->setConnected(true);
+                result = true;
+                break;
+            } else {
+                LOG(INFO) << "not connected" << std::endl;
+                controller.reset();
+                controller = nullptr;
             }
         }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
+        //high_speed = !high_speed;
+        LOG(INFO) << "---------------------------------" << std::endl;
     }
+    LOG(INFO) << "search_port end" << std::endl;
 
-    LOG(INFO) << "routine stop" << std::endl;
+    return result;
 }
 
 void Driver::resetScaleParameters()

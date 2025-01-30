@@ -14,7 +14,6 @@
 #include <iomanip>
 #include <map>
 #include <memory>
-#include <dlfcn.h>
 
 #ifdef MASSAK_WINDOWS
 #include <windows.h>

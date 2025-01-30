@@ -13,7 +13,6 @@ public:
         static Driver _instance;
         return _instance;
     }
-
     virtual ~Driver();
 
     bool GetScalesParameters();
@@ -24,15 +23,8 @@ public:
 private:    
     Driver();
 
-    void start();
-    void stop();
-
     bool checkPortGetMassa();
-
-    bool is_run;
-    std::unique_ptr<std::thread> main_thread;
-
-    void routine();
+    bool search_port();
 
     std::mutex mutexParams;
     void resetScaleParameters();
