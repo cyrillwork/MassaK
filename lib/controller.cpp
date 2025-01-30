@@ -19,9 +19,9 @@ Controller::Controller(const std::string& port_name, bool high_speed):
     }
 
     is_init = open();
-    if(is_init) {
-        ptrSerial->close();
-    }
+    // if(is_init) {
+    //     ptrSerial->close();
+    // }
 }
 
 Controller::~Controller()

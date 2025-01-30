@@ -41,11 +41,11 @@ bool Driver::GetScalesParameters()
     Protocol::getMassa(data);
     //Protocol::print(data);
 
-    if(!controller->open()) {
-        std::cout << "Driver::GetScalesParameters error open" << std::endl;
-        resetScaleParameters();
-        return result;
-    }
+    // if(!controller->open()) {
+    //     std::cout << "Driver::GetScalesParameters error open" << std::endl;
+    //     resetScaleParameters();
+    //     return result;
+    // }
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
@@ -60,7 +60,7 @@ bool Driver::GetScalesParameters()
         resetScaleParameters();
     }
 
-    controller->close();
+    //controller->close();
 
     return result;
 }
@@ -87,10 +87,10 @@ bool Driver::SetZero()
     Protocol::setZero(data);
     //Protocol::print(data);
 
-    if(!controller->open()) {
-        std::cout << "Driver::setZero error open" << std::endl;
-        return result;
-    }
+    // if(!controller->open()) {
+    //     std::cout << "Driver::setZero error open" << std::endl;
+    //     return result;
+    // }
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
@@ -105,7 +105,7 @@ bool Driver::SetZero()
         resetScaleParameters();
     }
 
-    controller->close();
+    //controller->close();
 
     return result;
 }
@@ -132,10 +132,10 @@ bool Driver::SetTare(int32_t tare)
     Protocol::setTare(data, tare);
     //Protocol::print(data);
 
-    if(!controller->open()) {
-        std::cout << "Driver::setTare error open" << std::endl;
-        return result;
-    }
+    // if(!controller->open()) {
+    //     std::cout << "Driver::setTare error open" << std::endl;
+    //     return result;
+    // }
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
@@ -150,7 +150,7 @@ bool Driver::SetTare(int32_t tare)
         resetScaleParameters();
     }
 
-    controller->close();
+    //controller->close();
 
     return result;
 }
@@ -176,10 +176,10 @@ bool Driver::checkPortGetMassa()
     Protocol::getMassa(data);
     //Protocol::print(data);
 
-    if(!controller->open()) {
-        std::cout << "Driver::checkPortGetMassa error open" << std::endl;
-        return result;
-    }
+    // if(!controller->open()) {
+    //     std::cout << "Driver::checkPortGetMassa error open" << std::endl;
+    //     return result;
+    // }
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
@@ -191,7 +191,7 @@ bool Driver::checkPortGetMassa()
        }
     }
 
-    controller->close();
+    //controller->close();
 
     return result;
 }

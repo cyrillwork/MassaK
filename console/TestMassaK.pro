@@ -8,8 +8,11 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 LIBS += -lpthread
-
-LIBS += -rdynamic -ldl
+win32 {
+    DEFINES += MASSAK_WINDOWS
+} else {
+    LIBS += -rdynamic -ldl
+}
 
 TEMPLATE = app
 TARGET = TestMassaK

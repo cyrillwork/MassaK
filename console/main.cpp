@@ -40,6 +40,7 @@ static f_get_scale_params	g_get_scale_params      = nullptr;
 static std::unique_ptr<std::thread> gameThread = nullptr;
 
 bool MyLoadLibrary(const std::string &libPath){
+    bool result = true;
 
 #ifdef MASSAK_WINDOWS
     std::wstring str1(libPath.begin(), libPath.end());
@@ -76,7 +77,6 @@ bool MyLoadLibrary(const std::string &libPath){
     }
 
 #else
-    bool result = true;
 
     dhndl_logic = dlopen(libPath.c_str(), RTLD_NOW);
 
@@ -119,7 +119,7 @@ bool MyLoadLibrary(const std::string &libPath){
 int main(int arg, char* argc[])
 {
 #ifdef MASSAK_WINDOWS
-    std::string libPath = "../lib/MassaK.dll";
+    std::string libPath = "d:/cyrill/MassaK/lib/debug/MassaK.dll";
 #else
     std::string libPath = "../lib/libMassaK.so.1";
 #endif
