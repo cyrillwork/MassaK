@@ -48,7 +48,7 @@ bool Driver::GetScalesParameters()
     bool result = false;
 
     if(!(controller && controller->isInit())) {
-        std::cout << "Driver::GetScalesParameters controller not init" << std::endl;
+        //std::cout << "Driver::GetScalesParameters controller not init" << std::endl;
         return result;
     }
 

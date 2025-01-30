@@ -8,8 +8,12 @@
 
 class Driver
 {
-public:    
-    Driver();
+public:        
+    static Driver& instance() {
+        static Driver _instance;
+        return _instance;
+    }
+
     virtual ~Driver();
 
     bool GetScalesParameters();
@@ -17,7 +21,9 @@ public:
     bool SetTare(int32_t tare = 0);
     void getScalesParameters(ScalesParameters& get_params);
 
-private:
+private:    
+    Driver();
+
     void start();
     void stop();
 
