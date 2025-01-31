@@ -19,9 +19,9 @@ Controller::Controller(const std::string& port_name, bool high_speed):
     }
 
     is_init = open();
-    // if(is_init) {
-    //     ptrSerial->close();
-    // }
+    if(is_init) {
+        ptrSerial->close();
+    }
 }
 
 Controller::~Controller()
@@ -63,7 +63,7 @@ bool Controller::read(std::vector<uint8_t>& buff)
 bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
 {
     bool result = false;
-    uint64_t timeout = 1000000;
+    uint64_t timeout = 300000;
     buff.clear();
     while (true) {
         if(ptrSerial->select(timeout) > 0)
