@@ -4,7 +4,9 @@
 #include <iostream>
 #include <QString>
 
-#include "driver_plain.h"
+extern "C" {
+    #include "driver_plain.h"
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

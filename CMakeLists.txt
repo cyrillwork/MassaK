@@ -34,7 +34,7 @@ add_executable(MassaK ${SOURCES})
 
 target_link_libraries(MassaK PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(MassaK PRIVATE Threads::Threads)
+target_link_libraries(MassaK PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/build/libMassaK.so)
+#target_link_libraries(MassaK PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libMassaK.so)
 
 target_include_directories(MassaK PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
-
-target_link_libraries(MassaK PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/build/libMassaK.so)

@@ -11,6 +11,7 @@ set(SOURCES
     checkcomports.cpp
     controller.cpp
     driver.cpp
+    driver_plain.cpp
     protocol.cpp
 )
 
@@ -25,6 +26,7 @@ set(HEADERS
     checkcomports.h
     controller.h
     driver.h
+    driver_plain.h
     scales_parameters.h
 )
 
