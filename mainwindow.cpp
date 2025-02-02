@@ -4,15 +4,21 @@
 #include <iostream>
 #include <QString>
 
+extern "C" {
+    #include "driver_plain.h"
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , is_run{true}
     , main_thread{&MainWindow::routine, this}
 {
-    std::cout << "version: " << Driver::instance().get_version() << "\n";
+    //std::cout << "version: " << Driver::instance().get_version() << "\n";
 
     ui->setupUi(this);
+
+    GetScalesParameters();
 }
 
 MainWindow::~MainWindow()
@@ -26,33 +32,29 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_getMassa_released()
 {
-    std::cout << "Get Massa" << std::endl;    
-    Driver::instance().getMassa();
-    //show_info();
+    std::cout << "GetScalesParameters" << std::endl;
+    GetScalesParameters();
 }
 
 void MainWindow::on_setZero_released()
 {
-    std::cout << "Set Zero" << std::endl;
-    Driver::instance().setZero();
+    std::cout << "Set Zero" << std::endl;   
+    SetZero();
 }
 
 void MainWindow::on_setTare_released()
 {
     std::cout << "Set Tare" << std::endl;
-
     auto tare = ui->tareBox->value();
     std::cout << "tare: " << tare << std::endl;
-
-    Driver::instance().setTare(tare);
+    SetTare(tare);
 }
 
 void MainWindow::show_info()
 {
     std::string str_info;
     ScalesParameters params;
-    Driver::instance().getScalesParameters(params);
-    //std::string str1 = ((params.connection) ? "true" : "false");
+    getScalesParametersStruct(&params);
     str_info =  "connection:\t"       + std::string(params.connection ? "true" : "false") + "\n" +
                 "condition:\t"        + std::string(params.condition ? "true" : "false")      + "\n" +
                 "weigth:\t\t"         + std::to_string(params.weight)         + "\n" +
@@ -67,9 +69,8 @@ void MainWindow::show_info()
 
 void MainWindow::routine()
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     while(is_run) {
-        //std::cout << "show_info" << std::endl;
         show_info();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

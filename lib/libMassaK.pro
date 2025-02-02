@@ -30,7 +30,6 @@ windows {
     QMAKE_CXXFLAGS += -mno-ms-bitfields
 }
 
-
 LIBS += -lpthread
 
 HEADERS += \

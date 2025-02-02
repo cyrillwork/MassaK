@@ -122,13 +122,13 @@ bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
             return result;
         }
         result = true;
-        params.connection = true;
-        params.condition  = true;
-        params.weight = ackMassa.weight;
-        params.weight_net  = ackMassa.net;
-        params.weight_zero = ackMassa.zero;
-        params.weight_stable = ackMassa.stable;
-
+        params.connection   = true;
+        params.condition    = true;
+        params.weight       = ackMassa.weight;
+        params.weight_stable  = ackMassa.stable;
+        params.weight_overmax = false;
+        params.weight_zero    = ackMassa.zero;
+        params.weight_net     = ackMassa.net;
     } else if (commonMessage.command == CMD_ERROR) {
         result = true;
         LOG(INFO) << "CMD_ERROR" << std::endl;
@@ -141,11 +141,11 @@ bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
         if(errorMessage.errorCode == ErrorCodes::OVER_WEIRGHT) {
             params.connection       = true;
             params.condition        = true;
-            params.weight           = 0;//ackMassa.weight;
-            params.weight_net       = false;//ackMassa.net;
-            params.weight_zero      = false;
+            params.weight           = 0;//ackMassa.weight;            
             params.weight_stable    = false;//ackMassa.stable;
             params.weight_overmax   = true;
+            params.weight_net       = false;//ackMassa.net;
+            params.weight_zero      = false;                        
         } else {
             params.connection       = true;
             params.condition        = false;

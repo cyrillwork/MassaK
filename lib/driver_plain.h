@@ -6,19 +6,14 @@
 #include <stdio.h>
 
 extern "C" {
-    void start();
 
-    void stop();
+    bool GetScalesParameters();
 
-    bool getScalePar();
+    bool SetZero();
 
-    bool getMassa();
+    bool SetTare(int32_t tare = 0);
 
-    bool setZero();
-
-    bool setTare(int32_t tare = 0);
-
-    void getScalesParameters(ScalesParameters* get_params);
+    void getScalesParametersStruct(ScalesParameters* get_params);
 }
 
 

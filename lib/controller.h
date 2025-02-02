@@ -21,10 +21,16 @@ public:
     bool isConnected() const;
     void setConnected(bool connected);
 
+    bool open();
+    void close();
+
 private:
     //int fd;
+    std::string name;
+    std::string baud;
     bool is_connected;
-    bool is_init;    
+    bool is_init;
+
 
     //bool open(const std::string& port_name);
 

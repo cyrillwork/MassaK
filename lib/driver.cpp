@@ -8,82 +8,31 @@
 
 std::unique_ptr<Controller> controller;
 
-Driver::Driver():
-    is_run{false}
+Driver::Driver()
 {
 #ifndef MASSAK_WINDOWS
     AixLog::Log::init( { std::make_shared<AixLog::SinkFile>(AixLog::Severity::DataCapture, "/tmp/libMassaK.log") } ); 
 #endif
     LOG(INFO) << "Driver start" << "\n";
-
-    start();
 }
 
 Driver::~Driver()
 {
     LOG(INFO) << "Driver stop" << "\n";
-    stop();
 }
 
-void Driver::start()
-{
-    if(main_thread) {
-        stop();
-    }
-    is_run = true;
-    main_thread = std::make_unique<std::thread>(&Driver::routine, this);
-}
-
-void Driver::stop()
-{
-    if(main_thread && main_thread->joinable()) {
-        is_run = false;
-        main_thread->join();
-        main_thread.reset();
-    }
-}
-
-bool Driver::getScalePar()
+bool Driver::GetScalesParameters()
 {
     bool result = false;
 
-    if(!(controller && controller->isInit())) {
-        LOG(INFO) << "Driver::getScalePar controller not init" << std::endl;
-        return result;
-    }
-
-    Data data;
-    Data recv_data;
-    Protocol::getScalePar(data);
-    //Protocol::print(data);
-
-    if(controller->send(data)) {
-       if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
-           result = Protocol::parseResponseGetScalePar(recv_data);
-           if(result) {
-               setConnected();
-           }
-       }
-    }
-
-    if(!result) {
-        LOG(INFO) << "Driver::getScalePar error parse" << std::endl;
-    }
-
-    return result;
-}
-
-bool Driver::getMassa()
-{
-    bool result = false;
-
-    if(!(controller && controller->isInit())) {
-        std::cout << "Driver::getMassa controller not init" << std::endl;
-        return result;
+    if (!(controller && controller->isInit()))  {
+        if(!search_port()) {
+            return result;
+        }
     }
 
     if(!controller->isConnected()) {
-        std::cout << "Driver::getMassa controller not connected" << std::endl;
+        std::cout << "Driver::GetScalesParameters controller not connected" << std::endl;
         return result;
     }
 
@@ -91,6 +40,12 @@ bool Driver::getMassa()
     Data recv_data;
     Protocol::getMassa(data);
     //Protocol::print(data);
+
+    if(!controller->open()) {
+        std::cout << "Driver::GetScalesParameters error open" << std::endl;
+        resetScaleParameters();
+        return result;
+    }
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
@@ -103,24 +58,27 @@ bool Driver::getMassa()
 
     if(!result) {
         resetScaleParameters();
-        controller.reset();
-        controller = nullptr;
     }
+
+    controller->close();
 
     return result;
 }
 
-bool Driver::setZero()
+bool Driver::SetZero()
 {
     bool result = false;
 
     if(!(controller && controller->isInit())) {
-        std::cout << "Driver::setZero controller not init" << std::endl;
-        return result;
+        if(!search_port()) {
+            std::cout << "Driver::setZero controller not init" << std::endl;
+            return result;
+        }
     }
 
     if(!controller->isConnected()) {
         std::cout << "Driver::setZero controller not connected" << std::endl;
+        resetScaleParameters();
         return result;
     }
 
@@ -129,35 +87,43 @@ bool Driver::setZero()
     Protocol::setZero(data);
     //Protocol::print(data);
 
+    if(!controller->open()) {
+        std::cout << "Driver::setZero error open" << std::endl;
+        return result;
+    }
+
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
-           ScalesParameters _params;
-           Protocol::parseResponseSetZero(recv_data, _params);
-           setScalesParameters(_params);
+           //ScalesParameters _params;
+           //Protocol::parseResponseSetZero(recv_data, _params);
+           //setScalesParameters(_params);
            result = true;
        }
     }
 
     if(!result) {
         resetScaleParameters();
-        controller.reset();
-        controller = nullptr;
     }
+
+    controller->close();
 
     return result;
 }
 
-bool Driver::setTare(int32_t tare)
+bool Driver::SetTare(int32_t tare)
 {
     bool result = false;
 
-    if(!(controller && controller->isInit())) {
-        std::cout << "Driver::setTare controller not init" << std::endl;
-        return result;
+    if(!(controller && controller->isInit())) {        
+        if(!search_port()) {
+            std::cout << "Driver::setZero controller not init" << std::endl;
+            return result;
+        }
     }
 
     if(!controller->isConnected()) {
         std::cout << "Driver::setTare controller not connected" << std::endl;
+        resetScaleParameters();
         return result;
     }
 
@@ -166,84 +132,103 @@ bool Driver::setTare(int32_t tare)
     Protocol::setTare(data, tare);
     //Protocol::print(data);
 
+    if(!controller->open()) {
+        std::cout << "Driver::setTare error open" << std::endl;
+        return result;
+    }
+
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
-           ScalesParameters _params;
-           Protocol::parseResponseSetTare(recv_data, _params);
-           setScalesParameters(_params);
+           //ScalesParameters _params;
+           //Protocol::parseResponseSetTare(recv_data, _params);
+           //setScalesParameters(_params);
            result = true;
        }
     }
 
     if(!result) {
         resetScaleParameters();
-        controller.reset();
-        controller = nullptr;
     }
+
+    controller->close();
 
     return result;
 }
 
-void Driver::routine()
+void Driver::getScalesParameters(ScalesParameters& get_params)
 {
-    LOG(INFO) << "routine start" << std::endl;
-    COMPorts array_ports;
+    std::lock_guard<std::mutex> _lck(mutexParams);
+    get_params = scalesParameters;
+    (void)_lck;
+}
+
+bool Driver::checkPortGetMassa()
+{
+    bool result = false;
+
+    if(!(controller && controller->isInit())) {
+        std::cout << "Driver::checkPortGetMassa controller not init" << std::endl;
+        return result;
+    }
+
+    Data data;
+    Data recv_data;
+    Protocol::getMassa(data);
+    //Protocol::print(data);
+
+     if(!controller->open()) {
+         std::cout << "Driver::checkPortGetMassa error open" << std::endl;
+         return result;
+     }
+
+    if(controller->send(data)) {
+       if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
+           ScalesParameters _params;
+           _params.connection = true;
+           Protocol::parseResponseGetMassa(recv_data, _params);
+           setScalesParameters(_params);
+           result = true;
+       }
+    }
+
+    controller->close();
+
+    return result;
+}
+
+bool Driver::search_port()
+{
+    bool result = false;
     bool high_speed = false;
 
-    while (is_run)
-    {
-        //std::cout << "---------------------------------" << std::endl;
-        if(array_ports.empty()) {
-            CheckCOMPorts ports;
-            ports.get_tty_ports(array_ports);
-            for(const auto& iii: array_ports) {
-                LOG(INFO) << "Found port: " << iii << std::endl;
-            }
-            high_speed = !high_speed;
-            LOG(INFO) << "---------------------------------" << std::endl;
-        }
+    LOG(INFO) << "search_port begin" << std::endl;
+    COMPorts array_ports;       
 
-        if(!controller && !array_ports.empty()) {
-            LOG(INFO) << "make controller port: " << array_ports.back() << std::endl;
+    //if(array_ports.empty())
+    {
+        CheckCOMPorts ports;
+        ports.get_tty_ports(array_ports);
+        for(const auto& iii: array_ports) {
+            LOG(INFO) << "Found port: " << iii << std::endl;
             controller = std::make_unique<Controller>(array_ports.back(), high_speed);
             LOG(INFO) << "is_init: " << controller->isInit() << std::endl;
-
-            if(controller->isInit() && getScalePar()) {
+            if(controller->isInit() && checkPortGetMassa()) {
                 LOG(INFO) << "set connected" << std::endl;
                 controller->setConnected(true);
+                result = true;
+                break;
             } else {
                 LOG(INFO) << "not connected" << std::endl;
-                array_ports.pop_back();
                 controller.reset();
                 controller = nullptr;
             }
         }
-
-//        if(controller && controller->isInit())
-//        {
-//            if(need_getMassa) {
-//                need_getMassa = false;
-//                if(!m_getMassa()) {
-//                    LOG(INFO) << "need reconnected" << std::endl;
-//                    array_ports.clear();
-//                    controller.reset();
-//                    controller = nullptr;
-//                }
-//            } else if(need_setZero) {
-//                need_setZero = false;
-//            } else if(need_setTare) {
-//                need_setTare = false;
-//            }
-//            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-//        } else
-
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        }
-
+        //high_speed = !high_speed;
+        LOG(INFO) << "---------------------------------" << std::endl;
     }
+    LOG(INFO) << "search_port end" << std::endl;
 
-    LOG(INFO) << "routine stop" << std::endl;
+    return result;
 }
 
 void Driver::resetScaleParameters()
@@ -279,29 +264,24 @@ void Driver::setScalesParameters(const ScalesParameters& params)
     (void)_lck;
 }
 
-void Driver::getScalesParameters(ScalesParameters& get_params)
-{
-    std::lock_guard<std::mutex> _lck(mutexParams);
-    get_params = scalesParameters;
-    (void)_lck;
-}
+//void Driver::getScalesParameters(ScalesParameters& get_params)
+//{
+//    std::lock_guard<std::mutex> _lck(mutexParams);
+//    get_params = scalesParameters;
+//    (void)_lck;
+//}
 
-void Driver::printScalesParameters()
-{
-    std::lock_guard<std::mutex> _lck(mutexParams);
-    std::cout << "connection: " << scalesParameters.connection << std::endl;
-    std::cout << "condition: "  << scalesParameters.condition << std::endl;
-    std::cout << std::dec << "weight: "     << (int)scalesParameters.weight << std::endl;
+//void Driver::printScalesParameters()
+//{
+//    std::lock_guard<std::mutex> _lck(mutexParams);
+//    std::cout << "connection: " << scalesParameters.connection << std::endl;
+//    std::cout << "condition: "  << scalesParameters.condition << std::endl;
+//    std::cout << std::dec << "weight: "     << (int)scalesParameters.weight << std::endl;
 
-    std::cout << "weight_stable: "  << scalesParameters.weight_stable << std::endl;
-    std::cout << "weight_overmax: " << scalesParameters.weight_overmax << std::endl;
-    std::cout << "weight_net: "     << scalesParameters.weight_net << std::endl;
-    std::cout << "weight_zero: "    << scalesParameters.weight_zero << std::endl;
-    (void)_lck;
-}
-
-std::string Driver::get_version() const
-{
-    return "1.0";
-}
+//    std::cout << "weight_stable: "  << scalesParameters.weight_stable << std::endl;
+//    std::cout << "weight_overmax: " << scalesParameters.weight_overmax << std::endl;
+//    std::cout << "weight_net: "     << scalesParameters.weight_net << std::endl;
+//    std::cout << "weight_zero: "    << scalesParameters.weight_zero << std::endl;
+//    (void)_lck;
+//}
 

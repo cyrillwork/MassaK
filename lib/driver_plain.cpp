@@ -1,38 +1,29 @@
 #include "driver_plain.h"
 #include "driver.h"
 
-void start()
+#include <iostream>
+
+bool GetScalesParameters()
 {
-    Driver::instance().start();
+    return Driver::instance().GetScalesParameters();
 }
 
-void stop()
+bool SetZero()
 {
-    Driver::instance().stop();
+    return Driver::instance().SetZero();
 }
 
-bool getScalePar()
+bool SetTare(int32_t tare)
 {
-    return Driver::instance().getScalePar();
+    return Driver::instance().SetTare(tare);
 }
 
-bool getMassa()
+void getScalesParametersStruct(ScalesParameters* get_params)
 {
-    return Driver::instance().getMassa();
-}
-
-bool setZero()
-{
-    return Driver::instance().setZero();
-}
-
-bool setTare(int32_t tare)
-{
-    return Driver::instance().setTare(tare);
-}
-
-void getScalesParameters(ScalesParameters* get_params)
-{
+    if(!get_params) {
+        std::cout << "!!! Error get_params is NULL" << std::endl;
+        return;
+    }
     ScalesParameters temp_get_params;
     Driver::instance().getScalesParameters(temp_get_params);
     *get_params = temp_get_params;
