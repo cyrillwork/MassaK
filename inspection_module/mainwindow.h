@@ -4,8 +4,6 @@
 #include <thread>
 #include <memory>
 
-#include "driver.h"
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -21,6 +19,8 @@ private slots:
     void on_getMassa_released();
     void on_setZero_released();
     void on_setTare_released();
+
+    void on_closeButton_released();
 
 private:
     Ui::MainWindow *ui;
