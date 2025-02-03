@@ -13,7 +13,7 @@ extern "C" {
 
     bool SetTare(int32_t tare = 0);
 
-    void getScalesParametersStruct(ScalesParameters* get_params);
+    void GetScalesParametersStruct(ScalesParameters* get_params);
 }
 
 

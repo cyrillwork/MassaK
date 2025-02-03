@@ -105,7 +105,7 @@ bool MyLoadLibrary(const std::string &libPath){
         result = false;
     }
 
-    g_get_scale_params = reinterpret_cast<f_get_scale_params>(dlsym(dhndl_logic, "getScalesParametersStruct"));
+    g_get_scale_params = reinterpret_cast<f_get_scale_params>(dlsym(dhndl_logic, "GetScalesParametersStruct"));
     if(!g_get_scale_params) {
         std::cout << "Error load g_get_scale_params " << dlerror() << std::endl;
         result = false;

@@ -18,13 +18,13 @@ bool SetTare(int32_t tare)
     return Driver::instance().SetTare(tare);
 }
 
-void getScalesParametersStruct(ScalesParameters* get_params)
+void GetScalesParametersStruct(ScalesParameters* get_params)
 {
     if(!get_params) {
         std::cout << "!!! Error get_params is NULL" << std::endl;
         return;
     }
     ScalesParameters temp_get_params;
-    Driver::instance().getScalesParameters(temp_get_params);
+    Driver::instance().GetScalesParametersStruct(temp_get_params);
     *get_params = temp_get_params;
 }
