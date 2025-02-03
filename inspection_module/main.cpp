@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
 
     w.setWindowState(Qt::WindowFullScreen);
     //w.setWindowTitle("Test Massa K");
-
     //w.setWindowFlags(Qt::WindowFullscreenButtonHint);
     //w.setWindowFlags(w.windowFlags() & ~Qt::WindowCloseButtonHint);
     w.show();

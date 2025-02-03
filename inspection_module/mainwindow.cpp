@@ -12,8 +12,12 @@ MainWindow::MainWindow(QWidget *parent)
     , is_run{true}
     , main_thread{&MainWindow::routine, this}
 {
+
     ui->setupUi(this);
     //showFullScreen();
+
+    QPixmap pixmap("logo.png");
+    ui->logoLabel->setPixmap(pixmap);
 }
 
 MainWindow::~MainWindow()
