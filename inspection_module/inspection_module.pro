@@ -12,14 +12,20 @@ QMAKE_CXXFLAGS += -g -std=c++17
 INCLUDEPATH += ../lib/
 
 SOURCES += \
+    checkingwidget.cpp \
     mainwindow.cpp \
-    main.cpp
+    main.cpp \
+    messageform.cpp
 
 HEADERS += \
-    mainwindow.h
+    checkingwidget.h \
+    mainwindow.h \
+    messageform.h
 
 FORMS += \
-    mainwindow.ui
+    checkingwidget.ui \
+    mainwindow.ui \
+    messageform.ui
 
 # Default rules for deployment.
 # qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include <QApplication>
-
+#include <QStackedWidget>
+#include <QPushButton>
+#include <QWidget>
+#include <QLayout>
 //#include <iostream>
 //#include <vector>
 //#include <stdio.h>
@@ -9,14 +12,11 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
+    QApplication app(argc, argv);
 
-    w.setWindowState(Qt::WindowFullScreen);
-    //w.setWindowTitle("Test Massa K");
-    //w.setWindowFlags(Qt::WindowFullscreenButtonHint);
-    //w.setWindowFlags(w.windowFlags() & ~Qt::WindowCloseButtonHint);
-    w.show();
+    MainWindow mainWindow;
+    //mainWindow.setWindowState(Qt::WindowFullScreen);
+    mainWindow.setVisible(false);
 
-    return a.exec();
+    return app.exec();
 }
