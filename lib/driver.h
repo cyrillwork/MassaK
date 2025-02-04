@@ -18,7 +18,7 @@ public:
     bool GetScalesParameters();
     bool SetZero();
     bool SetTare(int32_t tare = 0);
-    void getScalesParameters(ScalesParameters& get_params);
+    void GetScalesParametersStruct(ScalesParameters& get_params);
 
 private:    
     Driver();
