@@ -64,7 +64,7 @@ void MainWindow::show_info()
 {
     std::string str_info;
     ScalesParameters params;
-    getScalesParametersStruct(&params);
+    GetScalesParametersStruct(&params);
     //std::string str1 = ((params.connection) ? "true" : "false");
     str_info =  "connection:\t"       + std::string(params.connection ? "true" : "false") + "\n" +
                 "condition:\t"        + std::string(params.condition ? "true" : "false")      + "\n" +
