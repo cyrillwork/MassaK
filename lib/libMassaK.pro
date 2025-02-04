@@ -1,6 +1,8 @@
 TARGET = MassaK
 TEMPLATE = lib
 
+CONFIG += unversioned_libname unversioned_soname
+
 INCLUDEPATH += ./serial
 
 SOURCES += \
@@ -21,7 +23,6 @@ windows {
 }
 
     
-#QMAKE_CXXFLAGS += -O2 -fPIC
 
 QMAKE_CXXFLAGS += -std=c++17 -fPIC
 CONFIG += c++17
