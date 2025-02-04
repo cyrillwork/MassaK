@@ -11,3 +11,8 @@ MassaK
 *.stash
 moc_*
 ui_*
+release/
+lib/release
+lib/debug
+.qtc_clangd
+console/debug
