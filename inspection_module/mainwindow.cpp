@@ -137,7 +137,7 @@ void MainWindow::on_showMessageWidget()
     messageWidget->adjustSize();
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    messageWidget->move(desktop()->screen()->rect().center() - messageWidget->rect().center());
+    messageWidget->move(QApplication::desktop()->screen()->rect().center() - messageWidget->rect().center());
 #else
     messageWidget->move(QGuiApplication::screens().at(0)->geometry().center() - messageWidget->rect().center());
 #endif
