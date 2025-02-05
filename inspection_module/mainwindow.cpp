@@ -3,9 +3,14 @@
 
 #include <iostream>
 #include <QString>
-#include <QDesktopWidget>
 
 #include "driver_plain.h"
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <QDesktopWidget>
+#else
+#include <QScreen>
+#endif
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -129,14 +134,16 @@ void MainWindow::on_showMessageWidget()
     std::cout << "get MainWindow::on_showMessageWidget" << std::endl;
 
     messageWidget = new MessageForm();
-
     messageWidget->adjustSize();
-    messageWidget->move(QApplication::desktop()->screen()->rect().center() - messageWidget->rect().center());
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    messageWidget->move(desktop()->screen()->rect().center() - messageWidget->rect().center());
+#else
+    messageWidget->move(QGuiApplication::screens().at(0)->geometry().center() - messageWidget->rect().center());
+#endif
 
     //messageWidget->show();
     messageWidget->setTextAndShow(1);
 
 }
-
-
 

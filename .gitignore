@@ -12,6 +12,7 @@ MassaK
 moc_*
 ui_*
 release/
+debug/
 lib/release
 lib/debug
 .qtc_clangd
