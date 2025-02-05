@@ -4,8 +4,6 @@
 #include <iostream>
 #include <QString>
 
-#include "driver_plain.h"
-
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QDesktopWidget>
 #else
@@ -20,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     connect(this, &MainWindow::showCheckingWidget, this, &MainWindow::on_showCheckingWidget);
-
     connect(this, &MainWindow::showMessageWidget,  this, &MainWindow::on_showMessageWidget);
 
     QPixmap pixmap("logo.png");
@@ -45,13 +42,13 @@ MainWindow::~MainWindow()
 void MainWindow::on_getMassa_released()
 {
     std::cout << "Get Massa" << std::endl;    
-    GetScalesParameters();
+    Driver::instance().GetScalesParameters();
 }
 
 void MainWindow::on_setZero_released()
 {
     std::cout << "Set Zero" << std::endl;
-    SetZero();
+    Driver::instance().SetZero();
 }
 
 void MainWindow::on_setTare_released()
@@ -69,7 +66,7 @@ void MainWindow::show_info()
 {
     std::string str_info;
     ScalesParameters params;
-    GetScalesParametersStruct(&params);
+    Driver::instance().GetScalesParametersStruct(params);
     //std::string str1 = ((params.connection) ? "true" : "false");
     str_info =  "connection:\t"       + std::string(params.connection ? "true" : "false") + "\n" +
                 "condition:\t"        + std::string(params.condition ? "true" : "false")      + "\n" +
@@ -86,21 +83,24 @@ void MainWindow::show_info()
 void MainWindow::routine()
 {
     static bool first_run = true;
-    static int  counter = 0;
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     while(is_run) {
-        std::cout << "show_info counter: " << counter  << std::endl;
+        std::cout << "info deviceStatus: " << (int)deviceStatus << std::endl;
 
         if(first_run) {
             first_run = false;
 
-            std::cout << "emit showMessageWidget"<< std::endl;
-            emit showMessageWidget();
+            std::cout << "Driver::instance().GetScaleParCheck()"<< std::endl;
+            deviceStatus = Driver::instance().GetScaleParCheck();
+
+            if(DeviceStatusType::NoPortAnswer == deviceStatus || DeviceStatusType::AnswerWithError == deviceStatus) {
+                std::cout << "emit showMessageWidget"<< std::endl;
+                emit showMessageWidget();
+            }
         }
 
-        counter++;
-        if(counter == 10) {
+        if(DeviceStatusType::GetGoodAnswer == deviceStatus) {
             //messageForm->close();
             std::cout << "emit showCheckingWidget"<< std::endl;
             emit showCheckingWidget();
@@ -133,7 +133,9 @@ void MainWindow::on_showMessageWidget()
 {
     std::cout << "get MainWindow::on_showMessageWidget" << std::endl;
 
-    messageWidget = new MessageForm();
+    messageWidget = new MessageForm();    
+    messageWidget->setTextAndShow(deviceStatus);
+
     messageWidget->adjustSize();
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -143,7 +145,7 @@ void MainWindow::on_showMessageWidget()
 #endif
 
     //messageWidget->show();
-    messageWidget->setTextAndShow(1);
+
 
 }
 

@@ -4,6 +4,8 @@
 #include <thread>
 #include <memory>
 
+#include "driver.h"
+
 #include "checkingwidget.h"
 #include "messageform.h"
 
@@ -34,8 +36,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    CheckingWidget *checkingWidget;
-    MessageForm    *messageWidget;
+    CheckingWidget  *checkingWidget = nullptr;
+    MessageForm     *messageWidget  = nullptr;
+    DeviceStatusType deviceStatus   = DeviceStatusType::NoPortAnswer;
 
     void show_info();
 

@@ -6,6 +6,14 @@
 
 #include "protocol.h"
 
+enum DeviceStatusType: uint32_t
+{
+    GetGoodAnswer        = 0,
+    NoPortAnswer         = 1,
+    AnswerWithError      = 2,
+    AnswerWithOverWeight = 3
+};
+
 class Driver
 {
 public:        
@@ -19,6 +27,8 @@ public:
     bool SetZero();
     bool SetTare(int32_t tare = 0);
     void GetScalesParametersStruct(ScalesParameters& get_params);
+
+    DeviceStatusType GetScaleParCheck();
 
 private:    
     Driver();

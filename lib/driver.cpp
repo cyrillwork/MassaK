@@ -65,6 +65,47 @@ bool Driver::GetScalesParameters()
     return result;
 }
 
+DeviceStatusType Driver::GetScaleParCheck()
+{
+    DeviceStatusType result = NoPortAnswer;
+
+    if (!(controller && controller->isInit()))  {
+        if(!search_port()) {
+            return result;
+        }
+    }
+
+    if(!controller->isConnected()) {
+        std::cout << "Driver::GetScaleParCheck controller not connected" << std::endl;
+        return result;
+    }
+
+    Data data;
+    Data recv_data;
+    Protocol::getScalePar(data);
+    Protocol::print(data);
+
+    if(!controller->open()) {
+        std::cout << "Driver::GetScalesParameters error open" << std::endl;
+        return result;
+    }
+
+    if(controller->send(data)) {
+       if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
+           result = Protocol::parseResponseGetScalePar(recv_data) ? GetGoodAnswer : AnswerWithError;
+       }
+    }
+
+    if(!result) {
+        resetScaleParameters();
+    }
+
+    controller->close();
+
+    return result;
+}
+
+
 bool Driver::SetZero()
 {
     bool result = false;
