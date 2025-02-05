@@ -13,7 +13,6 @@ moc_*
 ui_*
 release/
 lib/release
-inspection_module
 lib/debug
 .qtc_clangd
 console/debug
