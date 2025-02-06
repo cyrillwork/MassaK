@@ -185,7 +185,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QLabel" name="verisonPoVzvLabel">
+         <widget class="QLabel" name="PoSummLabel">
           <property name="font">
            <font>
             <pointsize>14</pointsize>
@@ -213,7 +213,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLabel" name="codeUstLabel">
+         <widget class="QLabel" name="calcodeLabel">
           <property name="font">
            <font>
             <pointsize>14</pointsize>
@@ -241,7 +241,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLabel" name="versionPoTermLabel">
+         <widget class="QLabel" name="PoVerLabel">
           <property name="font">
            <font>
             <pointsize>14</pointsize>

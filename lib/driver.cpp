@@ -65,7 +65,7 @@ bool Driver::GetScalesParameters()
     return result;
 }
 
-DeviceStatusType Driver::GetScaleParCheck()
+DeviceStatusType Driver::GetScaleParCheck(AckScaleParameters& params)
 {
     DeviceStatusType result = NoPortAnswer;
 
@@ -92,7 +92,7 @@ DeviceStatusType Driver::GetScaleParCheck()
 
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
-           result = Protocol::parseResponseGetScalePar(recv_data) ? GetGoodAnswer : AnswerWithError;
+           result = Protocol::parseResponseGetScalePar(recv_data, params) ? GetGoodAnswer : AnswerWithError;
        }
     }
 

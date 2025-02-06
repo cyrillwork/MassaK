@@ -28,7 +28,7 @@ public:
     bool SetTare(int32_t tare = 0);
     void GetScalesParametersStruct(ScalesParameters& get_params);
 
-    DeviceStatusType GetScaleParCheck();
+    DeviceStatusType GetScaleParCheck(AckScaleParameters& params);
 
 private:    
     Driver();

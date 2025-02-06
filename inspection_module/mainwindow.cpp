@@ -82,17 +82,15 @@ void MainWindow::show_info()
 
 void MainWindow::routine()
 {
-    static bool first_run = true;
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     while(is_run) {
         std::cout << "info deviceStatus: " << (int)deviceStatus << std::endl;
 
-        if(first_run) {
-            first_run = false;
-
+        if(DeviceStatusType::NoPortAnswer == deviceStatus || deviceStatus == DeviceStatusType::AnswerWithError)
+        {
             std::cout << "Driver::instance().GetScaleParCheck()"<< std::endl;
-            deviceStatus = Driver::instance().GetScaleParCheck();
+            deviceStatus = Driver::instance().GetScaleParCheck(ackScaleParameters);
 
             if(DeviceStatusType::NoPortAnswer == deviceStatus || DeviceStatusType::AnswerWithError == deviceStatus) {
                 std::cout << "emit showMessageWidget"<< std::endl;
@@ -126,7 +124,30 @@ void MainWindow::on_showCheckingWidget()
     }
 
     setVisible(true);
-    showFullScreen();
+
+    if(!ackScaleParameters.Calcode.empty()) {
+        QString calcode_temp(ackScaleParameters.Calcode.c_str());
+        ui->calcodeLabel->setText(calcode_temp);
+    } else {
+        ui->calcodeLabel->setText("  ");
+    }
+
+
+    if(!ackScaleParameters.PO_Ver.empty()) {
+        QString po_ver_temp(ackScaleParameters.PO_Ver.c_str());
+        ui->PoVerLabel->setText(po_ver_temp);
+    } else {
+        ui->PoVerLabel->setText("  ");
+    }
+
+    if(!ackScaleParameters.PO_Summ.empty()) {
+        QString po_summ_temp(ackScaleParameters.PO_Summ.c_str());
+        ui->PoSummLabel->setText(po_summ_temp);
+    } else {
+        ui->PoSummLabel->setText("   ");
+    }
+
+    //showFullScreen();
 }
 
 void MainWindow::on_showMessageWidget()

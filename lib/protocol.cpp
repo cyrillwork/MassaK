@@ -278,8 +278,7 @@ bool Protocol::parseResponseSetTare(const Data& buff, ScalesParameters& params)
 }
 
 
-
-bool Protocol::parseResponseGetScalePar(const Data& buff)
+bool Protocol::parseResponseGetScalePar(const Data& buff, AckScaleParameters& params)
 {
     bool result = false;
     auto len = buff.size();
@@ -299,11 +298,69 @@ bool Protocol::parseResponseGetScalePar(const Data& buff)
               (uint8_t*)&commonMessage);
 
     LOG(INFO) << std::hex << "parseResponseGetScalePar command:" << (int)commonMessage.command << std::endl;
-    if(commonMessage.command == CMD_ACK_SCALE_PAR) {
-        LOG(INFO) << "CMD_ACK_SCALE_PAR" << std::endl;
+    if(commonMessage.command == CMD_ACK_SCALE_PAR) {        
+
+        auto _get_string = [](char* ptr1, size_t max_size, std::string& res_str) {
+            size_t _pos = 0;
+            while(true) {
+                if(_pos >= max_size) {
+                    break;
+                }
+                if((ptr1[_pos] == 0x0D) && (ptr1[_pos + 1] == 0x0A)) {
+                    _pos++;
+                    _pos++;
+                    break;
+                }
+                res_str.push_back(ptr1[_pos]);
+                _pos++;
+            }
+            return _pos;
+        };
+
+        LOG(INFO) << "CMD_ACK_SCALE_PAR" << std::endl;                
+        //char P_Min[21] = {};
+
+        char* ptr1  = (char*)(buff.data()) + 6;
+        size_t pos1 = 0;
+
+        LOG(INFO) << std::dec << "pos begin: " << pos1 << std::endl;
+
+        pos1 += _get_string(ptr1, 20, params.P_Max);
+        LOG(INFO) << "P_Max: " << params.P_Max << std::endl;
+        LOG(INFO) << std::dec << "pos1: " << pos1 << std::endl;
+
+        pos1 += _get_string(ptr1 + pos1, 20, params.P_Min);
+        LOG(INFO) << "P_Min: " << params.P_Min << std::endl;
+        LOG(INFO) << "pos1: " << pos1 << std::endl;
+
+        pos1 += _get_string(ptr1 + pos1, 10, params.P_e);
+        LOG(INFO) << "P_e: " << params.P_e << std::endl;
+        LOG(INFO) << "pos1: " << pos1 << std::endl;
+
+        pos1 += _get_string(ptr1 + pos1, 10, params.P_T);
+        LOG(INFO) << "P_T: " << params.P_T << std::endl;
+        LOG(INFO) << "pos1: " << pos1 << std::endl;
+
+        pos1 += _get_string(ptr1 + pos1, 7, params.Fix);
+        LOG(INFO) << "Fix: " << params.Fix << std::endl;
+        LOG(INFO) << "pos1: " << pos1 << std::endl;
+
+        pos1 += _get_string(ptr1 + pos1, 12, params.Calcode);
+        LOG(INFO) << "Calcode: " << params.Calcode << std::endl;
+        LOG(INFO) << "pos1: " << pos1 << std::endl;
+
+        pos1 += _get_string(ptr1 + pos1, 12, params.PO_Ver);
+        LOG(INFO) << "PO_Ver: " << params.PO_Ver << std::endl;
+        LOG(INFO) << "pos1: " << pos1 << std::endl;
+
+        pos1 += _get_string(ptr1 + pos1, 12, params.PO_Summ);
+        LOG(INFO) << "PO_Summ: " << params.PO_Summ << std::endl;
+        LOG(INFO) << "pos1: " << pos1 << std::endl;
+
         result = true;
     } else if(commonMessage.command == CMD_ERROR) {
         LOG(INFO) << "CMD_ERROR" << std::endl;
+        params.is_error = true;
         result = true;
     }
 

@@ -105,3 +105,16 @@ struct AckMassaTare: public AckMassa
     int32_t tare;
 } __attribute__ ((packed));
 
+//struct AckScalePar: public CommonMessage
+//{
+//    AckScalePar(): CommonMessage(CMD_ACK_SCALE_PAR)
+//    { length = 0x0064; }
+//    char P_Max[21]  = {};   // Максимальная нагрузка
+//    char P_Min[21]  = {};   // Минимальная нагрузка
+//    char P_e[11]    = {};   // Поверочный интервал весов, e,
+//    char P_T[11]    = {};   // Поверочный интервал весов, e,
+//    char Fix[7]     = {};   // Параметр фиксации веса
+//    char Calcode[12]= {};   // Код юстировки
+//    char PO_Ver[9]  = {};   // Версия ПО датчика взвешивания,
+//    char PO_Summ[8] = {};   // Контрольная сумма ПО датчика взвешивания
+//} __attribute__ ((packed));

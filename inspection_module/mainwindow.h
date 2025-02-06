@@ -39,6 +39,7 @@ private:
     CheckingWidget  *checkingWidget = nullptr;
     MessageForm     *messageWidget  = nullptr;
     DeviceStatusType deviceStatus   = DeviceStatusType::NoPortAnswer;
+    AckScaleParameters ackScaleParameters;
 
     void show_info();
 
