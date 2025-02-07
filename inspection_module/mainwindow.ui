@@ -29,6 +29,12 @@
       </item>
       <item>
        <widget class="QLabel" name="logoLabel">
+        <property name="maximumSize">
+         <size>
+          <width>112</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -108,14 +114,14 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="infoLabel">
         <property name="font">
          <font>
           <pointsize>16</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>Max = 6/15kg Min=40g e= 2/5g T=-6kg</string>
+         <string/>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -136,7 +142,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="weightLabel">
         <property name="font">
          <font>
           <pointsize>30</pointsize>
@@ -145,7 +151,7 @@
          </font>
         </property>
         <property name="text">
-         <string>15.000 kg</string>
+         <string>0.000 kg</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

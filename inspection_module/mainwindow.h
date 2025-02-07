@@ -41,7 +41,8 @@ private:
     std::unique_ptr<MessageForm> messageWidget;
 
     DeviceStatusType deviceStatus   = DeviceStatusType::NoPortAnswer;
-    AckScaleParameters ackScaleParameters;
+    AckScaleParameters  ackScaleParameters;
+    ScalesParameters    scalesParameters;
 
     void show_info();
 

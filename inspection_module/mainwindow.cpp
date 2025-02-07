@@ -108,10 +108,19 @@ void MainWindow::routine()
             }
         }
 
-        if(DeviceStatusType::GetGoodAnswer == deviceStatus) {
+        if(deviceStatus == DeviceStatusType::GetGoodAnswer) {
             //messageForm->close();
-            std::cout << "emit showCheckingWidget"<< std::endl;
-            emit showCheckingWidget();
+            std::cout << "try get Massa "<< std::endl;
+            if(Driver::instance().GetScalesParameters()) {
+                Driver::instance().GetScalesParametersStruct(scalesParameters);
+
+                std::cout << "emit showCheckingWidget"<< std::endl;
+                emit showCheckingWidget();
+
+            } else {
+                deviceStatus = DeviceStatusType::NoPortAnswer;
+            }
+
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -137,10 +146,15 @@ void MainWindow::on_showCheckingWidget()
     setVisible(true);
     showFullScreen();
 
-
     if(!ackScaleParameters.Calcode.empty()) {
-        QString calcode_temp(ackScaleParameters.Calcode.c_str());
-        ui->calcodeLabel->setText(calcode_temp);
+        auto _pos = ackScaleParameters.Calcode.find('=');
+
+        if(_pos != std::string::npos && ((_pos + 1) < ackScaleParameters.Calcode.size()) ) {
+            ui->calcodeLabel->setText(ackScaleParameters.Calcode.substr(_pos + 1).c_str());
+        } else {
+            ui->calcodeLabel->setText( ackScaleParameters.Calcode.c_str() );
+        }
+
     } else {
         ui->calcodeLabel->setText("  ");
     }
@@ -158,6 +172,27 @@ void MainWindow::on_showCheckingWidget()
         ui->PoSummLabel->setText(po_summ_temp);
     } else {
         ui->PoSummLabel->setText("   ");
+    }
+
+    { //set Massa
+        char _buff[32] = {};
+        double weight = scalesParameters.weight * 0.001;
+
+        ::sprintf(_buff, "%.3f kg", weight);
+
+        QString weight_temp(_buff);
+        ui->weightLabel->setText(weight_temp);
+    }
+
+    { //set info
+
+        std::string str1;
+
+        str1 += ackScaleParameters.P_Max + " " + ackScaleParameters.P_Min + " " + ackScaleParameters.P_e +
+                " " + ackScaleParameters.P_T;
+
+        QString info_temp(str1.c_str());
+        ui->infoLabel->setText(info_temp);
     }
 
 
