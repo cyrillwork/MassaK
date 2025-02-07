@@ -18,8 +18,9 @@ public:
     void setTextAndShow(int deviceStatus);
 
 private slots:
-    void on_pushButton_released();
-    void on_pushButton_clicked();
+
+    void on_closeButton_released();
+    void on_closeButton_clicked();
 
 private:
     Ui::MessageForm *ui;

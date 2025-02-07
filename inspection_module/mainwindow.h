@@ -36,8 +36,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    CheckingWidget  *checkingWidget = nullptr;
-    MessageForm     *messageWidget  = nullptr;
+
+    std::unique_ptr<CheckingWidget> checkingWidget = nullptr;
+    std::unique_ptr<MessageForm> messageWidget;
+
     DeviceStatusType deviceStatus   = DeviceStatusType::NoPortAnswer;
     AckScaleParameters ackScaleParameters;
 

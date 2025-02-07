@@ -8,6 +8,12 @@ MessageForm::MessageForm(QWidget *parent) :
     ui(new Ui::MessageForm)
 {
     ui->setupUi(this);
+
+    QPixmap pixmap("quit.png");
+    QIcon ButtonIcon(pixmap);
+    ui->closeButton->setIcon(ButtonIcon);
+    ui->closeButton->setIconSize(pixmap.rect().size());
+    ui->closeButton->setFixedSize(pixmap.rect().size());
 }
 
 MessageForm::~MessageForm()
@@ -32,17 +38,16 @@ void MessageForm::setTextAndShow(int deviceStatus)
     show();
 }
 
-void MessageForm::on_pushButton_released()
+void MessageForm::on_closeButton_clicked()
 {
-    std::cout << "on_pushButton_released" << std::endl;
+    std::cout << "on_closeButton_clicked" << std::endl;
     QCoreApplication::quit();
 }
 
 
-void MessageForm::on_pushButton_clicked()
+void MessageForm::on_closeButton_released()
 {
-    std::cout << "on_pushButton_clicked" << std::endl;
+    std::cout << "on_closeButton_released" << std::endl;
     QCoreApplication::quit();
-
 }
 

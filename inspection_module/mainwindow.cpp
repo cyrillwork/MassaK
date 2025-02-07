@@ -23,6 +23,12 @@ MainWindow::MainWindow(QWidget *parent)
     QPixmap pixmap("logo.png");
     ui->logoLabel->setPixmap(pixmap);
 
+    QPixmap pixmap2("quit.png");
+    QIcon ButtonIcon(pixmap2);
+    ui->closeButton->setIcon(ButtonIcon);
+    ui->closeButton->setIconSize(pixmap2.rect().size());
+    ui->closeButton->setFixedSize(pixmap2.rect().size());
+
     setVisible(false);
 
     is_run = true;
@@ -53,8 +59,12 @@ void MainWindow::on_setZero_released()
 
 void MainWindow::on_setTare_released()
 {
-    checkingWidget = new CheckingWidget();
+    if(!checkingWidget) {
+        checkingWidget = std::make_unique<CheckingWidget>();
+    }
+
     checkingWidget->show();
+
 //    std::cout << "Set Tare" << std::endl;
 //    //auto tare = ui->tareBox->value();
 //    //std::cout << "tare: " << tare << std::endl;
@@ -119,11 +129,14 @@ void MainWindow::on_closeButton_released()
 void MainWindow::on_showCheckingWidget()
 {
     std::cout << "get MainWindow::on_showCheckingWidget" << std::endl;
+
     if(messageWidget) {
         messageWidget->hide();
     }
 
     setVisible(true);
+    showFullScreen();
+
 
     if(!ackScaleParameters.Calcode.empty()) {
         QString calcode_temp(ackScaleParameters.Calcode.c_str());
@@ -147,16 +160,17 @@ void MainWindow::on_showCheckingWidget()
         ui->PoSummLabel->setText("   ");
     }
 
-    //showFullScreen();
+
 }
 
 void MainWindow::on_showMessageWidget()
 {
     std::cout << "get MainWindow::on_showMessageWidget" << std::endl;
+    if(!messageWidget) {
+        messageWidget = std::make_unique<MessageForm>();
+    }
 
-    messageWidget = new MessageForm();    
     messageWidget->setTextAndShow(deviceStatus);
-
     messageWidget->adjustSize();
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
