@@ -6,7 +6,7 @@
 
 #include "driver.h"
 
-#include "checkingwidget.h"
+#include "alignwidget.h"
 #include "messageform.h"
 
 QT_BEGIN_NAMESPACE
@@ -34,15 +34,19 @@ private slots:
     void on_showCheckingWidget();
     void on_showMessageWidget();
 
+    void on_logoButton_released();
+
 private:
     Ui::MainWindow *ui;
 
-    std::unique_ptr<CheckingWidget> checkingWidget = nullptr;
+    std::unique_ptr<AlignWidget> checkingWidget = nullptr;
     std::unique_ptr<MessageForm> messageWidget;
 
     DeviceStatusType deviceStatus   = DeviceStatusType::NoPortAnswer;
     AckScaleParameters  ackScaleParameters;
     ScalesParameters    scalesParameters;
+
+    int Mode = 0;
 
     void show_info();
 

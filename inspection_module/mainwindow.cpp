@@ -14,14 +14,21 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-
     ui->setupUi(this);
 
     connect(this, &MainWindow::showCheckingWidget, this, &MainWindow::on_showCheckingWidget);
     connect(this, &MainWindow::showMessageWidget,  this, &MainWindow::on_showMessageWidget);
 
-    QPixmap pixmap("logo.png");
-    ui->logoLabel->setPixmap(pixmap);
+    //QPixmap pixmap("logo.png");
+    //ui->logoLabel->setPixmap(pixmap);
+    QPixmap pixmap1("logo.png");
+    QIcon ButtonLogoIcon(pixmap1);
+    ui->logoButton->setIcon(ButtonLogoIcon);
+    ui->logoButton->setIconSize(pixmap1.rect().size());
+    auto rrr = pixmap1.rect().size();
+    rrr.setHeight(rrr.height() + 10);
+    rrr.setWidth(rrr.width() + 10);
+    ui->logoButton->setFixedSize(rrr);
 
     QPixmap pixmap2("quit.png");
     QIcon ButtonIcon(pixmap2);
@@ -33,7 +40,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     is_run = true;
     main_thread = std::make_unique<std::thread>(&MainWindow::routine, this);
-
 }
 
 MainWindow::~MainWindow()
@@ -59,12 +65,6 @@ void MainWindow::on_setZero_released()
 
 void MainWindow::on_setTare_released()
 {
-    if(!checkingWidget) {
-        checkingWidget = std::make_unique<CheckingWidget>();
-    }
-
-    checkingWidget->show();
-
 //    std::cout << "Set Tare" << std::endl;
 //    //auto tare = ui->tareBox->value();
 //    //std::cout << "tare: " << tare << std::endl;
@@ -109,18 +109,16 @@ void MainWindow::routine()
         }
 
         if(deviceStatus == DeviceStatusType::GetGoodAnswer) {
-            //messageForm->close();
-            std::cout << "try get Massa "<< std::endl;
-            if(Driver::instance().GetScalesParameters()) {
-                Driver::instance().GetScalesParametersStruct(scalesParameters);
-
-                std::cout << "emit showCheckingWidget"<< std::endl;
-                emit showCheckingWidget();
-
-            } else {
-                deviceStatus = DeviceStatusType::NoPortAnswer;
+            if(Mode == 0) {
+                std::cout << "try get Massa "<< std::endl;
+                if(Driver::instance().GetScalesParameters()) {
+                    Driver::instance().GetScalesParametersStruct(scalesParameters);
+                    std::cout << "emit showCheckingWidget"<< std::endl;
+                    emit showCheckingWidget();
+                } else {
+                    deviceStatus = DeviceStatusType::NoPortAnswer;
+                }
             }
-
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -138,6 +136,9 @@ void MainWindow::on_closeButton_released()
 void MainWindow::on_showCheckingWidget()
 {
     std::cout << "get MainWindow::on_showCheckingWidget" << std::endl;
+    if(Mode != 0) {
+        return;
+    }
 
     if(messageWidget) {
         messageWidget->hide();
@@ -154,11 +155,9 @@ void MainWindow::on_showCheckingWidget()
         } else {
             ui->calcodeLabel->setText( ackScaleParameters.Calcode.c_str() );
         }
-
     } else {
         ui->calcodeLabel->setText("  ");
     }
-
 
     if(!ackScaleParameters.PO_Ver.empty()) {
         QString po_ver_temp(ackScaleParameters.PO_Ver.c_str());
@@ -185,17 +184,12 @@ void MainWindow::on_showCheckingWidget()
     }
 
     { //set info
-
         std::string str1;
-
         str1 += ackScaleParameters.P_Max + " " + ackScaleParameters.P_Min + " " + ackScaleParameters.P_e +
                 " " + ackScaleParameters.P_T;
-
         QString info_temp(str1.c_str());
         ui->infoLabel->setText(info_temp);
     }
-
-
 }
 
 void MainWindow::on_showMessageWidget()
@@ -213,9 +207,17 @@ void MainWindow::on_showMessageWidget()
 #else
     messageWidget->move(QGuiApplication::screens().at(0)->geometry().center() - messageWidget->rect().center());
 #endif
-
     //messageWidget->show();
-
-
 }
 
+void MainWindow::on_logoButton_released()
+{
+    std::cout << "on_logoButton_released" << std::endl;
+    Mode = 1;
+    setVisible(false);
+
+    if(!checkingWidget) {
+        checkingWidget = std::make_unique<AlignWidget>();
+    }
+    checkingWidget->show();
+}

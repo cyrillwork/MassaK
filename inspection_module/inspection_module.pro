@@ -12,18 +12,18 @@ QMAKE_CXXFLAGS += -g -std=c++17
 INCLUDEPATH += ../lib/
 
 SOURCES += \
-    checkingwidget.cpp \
+    alignwidget.cpp \
     mainwindow.cpp \
     main.cpp \
     messageform.cpp
 
 HEADERS += \
-    checkingwidget.h \
+    alignwidget.h \
     mainwindow.h \
     messageform.h
 
 FORMS += \
-    checkingwidget.ui \
+    alignwidget.ui \
     mainwindow.ui \
     messageform.ui
 
