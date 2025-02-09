@@ -7,6 +7,7 @@
 Makefile
 Makefile.*
 *.user
+*.pro.user.*
 MassaK
 *.stash
 moc_*

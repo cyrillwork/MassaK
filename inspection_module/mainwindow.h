@@ -24,12 +24,14 @@ signals:
     void showCheckingWidget();
     void showMessageWidget();
 
+public slots:
+    void on_finishAlignWidget();
+
 private slots:
     void on_getMassa_released();
     void on_setZero_released();
     void on_setTare_released();
     void on_closeButton_released();
-
 
     void on_showCheckingWidget();
     void on_showMessageWidget();
@@ -39,8 +41,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    std::unique_ptr<AlignWidget> checkingWidget = nullptr;
-    std::unique_ptr<MessageForm> messageWidget;
+    std::unique_ptr<AlignWidget> alignWidget = nullptr;
+    std::unique_ptr<MessageForm> messageWidget = nullptr;
 
     DeviceStatusType deviceStatus   = DeviceStatusType::NoPortAnswer;
     AckScaleParameters  ackScaleParameters;

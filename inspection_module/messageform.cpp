@@ -13,7 +13,13 @@ MessageForm::MessageForm(QWidget *parent) :
     QIcon ButtonIcon(pixmap);
     ui->closeButton->setIcon(ButtonIcon);
     ui->closeButton->setIconSize(pixmap.rect().size());
-    ui->closeButton->setFixedSize(pixmap.rect().size());
+
+    auto rrr = pixmap.rect().size();
+    rrr.setHeight(rrr.height() + 10);
+    rrr.setWidth(rrr.width() + 10);
+    ui->closeButton->setFixedSize(rrr);
+
+    ui->closeButton->setFixedSize(rrr);
 }
 
 MessageForm::~MessageForm()

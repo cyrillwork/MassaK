@@ -25,16 +25,20 @@ MainWindow::MainWindow(QWidget *parent)
     QIcon ButtonLogoIcon(pixmap1);
     ui->logoButton->setIcon(ButtonLogoIcon);
     ui->logoButton->setIconSize(pixmap1.rect().size());
-    auto rrr = pixmap1.rect().size();
-    rrr.setHeight(rrr.height() + 10);
-    rrr.setWidth(rrr.width() + 10);
-    ui->logoButton->setFixedSize(rrr);
+    auto rrr1 = pixmap1.rect().size();
+    rrr1.setHeight(rrr1.height() + 10);
+    rrr1.setWidth(rrr1.width() + 10);
+    ui->logoButton->setFixedSize(rrr1);
 
     QPixmap pixmap2("quit.png");
     QIcon ButtonIcon(pixmap2);
     ui->closeButton->setIcon(ButtonIcon);
+
     ui->closeButton->setIconSize(pixmap2.rect().size());
-    ui->closeButton->setFixedSize(pixmap2.rect().size());
+    auto rrr2 = pixmap2.rect().size();
+    rrr2.setHeight(rrr2.height() + 10);
+    rrr2.setWidth(rrr2.width() + 10);
+    ui->closeButton->setFixedSize(rrr2);
 
     setVisible(false);
 
@@ -49,6 +53,19 @@ MainWindow::~MainWindow()
         main_thread->join();
     }
     delete ui;
+}
+
+void MainWindow::on_finishAlignWidget()
+{
+    std::cout << "on_finishAlignWidget" << std::endl;
+
+    if(alignWidget) {
+        alignWidget->hide();
+    }
+
+    setVisible(true);
+    showFullScreen();
+
 }
 
 void MainWindow::on_getMassa_released()
@@ -216,8 +233,11 @@ void MainWindow::on_logoButton_released()
     Mode = 1;
     setVisible(false);
 
-    if(!checkingWidget) {
-        checkingWidget = std::make_unique<AlignWidget>();
+    if(!alignWidget) {
+        alignWidget = std::make_unique<AlignWidget>();
+        alignWidget->connectMainWindow(this);
     }
-    checkingWidget->show();
+
+    alignWidget->show();
+    alignWidget->showFullScreen();
 }

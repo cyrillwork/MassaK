@@ -4,11 +4,6 @@
 #include <QPushButton>
 #include <QWidget>
 #include <QLayout>
-//#include <iostream>
-//#include <vector>
-//#include <stdio.h>
-//#include <signal.h>
-//#include <unistd.h>
 
 int main(int argc, char *argv[])
 {
