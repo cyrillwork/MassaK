@@ -21,7 +21,7 @@ public:
     ~MainWindow();
 
 signals:
-    void showCheckingWidget();
+    void updateMainWidget();
     void showMessageWidget();
 
 public slots:
@@ -33,7 +33,7 @@ private slots:
     void on_setTare_released();
     void on_closeButton_released();
 
-    void on_showCheckingWidget();
+    void on_updateMainWidget();
     void on_showMessageWidget();
 
     void on_logoButton_released();

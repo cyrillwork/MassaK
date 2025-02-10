@@ -36,6 +36,7 @@ public:
 
 private:    
     Driver();
+    std::mutex mutexRequest;
 
     bool checkPortGetMassa();
     bool search_port();

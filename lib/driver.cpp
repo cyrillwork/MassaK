@@ -24,6 +24,7 @@ Driver::~Driver()
 bool Driver::GetScalesParameters()
 {
     bool result = false;
+    std::lock_guard<std::mutex> _lck(mutexRequest);
 
     if (!(controller && controller->isInit()))  {
         if(!search_port()) {
@@ -85,6 +86,8 @@ DeviceStatusType Driver::GetScaleParCheck(AckScaleParameters& params)
     Protocol::getScalePar(data);
     Protocol::print(data);
 
+    std::lock_guard<std::mutex> _lck(mutexRequest);
+
     if(!controller->open()) {
         std::cout << "Driver::GetScalesParameters error open" << std::endl;
         return result;
@@ -109,6 +112,7 @@ DeviceStatusType Driver::GetScaleParCheck(AckScaleParameters& params)
 bool Driver::SetZero()
 {
     bool result = false;
+    std::lock_guard<std::mutex> _lck(mutexRequest);
 
     if(!(controller && controller->isInit())) {
         if(!search_port()) {
@@ -154,6 +158,7 @@ bool Driver::SetZero()
 bool Driver::SetTare(int32_t tare)
 {
     bool result = false;
+    std::lock_guard<std::mutex> _lck(mutexRequest);
 
     if(!(controller && controller->isInit())) {        
         if(!search_port()) {
@@ -206,6 +211,7 @@ void Driver::GetScalesParametersStruct(ScalesParameters& get_params)
 bool Driver::SetCal(int32_t cal_code)
 {
     bool result = false;
+    std::lock_guard<std::mutex> _lck(mutexRequest);
 
     if(!(controller && controller->isInit())) {
         if(!search_port()) {
@@ -247,6 +253,7 @@ bool Driver::SetCal(int32_t cal_code)
 bool Driver::SetCalP(int32_t w_cal)
 {
     bool result = false;
+    std::lock_guard<std::mutex> _lck(mutexRequest);
 
     if(!(controller && controller->isInit())) {
         if(!search_port()) {
@@ -288,6 +295,7 @@ bool Driver::SetCalP(int32_t w_cal)
 bool Driver::checkPortGetMassa()
 {
     bool result = false;
+    std::lock_guard<std::mutex> _lck(mutexRequest);
 
     if(!(controller && controller->isInit())) {
         std::cout << "Driver::checkPortGetMassa controller not init" << std::endl;

@@ -10,13 +10,15 @@
 #include <QScreen>
 #endif
 
+static bool is_full_screen = false;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    connect(this, &MainWindow::showCheckingWidget, this, &MainWindow::on_showCheckingWidget);
+    connect(this, &MainWindow::updateMainWidget, this, &MainWindow::on_updateMainWidget);
     connect(this, &MainWindow::showMessageWidget,  this, &MainWindow::on_showMessageWidget);
 
     //QPixmap pixmap("logo.png");
@@ -59,14 +61,20 @@ void MainWindow::on_finishAlignWidget()
 {
     std::cout << "on_finishAlignWidget" << std::endl;
 
-    auto res = Driver::instance().SetCal(calCode);
+    if(alignWidget->getAlignWidgetType()) {
+        auto res = Driver::instance().SetCal(calCode);
+        std::cout << "Driver::instance().SetCal(calCode) res: " << res << std::endl;
 
-    std::cout << "Driver::instance().SetCal(calCode) res: " << res << std::endl;
+        alignWidget->setAlignWidgetType(false);
+
+    } else {
+
+    }
+
 
 //    if(alignWidget) {
 //        alignWidget->hide();
 //    }
-
 //    setVisible(true);
 //    showFullScreen();
 
@@ -79,18 +87,21 @@ void MainWindow::on_getMassa_released()
 }
 
 void MainWindow::on_setZero_released()
-{
-    std::cout << "Set Zero" << std::endl;
-    Driver::instance().SetZero();
+{    
+    auto res = Driver::instance().SetZero();
+    std::cout << "Set Zero res:" << res << std::endl;
 }
 
 void MainWindow::on_setTare_released()
 {
-//    std::cout << "Set Tare" << std::endl;
-//    //auto tare = ui->tareBox->value();
-//    //std::cout << "tare: " << tare << std::endl;
-//    int32_t tare = 0;
-//    SetTare(tare);
+    ScalesParameters params;
+    Driver::instance().GetScalesParametersStruct(params);
+
+    int32_t tare = params.weight;
+    std::cout << "tare: " << tare << std::endl;
+
+    auto res = Driver::instance().SetTare(tare);
+    std::cout << "Set Tare res:" << res << std::endl;
 }
 
 void MainWindow::show_info()
@@ -135,7 +146,7 @@ void MainWindow::routine()
                 if(Driver::instance().GetScalesParameters()) {
                     Driver::instance().GetScalesParametersStruct(scalesParameters);
                     std::cout << "emit showCheckingWidget"<< std::endl;
-                    emit showCheckingWidget();
+                    emit updateMainWidget();
                 } else {
                     deviceStatus = DeviceStatusType::NoPortAnswer;
                 }
@@ -154,9 +165,9 @@ void MainWindow::on_closeButton_released()
     QCoreApplication::quit();
 }
 
-void MainWindow::on_showCheckingWidget()
+void MainWindow::on_updateMainWidget()
 {
-    std::cout << "get MainWindow::on_showCheckingWidget" << std::endl;
+    std::cout << "on_updateMainWidget" << std::endl;
     if(Mode != 0) {
         return;
     }
@@ -166,7 +177,10 @@ void MainWindow::on_showCheckingWidget()
     }
 
     setVisible(true);
-    showFullScreen();
+
+    if(is_full_screen) {
+        showFullScreen();
+    }
 
     if(!ackScaleParameters.Calcode.empty()) {
         std::string _temp_str;
@@ -208,10 +222,14 @@ void MainWindow::on_showCheckingWidget()
         char _buff[32] = {};
         double weight = scalesParameters.weight * 0.001;
 
-        ::sprintf(_buff, "%.3f kg", weight);
+        if(scalesParameters.weight_stable) {
+            ::sprintf(_buff, "%.3f kg", weight);
+        } else {
+            ::sprintf(_buff, "%.3f", weight);
+        }
 
         QString weight_temp(_buff);
-        ui->weightLabel->setText(weight_temp);
+        ui->weightLabel->setText(weight_temp);                
     }
 
     { //set info
@@ -220,6 +238,19 @@ void MainWindow::on_showCheckingWidget()
                 " " + ackScaleParameters.P_T;
         QString info_temp(str1.c_str());
         ui->infoLabel->setText(info_temp);
+    }
+
+    { //labels
+        if(scalesParameters.weight_zero) {
+            ui->zeroLabel->setText(">0<");
+        } else {
+            ui->zeroLabel->setText("  ");
+        }
+        if(scalesParameters.weight_net) {
+            ui->netLabel->setText("NET");
+        } else {
+            ui->netLabel->setText("  ");
+        }
     }
 }
 
@@ -253,5 +284,8 @@ void MainWindow::on_logoButton_released()
     }
 
     alignWidget->show();
-    alignWidget->showFullScreen();
+
+    if(is_full_screen) {
+        alignWidget->showFullScreen();
+    }
 }

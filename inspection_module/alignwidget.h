@@ -19,18 +19,20 @@ public:
     ~AlignWidget();
     void connectMainWindow(QWidget *parent);
 
+    void setAlignWidgetType(bool type);
+    bool getAlignWidgetType() const;
+
 signals:
     void finishAlignWidget();
 
 private slots:
     void on_closeButton_released();
-
     void on_closeButton_clicked();
-
     void on_finishButton_released();
 
 private:
     Ui::AlignWidget *ui;
+    bool alignType = true;
 };
 
 #endif // ALIGNWIDGET_H
