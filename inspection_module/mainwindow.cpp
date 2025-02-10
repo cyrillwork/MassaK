@@ -59,12 +59,16 @@ void MainWindow::on_finishAlignWidget()
 {
     std::cout << "on_finishAlignWidget" << std::endl;
 
-    if(alignWidget) {
-        alignWidget->hide();
-    }
+    auto res = Driver::instance().SetCal(calCode);
 
-    setVisible(true);
-    showFullScreen();
+    std::cout << "Driver::instance().SetCal(calCode) res: " << res << std::endl;
+
+//    if(alignWidget) {
+//        alignWidget->hide();
+//    }
+
+//    setVisible(true);
+//    showFullScreen();
 
 }
 
@@ -109,10 +113,10 @@ void MainWindow::show_info()
 
 void MainWindow::routine()
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     while(is_run) {
-        std::cout << "info deviceStatus: " << (int)deviceStatus << std::endl;
+        std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << calCode << std::endl;
 
         if(DeviceStatusType::NoPortAnswer == deviceStatus || deviceStatus == DeviceStatusType::AnswerWithError)
         {
@@ -165,13 +169,23 @@ void MainWindow::on_showCheckingWidget()
     showFullScreen();
 
     if(!ackScaleParameters.Calcode.empty()) {
+        std::string _temp_str;
+        const char *ptr_calc = nullptr;
         auto _pos = ackScaleParameters.Calcode.find('=');
 
         if(_pos != std::string::npos && ((_pos + 1) < ackScaleParameters.Calcode.size()) ) {
-            ui->calcodeLabel->setText(ackScaleParameters.Calcode.substr(_pos + 1).c_str());
+            _temp_str = ackScaleParameters.Calcode.substr(_pos + 1).c_str();
+            ptr_calc = _temp_str.c_str();
+            ui->calcodeLabel->setText(ptr_calc);
         } else {
-            ui->calcodeLabel->setText( ackScaleParameters.Calcode.c_str() );
+            ptr_calc = ackScaleParameters.Calcode.c_str();
+            ui->calcodeLabel->setText( ptr_calc );
         }
+
+        if(ptr_calc) {
+            calCode = ::atoi(ptr_calc);
+        }
+
     } else {
         ui->calcodeLabel->setText("  ");
     }

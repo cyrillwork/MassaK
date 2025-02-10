@@ -49,6 +49,7 @@ private:
     ScalesParameters    scalesParameters;
 
     int Mode = 0;
+    int32_t calCode = 0;
 
     void show_info();
 

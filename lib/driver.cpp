@@ -203,6 +203,88 @@ void Driver::GetScalesParametersStruct(ScalesParameters& get_params)
     (void)_lck;
 }
 
+bool Driver::SetCal(int32_t cal_code)
+{
+    bool result = false;
+
+    if(!(controller && controller->isInit())) {
+        if(!search_port()) {
+            std::cout << "Driver::SetCal controller not init" << std::endl;
+            return result;
+        }
+    }
+
+    if(!controller->isConnected()) {
+        std::cout << "Driver::SetCal controller not connected" << std::endl;
+        return result;
+    }
+
+    Data data;
+    Data recv_data;
+    Protocol::getSetCal(data, cal_code);
+    //Protocol::print(data);
+
+    if(!controller->open()) {
+        std::cout << "Driver::SetCal error open" << std::endl;
+        return result;
+    }
+
+    if(controller->send(data)) {
+        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
+            uint8_t _error = 0;
+            if(Protocol::parseResponseSetCal(recv_data, _error)) {
+                result = true;
+            } else {
+                std::cout << "Driver::SetCal error parse error: " << (int)_error << std::endl;
+            }
+        }
+    }
+    controller->close();
+
+    return result;
+}
+
+bool Driver::SetCalP(int32_t w_cal)
+{
+    bool result = false;
+
+    if(!(controller && controller->isInit())) {
+        if(!search_port()) {
+            std::cout << "Driver::SetCalP controller not init" << std::endl;
+            return result;
+        }
+    }
+
+    if(!controller->isConnected()) {
+        std::cout << "Driver::SetCalP controller not connected" << std::endl;
+        return result;
+    }
+
+    Data data;
+    Data recv_data;
+    Protocol::getSetCalP(data, w_cal);
+    //Protocol::print(data);
+
+    if(!controller->open()) {
+        std::cout << "Driver::SetCalP error open" << std::endl;
+        return result;
+    }
+
+    if(controller->send(data)) {
+        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
+            uint8_t _error = 0;
+            if(Protocol::parseResponseSetCal(recv_data, _error)) {
+                result = true;
+            } else {
+                std::cout << "Driver::SetCalP error parse error: " << (int)_error << std::endl;
+            }
+        }
+    }
+    controller->close();
+
+    return result;
+}
+
 bool Driver::checkPortGetMassa()
 {
     bool result = false;

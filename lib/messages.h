@@ -11,6 +11,8 @@ enum ProtocolCommands: uint8_t
     CMD_SET_ZERO        = 0x72,
     CMD_GET_NAME        = 0x20,
     CMD_SET_NAME        = 0x22,
+    CMD_SET_CAL         = 0x63,
+    CMD_SET_CAL_P       = 0x64,
 
     CMD_ACK_MASSA       = 0x24,
     CMD_ACK_SCALE_PAR   = 0x76,
@@ -34,6 +36,7 @@ enum ErrorCodes: uint8_t
     NONE_CONNECTION     = 0x17,
     SET_WEIGHT_OFF      = 0x18,
     SCALE_FAULTY        = 0x19,
+    WRONG_CAL_CODE      = 0x34,
     UNKNOWN             = 0xF0
 };
 
@@ -103,6 +106,22 @@ struct AckMassaTare: public AckMassa
     AckMassaTare(): AckMassa()
     { length = 0x000d; }
     int32_t tare;
+} __attribute__ ((packed));
+
+struct SetCal: public CommonMessage
+{
+    SetCal(): CommonMessage(CMD_SET_CAL)
+    { length = 0x0005; }
+    int32_t cal_code;
+    uint16_t crc;
+} __attribute__ ((packed));
+
+struct SetCalP: public CommonMessage
+{
+    SetCalP(): CommonMessage(CMD_SET_CAL_P)
+    { length = 0x0005; }
+    int32_t w_cal;
+    uint16_t crc;
 } __attribute__ ((packed));
 
 //struct AckScalePar: public CommonMessage

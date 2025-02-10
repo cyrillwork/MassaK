@@ -85,6 +85,32 @@ void Protocol::print(const Data& buff)
     std::cout << std::dec << std::endl;
 }
 
+void Protocol::getSetCal(Data& buff, int32_t cal_code)
+{
+    size_t len_message = sizeof(SetCal);
+    buff.clear();
+    buff.reserve(len_message);
+
+    SetCal message;
+    message.cal_code = cal_code;
+    uint8_t* ptr1 = (uint8_t*)&message;
+    addCRC(ptr1, len_message);
+    std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
+}
+
+void Protocol::getSetCalP(Data& buff, int32_t w_cal)
+{
+    size_t len_message = sizeof(SetCalP);
+    buff.clear();
+    buff.reserve(len_message);
+
+    SetCalP message;
+    message.w_cal = w_cal;
+    uint8_t* ptr1 = (uint8_t*)&message;
+    addCRC(ptr1, len_message);
+    std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
+}
+
 bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
 {
     bool result = false;
@@ -364,6 +390,43 @@ bool Protocol::parseResponseGetScalePar(const Data& buff, AckScaleParameters& pa
         result = true;
     }
 
+    return result;
+}
+
+bool Protocol::parseResponseSetCal(const Data& buff, uint8_t& error)
+{
+    bool result = false;
+    auto len = buff.size();
+    if(len <= 7) {
+        LOG(INFO) << "Protocol::parseResponseSetCal Error too small len: " << len << std::endl;
+        return result;
+    }
+
+    if(!((buff[0] == 0xf8) && (buff[1] == 0x55) && (buff[2] == 0xce))) {
+        LOG(INFO) << "Protocol::parseResponseSetCal Error header" << std::endl;
+        return result;
+    }
+
+    CommonMessage commonMessage(CMD_NONE);
+
+    std::copy(buff.data(), buff.data() + sizeof(CommonMessage),
+              (uint8_t*)&commonMessage);
+
+    LOG(INFO) << std::hex << "parseResponseSetCal command:" << (int)commonMessage.command << std::endl;
+
+    if(commonMessage.command == CMD_ACK_SET_ZERO) {
+        LOG(INFO) << "CMD_ACK_SET_ZERO" << std::endl;
+        result = true;
+    } else if (commonMessage.command == CMD_ERROR) {
+        LOG(INFO) << "CMD_ERROR" << std::endl;
+        ErrorMessage errorMessage;
+        std::copy(buff.data(), buff.data() + sizeof(ErrorMessage),
+                  (uint8_t*)&errorMessage);
+        LOG(INFO) << std::hex << "errorCode:" << (int)errorMessage.errorCode << std::endl;
+        error = errorMessage.errorCode;
+    } else {
+        LOG(INFO) << std::dec << "unknown command " << std::endl;
+    }
     return result;
 }
 

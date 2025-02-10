@@ -30,10 +30,15 @@ public:
     static void getScalePar(Data& buff);
     static void print(const Data& buff);
 
+    static void getSetCal(Data& buff, int32_t cal_code);
+    static void getSetCalP(Data& buff, int32_t w_cal);
+
     static bool parseResponseGetMassa(const Data& buff, ScalesParameters& params);
     static bool parseResponseSetZero(const Data& buff, ScalesParameters& params);
     static bool parseResponseSetTare(const Data& buff, ScalesParameters& params);
     static bool parseResponseGetScalePar(const Data& buff, AckScaleParameters& params);
+
+    static bool parseResponseSetCal(const Data& buff, uint8_t& error);
 
     static void test_crc();
     static bool check_crc(const Data& buff);
