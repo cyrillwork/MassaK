@@ -63,6 +63,7 @@ private:
 
     int Mode = 0;
     int32_t calCode = 0;
+    DisplayParameters display;
 
     void show_info();
 
@@ -73,4 +74,6 @@ private:
 
     void updateMainWidgetMode0();
     void updateMainWidgetMode1_2();
+
+    std::string getDisplayParameters(const std::string& p_max);
 };

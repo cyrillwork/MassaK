@@ -136,7 +136,7 @@ void MainWindow::routine()
     //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     while(is_run) {
-        std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << calCode << std::endl;
+        std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << display.codeAD << std::endl;
 
         if(DeviceStatusType::NoPortAnswer == deviceStatus || deviceStatus == DeviceStatusType::AnswerWithError)
         {
@@ -193,7 +193,8 @@ void MainWindow::updateMainWidgetMode0()
         }
 
         if(ptr_calc) {
-            calCode = ::atoi(ptr_calc);
+            //calCode = ::atoi(ptr_calc);
+            display.codeAD = std::string(ptr_calc);
         }
 
     } else {
@@ -229,11 +230,20 @@ void MainWindow::updateMainWidgetMode0()
     }
 
     { //set info
-        std::string str1;
-        str1 += ackScaleParameters.P_Max + " " + ackScaleParameters.P_Min + " " + ackScaleParameters.P_e +
-                " " + ackScaleParameters.P_T;
-        QString info_temp(str1.c_str());
-        ui->infoLabel->setText(info_temp);
+        //auto ackScaleParameters.P_Max.find("");
+        display.parameters = getDisplayParameters(ackScaleParameters.P_Max);
+        //std::string str1;
+        if(display.parameters == "") {
+            display.parameters = ackScaleParameters.P_Max + " " + ackScaleParameters.P_Min + " " + ackScaleParameters.P_e +
+                    " " + ackScaleParameters.P_T;
+        }
+
+        if(display.parameters.empty()) {
+            ui->infoLabel->setText("  ");
+        } else {
+            QString info_temp(display.parameters.c_str());
+            ui->infoLabel->setText(info_temp);
+        }
     }
 
     { //labels
@@ -255,6 +265,25 @@ void MainWindow::updateMainWidgetMode1_2()
     if(alignWidget) {
         alignWidget->updateWeightInfo(scalesParameters);
     }
+}
+
+std::string MainWindow::getDisplayParameters(const std::string& p_max)
+{
+    if(p_max.find("=3/6 kg") != std::string::npos) {
+        return std::string("Max = 3/6kg  Min=20g e= 1/2g  T=-3kg");
+    } else if(p_max.find("=6 kg") != std::string::npos) {
+        return std::string("Max = 6kg  Min=40g e= 2g  T=-6kg");
+    } else if(p_max.find("=6/15 kg") != std::string::npos) {
+        return std::string("Max = 6/15kg  Min=40g e= 2/5g  T=-6kg");
+    } else if(p_max.find("=15 kg") != std::string::npos) {
+        return std::string("Max = 15kg  Min=100g e= 5g  T=-15kg");
+    } else if(p_max.find("=15/32 kg") != std::string::npos) {
+        return std::string("Max = 15/32kg  Min=100g e= 5/10g  T=-15kg");
+    } else if(p_max.find("=32 kg") != std::string::npos) {
+        return std::string("Max = 32kg  Min=200g e= 10g  T=-32kg");
+    }
+
+    return "";
 }
 
 void MainWindow::on_closeButton_released()
