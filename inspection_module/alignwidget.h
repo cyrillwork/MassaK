@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-//#include "mainwindow.h"
+#include "scales_parameters.h"
 
 
 namespace Ui {
@@ -22,6 +22,8 @@ public:
     void setAlignWidgetType(bool type);
     bool getAlignWidgetType() const;
 
+    void updateWeightInfo(ScalesParameters& scalesParameters);
+
 signals:
     void finishAlignWidget();
 
@@ -32,7 +34,7 @@ private slots:
 
 private:
     Ui::AlignWidget *ui;
-    bool alignType = true;
+    bool alignType = true; // true - with zero, false - with max weight
 };
 
 #endif // ALIGNWIDGET_H

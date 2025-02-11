@@ -60,23 +60,22 @@ MainWindow::~MainWindow()
 void MainWindow::on_finishAlignWidget()
 {
     std::cout << "on_finishAlignWidget" << std::endl;
-
-    if(alignWidget->getAlignWidgetType()) {
-        auto res = Driver::instance().SetCal(calCode);
-        std::cout << "Driver::instance().SetCal(calCode) res: " << res << std::endl;
-
+    if(Mode == 1) {
+        Mode = 2;
         alignWidget->setAlignWidgetType(false);
+    } else if (Mode == 2) {
+        Mode = 0;
+        if(alignWidget) {
+            alignWidget->hide();
+        }
+        setVisible(true);
 
+        if(is_full_screen) {
+            showFullScreen();
+        }
     } else {
-
+        std::cout << "on_finishAlignWidget Error Mode: " << (int)Mode << std::endl;
     }
-
-
-//    if(alignWidget) {
-//        alignWidget->hide();
-//    }
-//    setVisible(true);
-//    showFullScreen();
 
 }
 
@@ -141,37 +140,24 @@ void MainWindow::routine()
         }
 
         if(deviceStatus == DeviceStatusType::GetGoodAnswer) {
-            if(Mode == 0) {
-                std::cout << "try get Massa "<< std::endl;
+            //if(Mode == 0)
+            {
+                //std::cout << "try get Massa "<< std::endl;
                 if(Driver::instance().GetScalesParameters()) {
                     Driver::instance().GetScalesParametersStruct(scalesParameters);
-                    std::cout << "emit showCheckingWidget"<< std::endl;
+                    //std::cout << "emit showCheckingWidget"<< std::endl;
                     emit updateMainWidget();
                 } else {
                     deviceStatus = DeviceStatusType::NoPortAnswer;
                 }
             }
         }
-
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
-
 }
 
-void MainWindow::on_closeButton_released()
+void MainWindow::updateMainWidgetMode0()
 {
-    //close();
-    std::cout << "on_closeButton_released" << std::endl;
-    QCoreApplication::quit();
-}
-
-void MainWindow::on_updateMainWidget()
-{
-    std::cout << "on_updateMainWidget" << std::endl;
-    if(Mode != 0) {
-        return;
-    }
-
     if(messageWidget) {
         messageWidget->hide();
     }
@@ -229,7 +215,7 @@ void MainWindow::on_updateMainWidget()
         }
 
         QString weight_temp(_buff);
-        ui->weightLabel->setText(weight_temp);                
+        ui->weightLabel->setText(weight_temp);
     }
 
     { //set info
@@ -252,6 +238,31 @@ void MainWindow::on_updateMainWidget()
             ui->netLabel->setText("  ");
         }
     }
+}
+
+void MainWindow::updateMainWidgetMode1_2()
+{
+    if(alignWidget) {
+        alignWidget->updateWeightInfo(scalesParameters);
+    }
+}
+
+void MainWindow::on_closeButton_released()
+{
+    //close();
+    std::cout << "on_closeButton_released" << std::endl;
+    QCoreApplication::quit();
+}
+
+void MainWindow::on_updateMainWidget()
+{
+    std::cout << "on_updateMainWidget Mode: " << Mode << std::endl;
+    if(Mode == 0) {
+        updateMainWidgetMode0();
+    } else if((Mode == 1) || (Mode == 2)) {
+        updateMainWidgetMode1_2();
+    }
+
 }
 
 void MainWindow::on_showMessageWidget()
@@ -282,7 +293,7 @@ void MainWindow::on_logoButton_released()
         alignWidget = std::make_unique<AlignWidget>();
         alignWidget->connectMainWindow(this);
     }
-
+    alignWidget->setAlignWidgetType(true);
     alignWidget->show();
 
     if(is_full_screen) {

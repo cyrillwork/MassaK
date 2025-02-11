@@ -57,4 +57,7 @@ private:
 
     bool is_run;
     std::unique_ptr<std::thread> main_thread;
+
+    void updateMainWidgetMode0();
+    void updateMainWidgetMode1_2();
 };

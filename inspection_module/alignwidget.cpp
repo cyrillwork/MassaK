@@ -28,7 +28,11 @@ AlignWidget::AlignWidget(QWidget *parent) :
 
     QPalette palette = ui->finishButton->palette();
 
-    palette.setColor(QPalette::Button, QColor(Qt::darkBlue));
+    QString hexValue = "#2E5596";
+    QColor color_b;
+    color_b.setRgb(QColor(hexValue).rgb());
+
+    palette.setColor(QPalette::Button, color_b);
     palette.setColor(QPalette::ButtonText, QColor(Qt::white));
     //palette.setColor(QPalette::Foreground, QColor(Qt.blue));
     //palette.setColor(QPalette::Base, QColor(Qt.blue));
@@ -85,5 +89,37 @@ void AlignWidget::on_finishButton_released()
 bool AlignWidget::getAlignWidgetType() const
 {
     return alignType;
+}
+
+void AlignWidget::updateWeightInfo(ScalesParameters& scalesParameters)
+{
+    { //set Massa
+        char _buff[32] = {};
+        double weight = scalesParameters.weight * 0.001;
+
+        if(scalesParameters.weight_stable) {
+            ::sprintf(_buff, "%.3f kg", weight);
+        } else {
+            ::sprintf(_buff, "%.3f", weight);
+        }
+
+        QString weight_temp(_buff);
+        ui->weightLabel->setText(weight_temp);
+    }
+
+
+    { //labels
+        if(scalesParameters.weight_zero) {
+            ui->zeroLabel->setText(">0<");
+        } else {
+            ui->zeroLabel->setText("  ");
+        }
+
+        if(scalesParameters.weight_net) {
+            ui->netLabel->setText("NET");
+        } else {
+            ui->netLabel->setText("  ");
+        }
+    }
 }
 
