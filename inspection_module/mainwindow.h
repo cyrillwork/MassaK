@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QTimer>
 #include <thread>
 #include <memory>
 
@@ -8,6 +9,8 @@
 
 #include "alignwidget.h"
 #include "messageform.h"
+
+//#define DEBUG_TEST
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -36,10 +39,20 @@ private slots:
     void on_updateMainWidget();
     void on_showMessageWidget();
 
+    void on_logoButton_pressed();
     void on_logoButton_released();
+    void on_holdTimerTimeout();
 
 private:
     Ui::MainWindow *ui;
+
+#ifdef DEBUG_TEST
+    const int32_t timeoutUsec = 3000;
+#else
+    const int32_t timeoutUsec = 10000;
+#endif
+
+    QTimer *holdTimer;
 
     std::unique_ptr<AlignWidget> alignWidget = nullptr;
     std::unique_ptr<MessageForm> messageWidget = nullptr;

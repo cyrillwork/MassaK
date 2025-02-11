@@ -10,7 +10,11 @@
 #include <QScreen>
 #endif
 
+#ifdef DEBUG_TEST
 static bool is_full_screen = false;
+#else
+static bool is_full_screen = true;
+#endif
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(this, &MainWindow::updateMainWidget, this, &MainWindow::on_updateMainWidget);
     connect(this, &MainWindow::showMessageWidget,  this, &MainWindow::on_showMessageWidget);
+
+
 
     //QPixmap pixmap("logo.png");
     //ui->logoLabel->setPixmap(pixmap);
@@ -41,6 +47,10 @@ MainWindow::MainWindow(QWidget *parent)
     rrr2.setHeight(rrr2.height() + 10);
     rrr2.setWidth(rrr2.width() + 10);
     ui->closeButton->setFixedSize(rrr2);
+
+    holdTimer = new QTimer(this);
+    holdTimer->setInterval(timeoutUsec);
+    connect(holdTimer, &QTimer::timeout, this, &MainWindow::on_holdTimerTimeout);
 
     setVisible(false);
 
@@ -286,6 +296,12 @@ void MainWindow::on_showMessageWidget()
 void MainWindow::on_logoButton_released()
 {
     std::cout << "on_logoButton_released" << std::endl;
+    holdTimer->stop();
+}
+
+void MainWindow::on_holdTimerTimeout()
+{
+    std::cout << "on_holdTimerTimeout" << std::endl;
     Mode = 1;
     setVisible(false);
 
@@ -300,3 +316,10 @@ void MainWindow::on_logoButton_released()
         alignWidget->showFullScreen();
     }
 }
+
+void MainWindow::on_logoButton_pressed()
+{
+    std::cout << "on_logoButton_pressed" << std::endl;
+    holdTimer->start();
+}
+
