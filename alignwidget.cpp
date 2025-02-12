@@ -112,7 +112,7 @@ void AlignWidget::updateWeightInfo(ScalesParameters& scalesParameters)
 
     { //labels
         if(scalesParameters.weight_zero) {
-            ui->zeroLabel->setText(">0<");
+            ui->zeroLabel->setText("> 0 <");
         } else {
             ui->zeroLabel->setText("  ");
         }

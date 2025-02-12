@@ -1,14 +1,16 @@
-#include <QApplication>
-
 #include "mainwindow.h"
-
+#include <QApplication>
+#include <QStackedWidget>
+#include <QPushButton>
+#include <QWidget>
+#include <QLayout>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.setWindowTitle("Test Massa K");
-    w.show();
+    QApplication app(argc, argv);
 
-    return a.exec();
+    MainWindow mainWindow;
+    mainWindow.setVisible(false);
+
+    return app.exec();
 }
