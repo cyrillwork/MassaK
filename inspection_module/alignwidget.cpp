@@ -33,6 +33,8 @@ AlignWidget::AlignWidget(QWidget *parent) :
     color_b.setRgb(QColor(hexValue).rgb());
 
     palette.setColor(QPalette::Button, color_b);
+    //palette.setColor(QPalette::Button, QColor(Qt::darkBlue));
+
     palette.setColor(QPalette::ButtonText, QColor(Qt::white));
     //palette.setColor(QPalette::Foreground, QColor(Qt.blue));
     //palette.setColor(QPalette::Base, QColor(Qt.blue));

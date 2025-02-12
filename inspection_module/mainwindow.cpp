@@ -24,8 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(this, &MainWindow::updateMainWidget, this, &MainWindow::on_updateMainWidget);
     connect(this, &MainWindow::showMessageWidget,  this, &MainWindow::on_showMessageWidget);
-
-
+    connect(this, &MainWindow::lostConnection, this, &MainWindow::on_lostConnection);
 
     //QPixmap pixmap("logo.png");
     //ui->logoLabel->setPixmap(pixmap);
@@ -89,16 +88,14 @@ void MainWindow::on_finishAlignWidget()
 
 }
 
-void MainWindow::on_getMassa_released()
-{
-    std::cout << "Get Massa" << std::endl;    
-    Driver::instance().GetScalesParameters();
-}
-
 void MainWindow::on_setZero_released()
-{    
+{
     auto res = Driver::instance().SetZero();
     std::cout << "Set Zero res:" << res << std::endl;
+    if(!res) {
+        deviceStatus = DeviceStatusType::NoPortAnswer;
+        emit lostConnection();
+    }
 }
 
 void MainWindow::on_setTare_released()
@@ -111,6 +108,11 @@ void MainWindow::on_setTare_released()
 
     auto res = Driver::instance().SetTare(tare);
     std::cout << "Set Tare res:" << res << std::endl;
+
+    if(!res) {
+        deviceStatus = DeviceStatusType::NoPortAnswer;
+        emit lostConnection();
+    }
 }
 
 void MainWindow::show_info()
@@ -138,7 +140,8 @@ void MainWindow::routine()
     while(is_run) {
         std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << display.codeAD << std::endl;
 
-        if(DeviceStatusType::NoPortAnswer == deviceStatus || deviceStatus == DeviceStatusType::AnswerWithError)
+        if( (DeviceStatusType::NoPortAnswer == deviceStatus || deviceStatus == DeviceStatusType::AnswerWithError)
+            || (display.codeAD == "") || (display.codeAD == "0") )
         {
             std::cout << "Driver::instance().GetScaleParCheck()"<< std::endl;
             deviceStatus = Driver::instance().GetScaleParCheck(ackScaleParameters);
@@ -159,6 +162,7 @@ void MainWindow::routine()
                     emit updateMainWidget();
                 } else {
                     deviceStatus = DeviceStatusType::NoPortAnswer;
+                    emit lostConnection();
                 }
             }
         }
@@ -344,6 +348,11 @@ void MainWindow::on_holdTimerTimeout()
     if(is_full_screen) {
         alignWidget->showFullScreen();
     }
+}
+
+void MainWindow::on_lostConnection()
+{
+    hide();
 }
 
 void MainWindow::on_logoButton_pressed()

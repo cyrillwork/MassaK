@@ -10,7 +10,7 @@
 #include "alignwidget.h"
 #include "messageform.h"
 
-//#define DEBUG_TEST
+#define DEBUG_TEST
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,12 +26,12 @@ public:
 signals:
     void updateMainWidget();
     void showMessageWidget();
+    void lostConnection();
 
 public slots:
     void on_finishAlignWidget();
 
 private slots:
-    void on_getMassa_released();
     void on_setZero_released();
     void on_setTare_released();
     void on_closeButton_released();
@@ -42,6 +42,8 @@ private slots:
     void on_logoButton_pressed();
     void on_logoButton_released();
     void on_holdTimerTimeout();
+
+    void on_lostConnection();
 
 private:
     Ui::MainWindow *ui;

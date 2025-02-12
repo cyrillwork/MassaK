@@ -19,6 +19,8 @@ struct AckScaleParameters
     std::string Calcode;
     std::string PO_Ver;
     std::string PO_Summ;
+
+    void clear();
 };
 
 class Protocol

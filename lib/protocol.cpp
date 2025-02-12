@@ -317,6 +317,7 @@ bool Protocol::parseResponseGetScalePar(const Data& buff, AckScaleParameters& pa
         LOG(INFO) << "Protocol::parseResponseGetScalePar Error header" << std::endl;
         return result;
     }
+    params.clear();
 
     CommonMessage commonMessage(CMD_NONE);
 
@@ -486,4 +487,17 @@ void Protocol::addCRC(uint8_t* data, size_t len)
     uint8_t *ptr1 = (uint8_t*)&_res;
     data[len - 2] = ptr1[0];
     data[len - 1] = ptr1[1];
+}
+
+void AckScaleParameters::clear()
+{
+    is_error = false;
+    P_Max.clear();
+    P_Min.clear();
+    P_e.clear();
+    P_T.clear();
+    Fix.clear();
+    Calcode.clear();
+    PO_Ver.clear();
+    PO_Summ.clear();
 }
