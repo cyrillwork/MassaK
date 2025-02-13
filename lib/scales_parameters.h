@@ -13,6 +13,16 @@ struct ScalesParameters
     bool weight_overmax = false;
     bool weight_net     = false;
     bool weight_zero    = false;
+
+    void clear() {
+        connection  = false;
+        condition   = false;
+        weight = 0;
+        weight_stable   = false;
+        weight_overmax  = false;
+        weight_net      = false;
+        weight_zero     = false;
+    }
 };
 
 struct DeviceParameters
@@ -36,6 +46,15 @@ struct DisplayParameters
     std::string weight_net;     // Индикатор веса нетто [пробел или "NET"]
     std::string codeAD;         // Код юстировки [шесть знаков]
 
+    void clear() {
+        parameters.clear();
+        weight_txt.clear();
+        weight_clb.clear();
+        weight_stable.clear();
+        weight_zero.clear();
+        weight_net.clear();
+        codeAD.clear();
+    }
 };
 
 

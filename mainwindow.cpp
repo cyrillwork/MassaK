@@ -356,11 +356,14 @@ void MainWindow::on_holdTimerTimeout()
 void MainWindow::on_lostConnection()
 {
     hide();
+    display.clear();
+    ackScaleParameters.clear();
+    scalesParameters.clear();
 }
 
 void MainWindow::on_logoButton_pressed()
 {
     std::cout << "on_logoButton_pressed" << std::endl;
-    holdTimer->start();
+    holdTimer->start();    
 }
 
