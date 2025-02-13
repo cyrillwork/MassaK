@@ -46,7 +46,7 @@ AlignWidget::AlignWidget(QWidget *parent) :
     //palette.setColor(QPalette::ButtonText, QColor(Qt.blue));
     //palette.setColor(QPalette::BrightText, QColor(Qt.blue));
     ui->finishButton->setPalette(palette);
-    ui->finishButton->show();
+    //ui->finishButton->show();
 }
 
 AlignWidget::~AlignWidget()

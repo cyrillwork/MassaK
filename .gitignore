@@ -18,3 +18,4 @@ lib/release
 lib/debug
 .qtc_clangd
 console/debug
+inspection_module
