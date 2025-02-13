@@ -386,7 +386,15 @@ bool Protocol::parseResponseGetScalePar(const Data& buff, AckScaleParameters& pa
 
         result = true;
     } else if(commonMessage.command == CMD_ERROR) {
-        LOG(INFO) << "CMD_ERROR" << std::endl;
+        LOG(INFO) << "CMD_ERROR" << std::endl;        
+        ErrorMessage errorMessage;
+        std::copy(buff.data(), buff.data() + sizeof(ErrorMessage),
+                  (uint8_t*)&errorMessage);
+        LOG(INFO) << std::hex << "errorCode:" << (int)errorMessage.errorCode << std::endl;
+
+        if(errorMessage.errorCode == OVER_WEIRGHT) {
+            params.is_over_weight = true;
+        }
         params.is_error = true;
         result = true;
     }
@@ -492,6 +500,7 @@ void Protocol::addCRC(uint8_t* data, size_t len)
 void AckScaleParameters::clear()
 {
     is_error = false;
+    is_over_weight = false;
     P_Max.clear();
     P_Min.clear();
     P_e.clear();

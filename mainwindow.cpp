@@ -152,7 +152,7 @@ void MainWindow::routine()
             }
         }
 
-        if(deviceStatus == DeviceStatusType::GetGoodAnswer)
+        if((deviceStatus == DeviceStatusType::GetGoodAnswer) || (deviceStatus == DeviceStatusType::AnswerWithOverWeight))
         {
             //if(Mode == 0)
             {
@@ -226,10 +226,14 @@ void MainWindow::updateMainWidgetMode0()
         char _buff[32] = {};
         double weight = scalesParameters.weight * 0.001;
 
-        if(scalesParameters.weight_stable) {
-            ::sprintf(_buff, "%.3f kg", weight);
+        if(deviceStatus == AnswerWithOverWeight) {
+            ::sprintf(_buff, "> MAX");
         } else {
-            ::sprintf(_buff, "%.3f", weight);
+            if(scalesParameters.weight_stable) {
+                ::sprintf(_buff, "%.3f kg", weight);
+            } else {
+                ::sprintf(_buff, "%.3f", weight);
+            }
         }
 
         QString weight_temp(_buff);

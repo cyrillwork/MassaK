@@ -94,8 +94,16 @@ DeviceStatusType Driver::GetScaleParCheck(AckScaleParameters& params)
     }
 
     if(controller->send(data)) {
-       if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
-           result = Protocol::parseResponseGetScalePar(recv_data, params) ? GetGoodAnswer : AnswerWithError;
+       if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {           
+           if(Protocol::parseResponseGetScalePar(recv_data, params)) {
+               if(params.is_error && params.is_over_weight) {
+                   result = AnswerWithOverWeight;
+               } else if(params.is_error) {
+                   result = AnswerWithError;
+               } else {
+                   result = GetGoodAnswer;
+               }
+           }
        }
     }
 

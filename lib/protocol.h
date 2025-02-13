@@ -10,7 +10,8 @@ using Data = std::vector<uint8_t>;
 
 struct AckScaleParameters
 {
-    bool is_error = false;
+    bool is_error       = false;
+    bool is_over_weight = false;
     std::string P_Max;
     std::string P_Min;
     std::string P_e;
