@@ -36,15 +36,6 @@ AlignWidget::AlignWidget(QWidget *parent) :
     //palette.setColor(QPalette::Button, QColor(Qt::darkBlue));
 
     palette.setColor(QPalette::ButtonText, QColor(Qt::white));
-    //palette.setColor(QPalette::Foreground, QColor(Qt.blue));
-    //palette.setColor(QPalette::Base, QColor(Qt.blue));
-    //palette.setColor(QPalette::AlternateBase, QColor(Qt.blue));
-    //palette.setColor(QPalette::ToolTipBase, QColor(Qt.blue));
-    //palette.setColor(QPalette::ToolTipText, QColor(Qt.blue));
-    //palette.setColor(QPalette::Text, QColor(Qt.blue));
-    //palette.setColor(QPalette::Button, QColor(Qt.blue));
-    //palette.setColor(QPalette::ButtonText, QColor(Qt.blue));
-    //palette.setColor(QPalette::BrightText, QColor(Qt.blue));
     ui->finishButton->setPalette(palette);
     //ui->finishButton->show();
 }
@@ -59,13 +50,22 @@ void AlignWidget::connectMainWindow(QWidget *parent)
     connect(this, &AlignWidget::finishAlignWidget, (MainWindow*)parent, &MainWindow::on_finishAlignWidget);
 }
 
-void AlignWidget::setAlignWidgetType(bool type)
+void AlignWidget::setAlignWidgetType(bool type, const DisplayParameters& display)
 {
     if(type) {
         ui->titleLabel->setText("Юстировка при нулевой нагрузке");
+        ui->infoLabel->setText("- При успокоившихся весах нажать \"Продолжить\"");
+        ui->w_clbLabel->setText("- Разгрузить весы");
         ui->finishButton->setText("Продолжить");
     } else {
         ui->titleLabel->setText("Юстировка под нагрузкой");
+        ui->infoLabel->setText("- При успокоившихся весах нажать \"Готово\"");
+
+        {
+            std::string _temp = "- Установить нагрузку " + display.weight_clb;
+            ui->w_clbLabel->setText(QString(_temp.c_str()));
+        }
+
         ui->finishButton->setText("Готово");
     }
 }
@@ -93,7 +93,7 @@ bool AlignWidget::getAlignWidgetType() const
     return alignType;
 }
 
-void AlignWidget::updateWeightInfo(ScalesParameters& scalesParameters)
+void AlignWidget::updateWeightInfo(const ScalesParameters& scalesParameters, const DisplayParameters& display)
 {
     { //set Massa
         char _buff[32] = {};
@@ -110,18 +110,10 @@ void AlignWidget::updateWeightInfo(ScalesParameters& scalesParameters)
     }
 
 
-    { //labels
-        if(scalesParameters.weight_zero) {
-            ui->zeroLabel->setText("> 0 <");
-        } else {
-            ui->zeroLabel->setText("  ");
-        }
+    { //labels        
+        ui->zeroLabel->setText(QString(display.weight_zero.c_str()));
 
-        if(scalesParameters.weight_net) {
-            ui->netLabel->setText("NET");
-        } else {
-            ui->netLabel->setText("  ");
-        }
+        ui->netLabel->setText(QString(display.weight_net.c_str()));
     }
 }
 

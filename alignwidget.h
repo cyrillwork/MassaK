@@ -19,10 +19,10 @@ public:
     ~AlignWidget();
     void connectMainWindow(QWidget *parent);
 
-    void setAlignWidgetType(bool type);
+    void setAlignWidgetType(bool type, const DisplayParameters& display);
     bool getAlignWidgetType() const;
 
-    void updateWeightInfo(ScalesParameters& scalesParameters);
+    void updateWeightInfo(const ScalesParameters& scalesParameters, const DisplayParameters& display);
 
 signals:
     void finishAlignWidget();

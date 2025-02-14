@@ -10,7 +10,7 @@
 #include "alignwidget.h"
 #include "messageform.h"
 
-//#define DEBUG_TEST
+#define DEBUG_TEST
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,10 +23,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void setJsonFilename(const std::string& name);
+
 signals:
     void updateMainWidget();
     void showMessageWidget();
     void lostConnection();
+    void saveToJson();
 
 public slots:
     void on_finishAlignWidget();
@@ -44,6 +47,7 @@ private slots:
     void on_holdTimerTimeout();
 
     void on_lostConnection();
+    void on_saveToJson();
 
 private:
     Ui::MainWindow *ui;
@@ -67,6 +71,8 @@ private:
     int32_t calCode = 0;
     DisplayParameters display;
 
+    std::string json_file_name;
+
     void show_info();
 
     void routine();
@@ -77,5 +83,5 @@ private:
     void updateMainWidgetMode0();
     void updateMainWidgetMode1_2();
 
-    std::string getDisplayParameters(const std::string& p_max);
+    std::string getDisplayParameters(const std::string& p_max, std::string& weight_clb);
 };

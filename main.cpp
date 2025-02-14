@@ -1,9 +1,7 @@
 #include "mainwindow.h"
+
 #include <QApplication>
-#include <QStackedWidget>
-#include <QPushButton>
 #include <QWidget>
-#include <QLayout>
 
 int main(int argc, char *argv[])
 {
@@ -11,6 +9,11 @@ int main(int argc, char *argv[])
 
     MainWindow mainWindow;
     mainWindow.setVisible(false);
+
+    if(argc == 3 && std::string(argv[1]) == "-i") {
+        auto _file_name = std::string(argv[2]);
+        mainWindow.setJsonFilename(_file_name);
+    }
 
     return app.exec();
 }

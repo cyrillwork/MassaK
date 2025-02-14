@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>756</width>
+    <width>875</width>
     <height>396</height>
    </rect>
   </property>
@@ -217,7 +217,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="w_clbLabel">
          <property name="font">
           <font>
            <pointsize>14</pointsize>
@@ -231,7 +231,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="infoLabel">
          <property name="font">
           <font>
            <pointsize>14</pointsize>

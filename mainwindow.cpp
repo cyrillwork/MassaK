@@ -3,6 +3,12 @@
 
 #include <iostream>
 #include <QString>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QString>
+#include <iostream>
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QDesktopWidget>
@@ -25,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::updateMainWidget, this, &MainWindow::on_updateMainWidget);
     connect(this, &MainWindow::showMessageWidget,  this, &MainWindow::on_showMessageWidget);
     connect(this, &MainWindow::lostConnection, this, &MainWindow::on_lostConnection);
+    connect(this, &MainWindow::saveToJson, this, &MainWindow::on_saveToJson);
 
     //QPixmap pixmap("logo.png");
     //ui->logoLabel->setPixmap(pixmap);
@@ -78,12 +85,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::setJsonFilename(const std::string& name)
+{
+    json_file_name = name;
+}
+
 void MainWindow::on_finishAlignWidget()
 {
     std::cout << "on_finishAlignWidget" << std::endl;
     if(Mode == 1) {
         Mode = 2;
-        alignWidget->setAlignWidgetType(false);
+        alignWidget->setAlignWidgetType(false, display);
     } else if (Mode == 2) {
         Mode = 0;
         if(alignWidget) {
@@ -157,6 +169,10 @@ void MainWindow::routine()
         {
             std::cout << "Driver::instance().GetScaleParCheck()"<< std::endl;
             deviceStatus = Driver::instance().GetScaleParCheck(ackScaleParameters);
+
+            if(!json_file_name.empty() && deviceStatus == DeviceStatusType::GetGoodAnswer) {
+                emit saveToJson();
+            }
 
             if(DeviceStatusType::NoPortAnswer == deviceStatus || DeviceStatusType::AnswerWithError == deviceStatus) {
                 std::cout << "emit showMessageWidget"<< std::endl;
@@ -255,7 +271,7 @@ void MainWindow::updateMainWidgetMode0()
 
     { //set info
         //auto ackScaleParameters.P_Max.find("");
-        display.parameters = getDisplayParameters(ackScaleParameters.P_Max);
+        display.parameters = getDisplayParameters(ackScaleParameters.P_Max, display.weight_clb);
         //std::string str1;
         if(display.parameters == "") {
             display.parameters = ackScaleParameters.P_Max + " " + ackScaleParameters.P_Min + " " + ackScaleParameters.P_e +
@@ -272,36 +288,44 @@ void MainWindow::updateMainWidgetMode0()
 
     { //labels
         if(scalesParameters.weight_zero) {
-            ui->zeroLabel->setText("> 0 <");
+            display.weight_zero = ">0<";
         } else {
-            ui->zeroLabel->setText("  ");
-        }
+            display.weight_zero = "  ";
+        }        
+        ui->zeroLabel->setText(QString(display.weight_zero.c_str()));
+
         if(scalesParameters.weight_net) {
-            ui->netLabel->setText("NET");
+            display.weight_net = "Net";
         } else {
-            ui->netLabel->setText("  ");
+            display.weight_net = "  ";
         }
+
+        ui->netLabel->setText(QString(display.weight_net.c_str()));
     }
 }
 
 void MainWindow::updateMainWidgetMode1_2()
 {
     if(alignWidget) {
-        alignWidget->updateWeightInfo(scalesParameters);
+        alignWidget->updateWeightInfo(scalesParameters, display);
     }
 }
 
-std::string MainWindow::getDisplayParameters(const std::string& p_max)
+std::string MainWindow::getDisplayParameters(const std::string& p_max, std::string& weight_clb)
 {
+    weight_clb = " ";
     if(p_max.find("=3/6 kg") != std::string::npos) {
+        weight_clb = "6.000 kg";
         return std::string("Max = 3/6kg  Min=20g e= 1/2g  T=-3kg");
     } else if(p_max.find("=6 kg") != std::string::npos) {
         return std::string("Max = 6kg  Min=40g e= 2g  T=-6kg");
     } else if(p_max.find("=6/15 kg") != std::string::npos) {
+        weight_clb = "15.000 kg";
         return std::string("Max = 6/15kg  Min=40g e= 2/5g  T=-6kg");
     } else if(p_max.find("=15 kg") != std::string::npos) {
         return std::string("Max = 15kg  Min=100g e= 5g  T=-15kg");
     } else if(p_max.find("=15/32 kg") != std::string::npos) {
+        weight_clb = "30.000 kg";
         return std::string("Max = 15/32kg  Min=100g e= 5/10g  T=-15kg");
     } else if(p_max.find("=32 kg") != std::string::npos) {
         return std::string("Max = 32kg  Min=200g e= 10g  T=-32kg");
@@ -364,7 +388,7 @@ void MainWindow::on_holdTimerTimeout()
         alignWidget = std::make_unique<AlignWidget>();
         alignWidget->connectMainWindow(this);
     }
-    alignWidget->setAlignWidgetType(true);
+    alignWidget->setAlignWidgetType(true, display);
     alignWidget->show();
 
     if(is_full_screen) {
@@ -378,6 +402,32 @@ void MainWindow::on_lostConnection()
     display.clear();
     ackScaleParameters.clear();
     scalesParameters.clear();
+}
+
+void MainWindow::on_saveToJson()
+{
+    auto _params = ackScaleParameters;
+    QJsonObject jsonObj;
+
+    jsonObj["P_Max"] = QString::fromStdString(_params.P_Max);
+    jsonObj["P_Min"] = QString::fromStdString(_params.P_Min);
+    jsonObj["P_e"] = QString::fromStdString(_params.P_e);
+    jsonObj["P_T"] = QString::fromStdString(_params.P_T);
+    jsonObj["Fix"] = QString::fromStdString(_params.Fix);
+    jsonObj["Calcode"] = QString::fromStdString(_params.Calcode);
+    jsonObj["PO_Ver"] = QString::fromStdString(_params.PO_Ver);
+    jsonObj["PO_Summ"] = QString::fromStdString(_params.PO_Summ);
+
+    QJsonDocument jsonDoc(jsonObj);
+    QFile file(QString(json_file_name.c_str()));
+
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(jsonDoc.toJson());
+        file.close();
+        std::cout << "Struct saved to " << json_file_name << std::endl;
+    } else {
+        std::cerr << "Failed to open file for writing" << std::endl;
+    }
 }
 
 void MainWindow::on_logoButton_pressed()
