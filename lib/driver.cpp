@@ -21,9 +21,9 @@ Driver::~Driver()
     LOG(INFO) << "Driver stop" << "\n";
 }
 
-bool Driver::GetScalesParameters()
+DeviceStatusType Driver::GetScalesParameters()
 {
-    bool result = false;
+    DeviceStatusType result = NoPortAnswer;
     std::lock_guard<std::mutex> _lck(mutexRequest);
 
     if (!(controller && controller->isInit()))  {
@@ -51,13 +51,20 @@ bool Driver::GetScalesParameters()
     if(controller->send(data)) {
        if(controller->read(recv_data) && Protocol::check_crc(recv_data)) {
            ScalesParameters _params;
-           Protocol::parseResponseGetMassa(recv_data, _params);
-           setScalesParameters(_params);
-           result = true;
+           if(Protocol::parseResponseGetMassa(recv_data, _params)) {
+               if(_params.error && _params.weight_overmax) {
+                   result = AnswerWithOverWeight;
+               } else if(_params.error) {
+                   result = AnswerWithError;
+               } else {
+                   result = GetGoodAnswer;
+               }
+               setScalesParameters(_params);
+           }
        }
     }
 
-    if(!result) {
+    if(result == NoPortAnswer) {
         resetScaleParameters();
     }
 

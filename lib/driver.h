@@ -25,7 +25,7 @@ public:
     }
     virtual ~Driver();
 
-    bool GetScalesParameters();
+    DeviceStatusType GetScalesParameters();
     bool SetZero();
     bool SetTare(int32_t tare = 0);
     void GetScalesParametersStruct(ScalesParameters& get_params);

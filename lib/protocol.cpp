@@ -38,6 +38,8 @@ void Protocol::getMassa(Data& buff)
     uint8_t* ptr1 = (uint8_t*)&message;
     addCRC(ptr1, len_message);
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
+
+    LOG(INFO) << "CMD_GET_MASSA" << std::endl;
 }
 
 void Protocol::setZero(Data& buff)
@@ -50,6 +52,8 @@ void Protocol::setZero(Data& buff)
     uint8_t* ptr1 = (uint8_t*)&message;
     addCRC(ptr1, len_message);
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
+
+    LOG(INFO) << "CMD_SET_ZERO" << std::endl;
 }
 
 void Protocol::setTare(Data& buff, int32_t tare)
@@ -63,6 +67,8 @@ void Protocol::setTare(Data& buff, int32_t tare)
     uint8_t* ptr1 = (uint8_t*)&message;
     addCRC(ptr1, len_message);
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
+
+    LOG(INFO) << "CMD_SET_TARE" << std::endl;
 }
 
 void Protocol::getScalePar(Data& buff)
@@ -75,6 +81,8 @@ void Protocol::getScalePar(Data& buff)
     uint8_t* ptr1 = (uint8_t*)&message;
     addCRC(ptr1, len_message);
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
+
+    LOG(INFO) << "CMD_GET_SCALE_PAR" << std::endl;
 }
 
 void Protocol::print(const Data& buff)
@@ -96,6 +104,8 @@ void Protocol::getSetCal(Data& buff, int32_t cal_code)
     uint8_t* ptr1 = (uint8_t*)&message;
     addCRC(ptr1, len_message);
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
+
+    LOG(INFO) << "CMD_SET_CAL" << std::endl;
 }
 
 void Protocol::getSetCalP(Data& buff, int32_t w_cal)
@@ -109,6 +119,8 @@ void Protocol::getSetCalP(Data& buff, int32_t w_cal)
     uint8_t* ptr1 = (uint8_t*)&message;
     addCRC(ptr1, len_message);
     std::copy(ptr1, ptr1 + len_message, back_inserter(buff));
+
+    LOG(INFO) << "CMD_SET_CAL_P" << std::endl;
 }
 
 bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
@@ -150,6 +162,7 @@ bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
         result = true;
         params.connection   = true;
         params.condition    = true;
+        params.error        = false;
         params.weight       = ackMassa.weight;
         params.weight_stable  = ackMassa.stable;
         params.weight_overmax = false;
@@ -164,6 +177,7 @@ bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
 
         LOG(INFO) << std::hex << "errorCode:" << (int)errorMessage.errorCode << std::endl;
 
+        params.error = true;
         if(errorMessage.errorCode == ErrorCodes::OVER_WEIRGHT) {
             params.connection       = true;
             params.condition        = true;

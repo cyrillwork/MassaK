@@ -185,13 +185,15 @@ void MainWindow::routine()
         {
             //if(Mode == 0)
             {
-                //std::cout << "try get Massa "<< std::endl;
-                if(Driver::instance().GetScalesParameters()) {
+                deviceStatus = Driver::instance().GetScalesParameters();
+
+                if( (deviceStatus == DeviceStatusType::GetGoodAnswer) ||
+                    (deviceStatus == DeviceStatusType::AnswerWithOverWeight) )
+                {
                     Driver::instance().GetScalesParametersStruct(scalesParameters);
                     //std::cout << "emit showCheckingWidget"<< std::endl;
                     emit updateMainWidget();
                 } else {
-                    deviceStatus = DeviceStatusType::NoPortAnswer;
                     emit lostConnection();
                 }
             }

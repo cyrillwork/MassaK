@@ -8,6 +8,7 @@ struct ScalesParameters
 {
     bool connection     = false;
     bool condition      = false;
+    bool error          = false;
     int32_t weight      = 0;
     bool weight_stable  = false;
     bool weight_overmax = false;
@@ -17,6 +18,7 @@ struct ScalesParameters
     void clear() {
         connection  = false;
         condition   = false;
+        error       = false;
         weight = 0;
         weight_stable   = false;
         weight_overmax  = false;
