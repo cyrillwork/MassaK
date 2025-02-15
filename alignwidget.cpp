@@ -60,12 +60,10 @@ void AlignWidget::setAlignWidgetType(bool type, const DisplayParameters& display
     } else {
         ui->titleLabel->setText("Юстировка под нагрузкой");
         ui->infoLabel->setText("- При успокоившихся весах нажать \"Готово\"");
-
         {
             std::string _temp = "- Установить нагрузку " + display.weight_clb;
             ui->w_clbLabel->setText(QString(_temp.c_str()));
         }
-
         ui->finishButton->setText("Готово");
     }
 }

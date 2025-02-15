@@ -92,24 +92,44 @@ void MainWindow::setJsonFilename(const std::string& name)
 
 void MainWindow::on_finishAlignWidget()
 {
+    isFinishAlign = true;
     std::cout << "on_finishAlignWidget" << std::endl;
-    if(Mode == 1) {
-        Mode = 2;
-        alignWidget->setAlignWidgetType(false, display);
-    } else if (Mode == 2) {
-        Mode = 0;
-        if(alignWidget) {
-            alignWidget->hide();
-        }
-        setVisible(true);
 
-        if(is_full_screen) {
-            showFullScreen();
+    if(Mode == 1)
+    {
+        if(Driver::instance().SetCal(calCode) && Driver::instance().SetCalP(0))
+        {
+            std::cout << "Align Widget 1 OK" << std::endl;
+            Mode = 2;
+            alignWidget->setAlignWidgetType(false, display);
+        } else {
+            std::cout << "error SetCal calCode: " << calCode << std::endl;
+            Mode = 0;
         }
+    } else if (Mode == 2) {
+        if(Driver::instance().SetCal(calCode) && Driver::instance().SetCalP(w_cal))
+        {
+            std::cout << "Align Widget 2 OK" << std::endl;
+        } else {
+            std::cout << "Align Widget 2 Error" << std::endl;
+        }
+        Mode = 0;
     } else {
         std::cout << "on_finishAlignWidget Error Mode: " << (int)Mode << std::endl;
     }
 
+    if(Mode == 0)
+    {//revert Main Widget
+        if(alignWidget) {
+            alignWidget->hide();
+        }
+        setVisible(true);
+        if(is_full_screen) {
+            showFullScreen();
+        }
+    }
+
+    isFinishAlign = false;
 }
 
 void MainWindow::on_setZero_released()
@@ -183,7 +203,7 @@ void MainWindow::routine()
         if( (deviceStatus == DeviceStatusType::GetGoodAnswer) ||
             (deviceStatus == DeviceStatusType::AnswerWithOverWeight) )
         {
-            //if(Mode == 0)
+            if(!isFinishAlign)
             {
                 deviceStatus = Driver::instance().GetScalesParameters();
 
@@ -224,31 +244,31 @@ void MainWindow::updateMainWidgetMode0()
         if(_pos != std::string::npos && ((_pos + 1) < ackScaleParameters.Calcode.size()) ) {
             _temp_str = ackScaleParameters.Calcode.substr(_pos + 1).c_str();
             ptr_calc = _temp_str.c_str();
-            ui->calcodeLabel->setText(ptr_calc);
+            std::string _tmp = "  " + _temp_str;
+            ui->calcodeLabel->setText(_tmp.c_str());
         } else {
             ptr_calc = ackScaleParameters.Calcode.c_str();
             ui->calcodeLabel->setText( ptr_calc );
         }
 
         if(ptr_calc) {
-            //calCode = ::atoi(ptr_calc);
+            calCode = ::atoi(ptr_calc);
             display.codeAD = std::string(ptr_calc);
         }
-
     } else {
         ui->calcodeLabel->setText("  ");
     }
 
     if(!ackScaleParameters.PO_Ver.empty()) {
-        QString po_ver_temp(ackScaleParameters.PO_Ver.c_str());
-        ui->PoVerLabel->setText(po_ver_temp);
+        std::string _tmp = "  " + ackScaleParameters.PO_Ver;
+        ui->PoVerLabel->setText(QString(_tmp.c_str()));
     } else {
         ui->PoVerLabel->setText("  ");
     }
 
     if(!ackScaleParameters.PO_Summ.empty()) {
-        QString po_summ_temp(ackScaleParameters.PO_Summ.c_str());
-        ui->PoSummLabel->setText(po_summ_temp);
+        std::string _tmp = "  " + ackScaleParameters.PO_Summ;
+        ui->PoSummLabel->setText(QString(_tmp.c_str()));
     } else {
         ui->PoSummLabel->setText("   ");
     }
@@ -317,19 +337,28 @@ std::string MainWindow::getDisplayParameters(const std::string& p_max, std::stri
 {
     weight_clb = " ";
     if(p_max.find("=3/6 kg") != std::string::npos) {
+        w_cal = 6000;
         weight_clb = "6.000 kg";
         return std::string("Max = 3/6kg  Min=20g e= 1/2g  T=-3kg");
     } else if(p_max.find("=6 kg") != std::string::npos) {
+        w_cal = 6000;
+        weight_clb = "6.000 kg";
         return std::string("Max = 6kg  Min=40g e= 2g  T=-6kg");
     } else if(p_max.find("=6/15 kg") != std::string::npos) {
+        w_cal = 15000;
         weight_clb = "15.000 kg";
         return std::string("Max = 6/15kg  Min=40g e= 2/5g  T=-6kg");
     } else if(p_max.find("=15 kg") != std::string::npos) {
+        w_cal = 15000;
+        weight_clb = "15.000 kg";
         return std::string("Max = 15kg  Min=100g e= 5g  T=-15kg");
     } else if(p_max.find("=15/32 kg") != std::string::npos) {
+        w_cal = 30000;
         weight_clb = "30.000 kg";
         return std::string("Max = 15/32kg  Min=100g e= 5/10g  T=-15kg");
     } else if(p_max.find("=32 kg") != std::string::npos) {
+        w_cal = 30000;
+        weight_clb = "30.000 kg";
         return std::string("Max = 32kg  Min=200g e= 10g  T=-32kg");
     }
 

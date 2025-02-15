@@ -147,7 +147,6 @@ bool Protocol::parseResponseGetMassa(const Data& buff, ScalesParameters& params)
     if(commonMessage.command == CMD_ACK_MASSA)
     {
         LOG(INFO) << "CMD_ACK_MASSA" << std::endl;
-
         AckMassaTare ackMassa;
         if(commonMessage.length == 0x9) {
             std::copy(buff.data(), buff.data() + sizeof(AckMassa),
@@ -217,10 +216,8 @@ bool Protocol::parseResponseSetZero(const Data& buff, ScalesParameters& params)
     }
 
     CommonMessage commonMessage(CMD_NONE);
-
     std::copy(buff.data(), buff.data() + sizeof(CommonMessage),
               (uint8_t*)&commonMessage);
-
     LOG(INFO) << std::hex << "parseResponseSetZero command:" << (int)commonMessage.command << std::endl;
 
     if(commonMessage.command == CMD_ACK_SET_ZERO) {

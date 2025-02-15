@@ -243,7 +243,7 @@ bool Driver::SetCal(int32_t cal_code)
     Data data;
     Data recv_data;
     Protocol::getSetCal(data, cal_code);
-    //Protocol::print(data);
+    Protocol::print(data);
 
     if(!controller->open()) {
         std::cout << "Driver::SetCal error open" << std::endl;
@@ -285,7 +285,7 @@ bool Driver::SetCalP(int32_t w_cal)
     Data data;
     Data recv_data;
     Protocol::getSetCalP(data, w_cal);
-    //Protocol::print(data);
+    Protocol::print(data);
 
     if(!controller->open()) {
         std::cout << "Driver::SetCalP error open" << std::endl;

@@ -68,13 +68,13 @@ private:
     ScalesParameters    scalesParameters;
 
     int Mode = 0;
+    bool isFinishAlign = false;
     int32_t calCode = 0;
     DisplayParameters display;
 
     std::string json_file_name;
 
     void show_info();
-
     void routine();
 
     bool is_run;
@@ -83,5 +83,6 @@ private:
     void updateMainWidgetMode0();
     void updateMainWidgetMode1_2();
 
+    int32_t w_cal = 0;
     std::string getDisplayParameters(const std::string& p_max, std::string& weight_clb);
 };

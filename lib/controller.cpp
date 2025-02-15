@@ -6,6 +6,8 @@
 #include <fcntl.h>
 #include <sstream>
 
+#include "protocol.h"
+
 Controller::Controller(const std::string& port_name, bool high_speed):
         name{port_name}
       , is_connected{false}
@@ -55,7 +57,7 @@ bool Controller::read(std::vector<uint8_t>& buff)
     if (read_fd(buff) && (buff.size() > 0)) {
         result = true;
     } else {
-        LOG(INFO) << "Error reading answer send size: " << buff.size() << std::endl;
+        LOG(INFO) << "Error reading answer size: " << buff.size() << std::endl;
     }
     return result;
 }
@@ -63,7 +65,7 @@ bool Controller::read(std::vector<uint8_t>& buff)
 bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
 {
     bool result = false;
-    uint64_t timeout = 300000;
+    uint64_t timeout = 1000000;
     buff.clear();
     while (true) {
         if(ptrSerial->select(timeout) > 0)
@@ -72,6 +74,9 @@ bool Controller::read_fd(std::vector<uint8_t>& buff, bool print)
             int bytesRead = ptrSerial->read(response, sizeof(response));
             if (bytesRead > 0) {
                 std::copy(response, response + bytesRead, back_inserter(buff));
+                if(Protocol::check_crc(buff)) {
+                    break;
+                }
             } else {
                 LOG(INFO) << "Controller::read_fd bytesRead: " << bytesRead << "\n";
                 break;
