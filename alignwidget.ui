@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>875</width>
-    <height>396</height>
+    <height>601</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,9 +37,6 @@
      </item>
      <item>
       <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
@@ -50,41 +47,52 @@
      </item>
      <item>
       <widget class="QLabel" name="zeroLabel">
+       <property name="maximumSize">
+        <size>
+         <width>60</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="font">
         <font>
-         <pointsize>14</pointsize>
+         <family>Sans Serif</family>
+         <pointsize>16</pointsize>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>&gt; 0 &lt;</string>
+        <string>&gt;0&lt;</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="netLabel">
+       <property name="maximumSize">
+        <size>
+         <width>60</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="font">
         <font>
-         <pointsize>14</pointsize>
+         <family>Sans Serif</family>
+         <pointsize>16</pointsize>
          <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>NET</string>
+        <string>Net</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
      <item>
       <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
@@ -99,9 +107,6 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <spacer name="verticalSpacer_10">
-       <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
@@ -114,38 +119,23 @@
       <widget class="QLabel" name="titleLabel">
        <property name="font">
         <font>
-         <pointsize>30</pointsize>
+         <family>Sans Serif</family>
+         <pointsize>40</pointsize>
          <bold>true</bold>
         </font>
        </property>
        <property name="layoutDirection">
-        <enum>Qt::LayoutDirection::LeftToRight</enum>
+        <enum>Qt::LeftToRight</enum>
        </property>
        <property name="text">
         <string>Юстировка при нулевой нагрузке</string>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
-       </property>
       </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item>
       <spacer name="verticalSpacer_3">
        <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
+        <enum>Qt::Vertical</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -157,9 +147,6 @@
      </item>
      <item>
       <spacer name="verticalSpacer_9">
-       <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
@@ -180,14 +167,14 @@
         <string>0.000 kg</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
      <item>
       <spacer name="verticalSpacer_5">
        <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
+        <enum>Qt::Vertical</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -199,9 +186,6 @@
      </item>
      <item>
       <spacer name="verticalSpacer_8">
-       <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
@@ -212,8 +196,11 @@
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="spacing">
+        <number>3</number>
+       </property>
        <property name="leftMargin">
-        <number>100</number>
+        <number>50</number>
        </property>
        <item>
         <widget class="QLabel" name="w_clbLabel">
@@ -224,7 +211,7 @@
           </font>
          </property>
          <property name="text">
-          <string>- Разгрузить весы</string>
+          <string>                       </string>
          </property>
         </widget>
        </item>
@@ -237,7 +224,7 @@
           </font>
          </property>
          <property name="text">
-          <string>- При успокоившихся весах нажать &quot;Продолжить&quot;</string>
+          <string>                       </string>
          </property>
          <property name="margin">
           <number>0</number>
@@ -248,9 +235,6 @@
      </item>
      <item>
       <spacer name="verticalSpacer_7">
-       <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
@@ -263,9 +247,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
@@ -304,9 +285,6 @@
        </item>
        <item>
         <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
@@ -319,9 +297,6 @@
      </item>
      <item>
       <spacer name="verticalSpacer_6">
-       <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
@@ -336,6 +311,9 @@
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QPushButton" name="closeButton">
+       <property name="layoutDirection">
+        <enum>Qt::RightToLeft</enum>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -343,8 +321,18 @@
      </item>
      <item>
       <spacer name="verticalSpacer_4">
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_11">
        <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
+        <enum>Qt::Vertical</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
