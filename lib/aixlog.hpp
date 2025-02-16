@@ -1296,9 +1296,17 @@ static std::ostream& operator<<(std::ostream& os, const Color& color)
 #endif
 
 #else
+#include <iostream>
+#include <chrono>
 
 #define LOG(...) std::cout
-
+// #define LOG(...) { \
+// auto _now = std::chrono::system_clock::now(); \
+// auto _duration = _now.time_since_epoch(); \
+// auto _ms = std::chrono::duration_cast<std::chrono::milliseconds>(_duration).count() % 1000; \
+// auto _sec = std::chrono::duration_cast<std::chrono::seconds>(_now.time_since_epoch()).count(); \
+// std::cout << "[" <<_sec << "." << _ms << "]" << msg \
+// }
 #endif
 
 #endif // AIX_LOG_HPP

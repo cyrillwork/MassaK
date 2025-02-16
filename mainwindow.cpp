@@ -54,17 +54,18 @@ MainWindow::MainWindow(QWidget *parent)
     rrr2.setWidth(rrr2.width() + 10);
     ui->closeButton->setFixedSize(rrr2);
 
-    QPalette palette = ui->setZero->palette();
-    palette.setColor(QPalette::Button, QColor(Qt::darkRed));
-    palette.setColor(QPalette::ButtonText, QColor(Qt::white));
-    ui->setZero->setPalette(palette);
-    ui->setZero->show();
+    // QPalette palette = ui->setZero->palette();
+    // palette.setColor(QPalette::Button, QColor(Qt::darkRed));
+    // palette.setColor(QPalette::ButtonText, QColor(Qt::white));
+    // ui->setZero->setPalette(palette);
+    // ui->setZero->show();
 
-    QPalette palette2 = ui->setTare->palette();
-    palette2.setColor(QPalette::Button, QColor(Qt::darkGreen));
-    palette2.setColor(QPalette::ButtonText, QColor(Qt::white));
-    ui->setTare->setPalette(palette2);
-    ui->setTare->show();
+    //ui->setTare->setStyleSheet("background-color: green; color: white");
+    //QPalette palette2 = ui->setTare->palette();
+    //palette2.setColor(QPalette::Button, QColor(Qt::darkGreen));
+    //palette2.setColor(QPalette::ButtonText, QColor(Qt::white));
+    //ui->setTare->setPalette(palette2);
+    //ui->setTare->show();
 
     holdTimer = new QTimer(this);
     holdTimer->setInterval(timeoutUsec);

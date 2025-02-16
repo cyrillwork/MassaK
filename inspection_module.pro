@@ -34,6 +34,7 @@ FORMS += \
 
 windows {
     LIBS += MassaK.dll
+#    LIBS += C:\cyrill\GitHub\MassaK\lib\debug\MassaK.dll
 } else {
     LIBS += ./lib/libMassaK.so
 }

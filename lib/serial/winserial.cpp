@@ -116,13 +116,13 @@ bool WinSerial::set_params(const std::string& baud_rate)
         return result;
     }
 
-    COMMTIMEOUTS CommTimeOuts;
+    COMMTIMEOUTS CommTimeOuts = {};
 
     CommTimeOuts.ReadIntervalTimeout         = 1;	 	//таймаут между двумя символами
-    CommTimeOuts.ReadTotalTimeoutMultiplier  = 1;	//общий таймаут операции чтения
-    CommTimeOuts.ReadTotalTimeoutConstant    = 1;         //константа для общего таймаута операции чтения
-    CommTimeOuts.WriteTotalTimeoutMultiplier = 1;      //общий таймаут операции записи
-    CommTimeOuts.WriteTotalTimeoutConstant   = 1;        //константа для общего таймаута операции записи
+    CommTimeOuts.ReadTotalTimeoutMultiplier  = 1;       //общий таймаут операции чтения
+    CommTimeOuts.ReadTotalTimeoutConstant    = 600;      //константа для общего таймаута операции чтения
+    CommTimeOuts.WriteTotalTimeoutMultiplier = 1;       //общий таймаут операции записи
+    CommTimeOuts.WriteTotalTimeoutConstant   = 1;       //константа для общего таймаута операции записи
 
     //записать структуру таймаутов в порт
     if(!SetCommTimeouts(m_Handle, &CommTimeOuts))	//если не удалось - закрыть порт и вывести сообщение об ошибке в строке состояния

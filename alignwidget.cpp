@@ -26,18 +26,16 @@ AlignWidget::AlignWidget(QWidget *parent) :
     ui->closeButton->setFixedSize(rrr);
 
 
-    QPalette palette = ui->finishButton->palette();
+    // QPalette palette = ui->finishButton->palette();
+    // QString hexValue = "#2E5596";
+    // QColor color_b;
+    // color_b.setRgb(QColor(hexValue).rgb());
+    // palette.setColor(QPalette::Button, color_b);
+    // //palette.setColor(QPalette::Button, QColor(Qt::darkBlue));
 
-    QString hexValue = "#2E5596";
-    QColor color_b;
-    color_b.setRgb(QColor(hexValue).rgb());
-
-    palette.setColor(QPalette::Button, color_b);
-    //palette.setColor(QPalette::Button, QColor(Qt::darkBlue));
-
-    palette.setColor(QPalette::ButtonText, QColor(Qt::white));
-    ui->finishButton->setPalette(palette);
-    //ui->finishButton->show();
+    // palette.setColor(QPalette::ButtonText, QColor(Qt::white));
+    // ui->finishButton->setPalette(palette);
+    // //ui->finishButton->show();
 }
 
 AlignWidget::~AlignWidget()
