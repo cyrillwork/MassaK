@@ -337,27 +337,27 @@ void MainWindow::updateMainWidgetMode1_2()
 std::string MainWindow::getDisplayParameters(const std::string& p_max, std::string& weight_clb)
 {
     weight_clb = " ";
-    if(p_max.find("=3/6 kg") != std::string::npos) {
+    if(p_max.find("3/6 kg") != std::string::npos) {
         w_cal = 6000;
         weight_clb = "6.000 kg";
         return std::string("Max = 3/6kg  Min=20g e= 1/2g  T=-3kg");
-    } else if(p_max.find("=6 kg") != std::string::npos) {
+    } else if(p_max.find("6 kg") != std::string::npos) {
         w_cal = 6000;
         weight_clb = "6.000 kg";
         return std::string("Max = 6kg  Min=40g e= 2g  T=-6kg");
-    } else if(p_max.find("=6/15 kg") != std::string::npos) {
+    } else if(p_max.find("6/15 kg") != std::string::npos) {
         w_cal = 15000;
         weight_clb = "15.000 kg";
         return std::string("Max = 6/15kg  Min=40g e= 2/5g  T=-6kg");
-    } else if(p_max.find("=15 kg") != std::string::npos) {
+    } else if(p_max.find("15 kg") != std::string::npos) {
         w_cal = 15000;
         weight_clb = "15.000 kg";
         return std::string("Max = 15kg  Min=100g e= 5g  T=-15kg");
-    } else if(p_max.find("=15/32 kg") != std::string::npos) {
+    } else if(p_max.find("15/32 kg") != std::string::npos) {
         w_cal = 30000;
         weight_clb = "30.000 kg";
         return std::string("Max = 15/32kg  Min=100g e= 5/10g  T=-15kg");
-    } else if(p_max.find("=32 kg") != std::string::npos) {
+    } else if(p_max.find("32 kg") != std::string::npos) {
         w_cal = 30000;
         weight_clb = "30.000 kg";
         return std::string("Max = 32kg  Min=200g e= 10g  T=-32kg");
