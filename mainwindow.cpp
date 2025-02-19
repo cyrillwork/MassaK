@@ -281,15 +281,27 @@ void MainWindow::updateMainWidgetMode0()
         if(deviceStatus == AnswerWithOverWeight) {
             ::sprintf(_buff, "> MAX");
         } else {
+
+//            if(scalesParameters.weight_stable) {
+//                ::sprintf(_buff, "%.3f kg", weight);
+//            } else {
+//                ::sprintf(_buff, "%.3f", weight);
+//            }
+
+            ::sprintf(_buff, "%.3f", weight);
+
             if(scalesParameters.weight_stable) {
-                ::sprintf(_buff, "%.3f kg", weight);
+                ui->kgLabel->setText( "kg" );
             } else {
-                ::sprintf(_buff, "%.3f", weight);
+                ui->kgLabel->setText( "  " );
             }
+
         }
 
-        QString weight_temp(_buff);
-        ui->weightLabel->setText(weight_temp);
+        //QString weight_temp(_buff);
+        //ui->weightLabel->setText(weight_temp);
+
+        ui->weightNLabel->setText( QString(_buff) );
     }
 
     { //set info

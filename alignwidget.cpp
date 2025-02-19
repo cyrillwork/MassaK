@@ -95,21 +95,26 @@ void AlignWidget::updateWeightInfo(const ScalesParameters& scalesParameters, con
         char _buff[32] = {};
         double weight = scalesParameters.weight * 0.001;
 
+        ::sprintf(_buff, "%.3f", weight);
+
         if(scalesParameters.weight_stable) {
-            ::sprintf(_buff, "%.3f kg", weight);
+            ui->kgLabel->setText( "kg" );
+            //::sprintf(_buff, "%.3f kg", weight);
         } else {
-            ::sprintf(_buff, "%.3f", weight);
+            ui->kgLabel->setText( "  " );
+            //::sprintf(_buff, "%.3f", weight);
         }
 
-        QString weight_temp(_buff);
-        ui->weightLabel->setText(weight_temp);
+//        QString weight_temp(_buff);
+//        ui->weightLabel->setText(weight_temp);
+
+        ui->weightLabel->setText( QString(_buff) );
     }
 
 
     { //labels        
-        ui->zeroLabel->setText(QString(display.weight_zero.c_str()));
-
-        ui->netLabel->setText(QString(display.weight_net.c_str()));
+      //  ui->zeroLabel->setText(QString(display.weight_zero.c_str()));
+      //  ui->netLabel->setText(QString(display.weight_net.c_str()));
     }
 }
 

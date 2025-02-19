@@ -10,7 +10,7 @@
 #include "alignwidget.h"
 #include "messageform.h"
 
-//#define DEBUG_TEST
+#define DEBUG_TEST
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
