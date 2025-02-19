@@ -98,23 +98,23 @@ void MainWindow::on_finishAlignWidget()
 
     if(Mode == 1)
     {
-        if(Driver::instance().SetCal(calCode) && Driver::instance().SetCalP(0))
+        if(Driver::instance().SetCalP(0))
         {
             std::cout << "Align Widget 1 OK" << std::endl;
             Mode = 2;
             alignWidget->setAlignWidgetType(false, display);
         } else {
             std::cout << "error SetCal calCode: " << calCode << std::endl;
-            Mode = 0;
+            // stay in the same mode
+            //Mode = 0;
         }
     } else if (Mode == 2) {
-        if(Driver::instance().SetCal(calCode) && Driver::instance().SetCalP(w_cal))
-        {
+        if(Driver::instance().SetCalP(w_cal)) {
             std::cout << "Align Widget 2 OK" << std::endl;
+            Mode = 0;
         } else {
             std::cout << "Align Widget 2 Error" << std::endl;
         }
-        Mode = 0;
     } else {
         std::cout << "on_finishAlignWidget Error Mode: " << (int)Mode << std::endl;
     }
@@ -260,19 +260,26 @@ void MainWindow::updateMainWidgetMode0()
         ui->calcodeLabel->setText("  ");
     }
 
-    if(!ackScaleParameters.PO_Ver.empty()) {
-        std::string _tmp = "  " + ackScaleParameters.PO_Ver;
-        ui->PoVerLabel->setText(QString(_tmp.c_str()));
-    } else {
-        ui->PoVerLabel->setText("  ");
-    }
+#ifdef MASSAK_WINDOWS
+    ui->PoVerLabel->setText("  VF_LX_0.1.0.W");
+#else
+    ui->PoVerLabel->setText("  VF_LX_0.1.0.L");
+#endif
 
-    if(!ackScaleParameters.PO_Summ.empty()) {
-        std::string _tmp = "  " + ackScaleParameters.PO_Summ;
-        ui->PoSummLabel->setText(QString(_tmp.c_str()));
-    } else {
-        ui->PoSummLabel->setText("   ");
-    }
+    // if(!ackScaleParameters.PO_Ver.empty()) {
+    //     std::string _tmp = "  " + ackScaleParameters.PO_Ver;
+    //     ui->PoVerLabel->setText(QString(_tmp.c_str()));
+    // } else {
+    //     ui->PoVerLabel->setText("  ");
+    // }
+
+    ui->PoSummLabel->setText("  U_38.1.6");
+    // if(!ackScaleParameters.PO_Summ.empty()) {
+    //     std::string _tmp = "  " + ackScaleParameters.PO_Summ;
+    //     ui->PoSummLabel->setText(QString(_tmp.c_str()));
+    // } else {
+    //     ui->PoSummLabel->setText("   ");
+    // }
 
     { //set Massa
         char _buff[32] = {};
@@ -424,7 +431,10 @@ void MainWindow::on_logoButton_released()
 
 void MainWindow::on_holdTimerTimeout()
 {
-    std::cout << "on_holdTimerTimeout" << std::endl;
+    std::cout << "on_holdTimerTimeout calCode: " << calCode << std::endl;
+
+    Driver::instance().SetCal(calCode);
+
     Mode = 1;
     setVisible(false);
 

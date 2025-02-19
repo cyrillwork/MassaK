@@ -33,6 +33,7 @@ FORMS += \
 # !isEmpty(target.path): INSTALLS += target
 
 windows {
+    DEFINES += MASSAK_WINDOWS
     LIBS += MassaK.dll
 #    LIBS += C:\cyrill\GitHub\MassaK\lib\debug\MassaK.dll
 } else {

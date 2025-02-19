@@ -64,7 +64,6 @@
          <font>
           <family>Sans Serif</family>
           <pointsize>16</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -94,7 +93,6 @@
          <font>
           <family>Sans Serif</family>
           <pointsize>16</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -155,7 +153,6 @@
          <font>
           <family>Sans Serif</family>
           <pointsize>40</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -240,7 +237,6 @@
           <property name="font">
            <font>
             <pointsize>50</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -272,7 +268,6 @@
           <property name="font">
            <font>
             <pointsize>50</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -344,7 +339,6 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -358,7 +352,6 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -372,12 +365,11 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
           <property name="text">
-           <string>Версия ПО терминала</string>
+           <string>Версия ПО поверки</string>
           </property>
          </widget>
         </item>
@@ -386,7 +378,6 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -400,7 +391,6 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -414,7 +404,6 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -455,7 +444,6 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
             <kerning>false</kerning>
            </font>
@@ -495,7 +483,6 @@
              <font>
               <family>Sans Serif</family>
               <pointsize>14</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -519,7 +506,6 @@
              <font>
               <family>Sans Serif</family>
               <pointsize>14</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -548,7 +534,7 @@
      <x>0</x>
      <y>0</y>
      <width>1111</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
