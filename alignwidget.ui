@@ -140,7 +140,11 @@
         <enum>Qt::LeftToRight</enum>
        </property>
        <property name="text">
-        <string>Юстировка при нулевой нагрузке</string>
+        <string>Юстировка при нулевой 
+ нагрузке</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>

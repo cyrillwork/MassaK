@@ -112,6 +112,7 @@ void MainWindow::on_finishAlignWidget()
         if(Driver::instance().SetCalP(w_cal)) {
             std::cout << "Align Widget 2 OK" << std::endl;
             Mode = 0;
+            needUpdateParams = true;
         } else {
             std::cout << "Align Widget 2 Error" << std::endl;
         }
@@ -186,7 +187,7 @@ void MainWindow::routine()
         std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << display.codeAD << std::endl;
 
         if( (DeviceStatusType::NoPortAnswer == deviceStatus || deviceStatus == DeviceStatusType::AnswerWithError)
-            || (display.codeAD == "") || (display.codeAD == "0") )
+            || (display.codeAD == "") || (display.codeAD == "0") || needUpdateParams)
         {
             std::cout << "Driver::instance().GetScaleParCheck()"<< std::endl;
             deviceStatus = Driver::instance().GetScaleParCheck(ackScaleParameters);

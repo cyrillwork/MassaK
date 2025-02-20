@@ -10,7 +10,7 @@
 #include "alignwidget.h"
 #include "messageform.h"
 
-#define DEBUG_TEST
+//#define DEBUG_TEST
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -69,6 +69,7 @@ private:
 
     int Mode = 0;
     bool isFinishAlign = false;
+    bool needUpdateParams = false;
     int32_t calCode = 0;
     DisplayParameters display;
 

@@ -51,7 +51,7 @@ void AlignWidget::connectMainWindow(QWidget *parent)
 void AlignWidget::setAlignWidgetType(bool type, const DisplayParameters& display)
 {
     if(type) {
-        ui->titleLabel->setText("Юстировка при нулевой нагрузке");
+        ui->titleLabel->setText("Юстировка при нулевой \n нагрузке");
         ui->infoLabel->setText("- При успокоившихся весах нажать \"Продолжить\"");
         ui->w_clbLabel->setText("- Разгрузить весы");
         ui->finishButton->setText("Продолжить");
