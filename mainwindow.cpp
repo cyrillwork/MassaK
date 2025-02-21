@@ -50,8 +50,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->closeButton->setIconSize(pixmap2.rect().size());
     auto rrr2 = pixmap2.rect().size();
-    rrr2.setHeight(rrr2.height() + 10);
-    rrr2.setWidth(rrr2.width() + 10);
+    rrr2.setHeight(rrr2.height() + 5);
+    rrr2.setWidth(rrr2.width() + 5);
     ui->closeButton->setFixedSize(rrr2);
 
     // QPalette palette = ui->setZero->palette();
@@ -186,6 +186,13 @@ void MainWindow::routine()
     while(is_run) {
         std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << display.codeAD << std::endl;
 
+#ifdef DEBUG_SHOW_MAIN
+        if(true) {
+            display.codeAD = "1234567";
+            deviceStatus = DeviceStatusType::GetGoodAnswer;
+            ackScaleParameters.Calcode = "1234567";
+        } else
+#endif
         if( (DeviceStatusType::NoPortAnswer == deviceStatus || deviceStatus == DeviceStatusType::AnswerWithError)
             || (display.codeAD == "") || (display.codeAD == "0") || needUpdateParams)
         {
@@ -207,12 +214,19 @@ void MainWindow::routine()
         {
             if(!isFinishAlign)
             {
+#ifndef DEBUG_SHOW_MAIN
                 deviceStatus = Driver::instance().GetScalesParameters();
-
+#endif
                 if( (deviceStatus == DeviceStatusType::GetGoodAnswer) ||
                     (deviceStatus == DeviceStatusType::AnswerWithOverWeight) )
                 {
+
+#ifndef DEBUG_SHOW_MAIN
                     Driver::instance().GetScalesParametersStruct(scalesParameters);
+#else
+                    scalesParameters.weight = 9999999;
+                    scalesParameters.weight_stable = true;
+#endif
                     //std::cout << "emit showCheckingWidget"<< std::endl;
                     emit updateMainWidget();
                 } else {
