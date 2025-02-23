@@ -18,8 +18,8 @@
     <widget class="QLabel" name="messageLabel">
      <property name="font">
       <font>
-       <pointsize>30</pointsize>
-       <weight>75</weight>
+       <family>Sans Serif</family>
+       <pointsize>26</pointsize>
        <bold>true</bold>
       </font>
      </property>
@@ -32,23 +32,28 @@
     <widget class="QPushButton" name="closeButton">
      <property name="minimumSize">
       <size>
-       <width>74</width>
-       <height>56</height>
+       <width>90</width>
+       <height>90</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>74</width>
-       <height>56</height>
+       <width>90</width>
+       <height>90</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>20</pointsize>
+       <family>Sans Serif</family>
+       <pointsize>40</pointsize>
+       <bold>true</bold>
       </font>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: #2E5596; color: white</string>
+     </property>
      <property name="text">
-      <string/>
+      <string>X</string>
      </property>
     </widget>
    </item>

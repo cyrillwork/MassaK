@@ -9,17 +9,16 @@ MessageForm::MessageForm(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QPixmap pixmap("quit.png");
-    QIcon ButtonIcon(pixmap);
-    ui->closeButton->setIcon(ButtonIcon);
-    ui->closeButton->setIconSize(pixmap.rect().size());
+    // QPixmap pixmap("quit.png");
+    // QIcon ButtonIcon(pixmap);
+    // ui->closeButton->setIcon(ButtonIcon);
+    // ui->closeButton->setIconSize(pixmap.rect().size());
 
-    auto rrr = pixmap.rect().size();
-    rrr.setHeight(rrr.height() + 10);
-    rrr.setWidth(rrr.width() + 10);
-    ui->closeButton->setFixedSize(rrr);
-
-    ui->closeButton->setFixedSize(rrr);
+    // auto rrr = pixmap.rect().size();
+    // rrr.setHeight(rrr.height() + 10);
+    // rrr.setWidth(rrr.width() + 10);
+    // ui->closeButton->setFixedSize(rrr);
+    // ui->closeButton->setFixedSize(rrr);
 }
 
 MessageForm::~MessageForm()

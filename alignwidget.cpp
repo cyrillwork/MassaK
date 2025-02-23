@@ -15,15 +15,14 @@ AlignWidget::AlignWidget(QWidget *parent) :
     //setWindowState(Qt::WindowFullScreen);
     //showFullScreen();
 
-    QPixmap pixmap("quit.png");
-    QIcon ButtonIcon(pixmap);
-    ui->closeButton->setIcon(ButtonIcon);
-    ui->closeButton->setIconSize(pixmap.rect().size());
-
-    auto rrr = pixmap.rect().size();
-    rrr.setHeight(rrr.height() + 10);
-    rrr.setWidth(rrr.width() + 10);
-    ui->closeButton->setFixedSize(rrr);
+    // QPixmap pixmap("quit.png");
+    // QIcon ButtonIcon(pixmap);
+    // ui->closeButton->setIcon(ButtonIcon);
+    // ui->closeButton->setIconSize(pixmap.rect().size());
+    // auto rrr = pixmap.rect().size();
+    // rrr.setHeight(rrr.height() + 10);
+    // rrr.setWidth(rrr.width() + 10);
+    // ui->closeButton->setFixedSize(rrr);
 
 
     // QPalette palette = ui->finishButton->palette();
@@ -51,7 +50,7 @@ void AlignWidget::connectMainWindow(QWidget *parent)
 void AlignWidget::setAlignWidgetType(bool type, const DisplayParameters& display)
 {
     if(type) {
-        ui->titleLabel->setText("Юстировка при нулевой \n нагрузке");
+        ui->titleLabel->setText("Юстировка при нулевой нагрузке");
         ui->infoLabel->setText("- При успокоившихся весах нажать \"Продолжить\"");
         ui->w_clbLabel->setText("- Разгрузить весы");
         ui->finishButton->setText("Продолжить");

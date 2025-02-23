@@ -44,15 +44,14 @@ MainWindow::MainWindow(QWidget *parent)
     rrr1.setWidth(rrr1.width() + 10);
     ui->logoButton->setFixedSize(rrr1);
 
-    QPixmap pixmap2("quit.png");
-    QIcon ButtonIcon(pixmap2);
-    ui->closeButton->setIcon(ButtonIcon);
-
-    ui->closeButton->setIconSize(pixmap2.rect().size());
-    auto rrr2 = pixmap2.rect().size();
-    rrr2.setHeight(rrr2.height() + 5);
-    rrr2.setWidth(rrr2.width() + 5);
-    ui->closeButton->setFixedSize(rrr2);
+    // QPixmap pixmap2("quit.png");
+    // QIcon ButtonIcon(pixmap2);
+    // ui->closeButton->setIcon(ButtonIcon);
+    // ui->closeButton->setIconSize(pixmap2.rect().size());
+    // auto rrr2 = pixmap2.rect().size();
+    // rrr2.setHeight(rrr2.height() + 5);
+    // rrr2.setWidth(rrr2.width() + 5);
+    // ui->closeButton->setFixedSize(rrr2);
 
     // QPalette palette = ui->setZero->palette();
     // palette.setColor(QPalette::Button, QColor(Qt::darkRed));
@@ -96,10 +95,13 @@ void MainWindow::on_finishAlignWidget()
     isFinishAlign = true;
     std::cout << "on_finishAlignWidget" << std::endl;
 
-    if(Mode == 1)
-    {
-        if(Driver::instance().SetCalP(0))
-        {
+    if(Mode == 1) {
+#ifdef DEBUG_SHOW_MAIN
+        std::cout << "Align Widget 1 OK" << std::endl;
+        Mode = 2;
+        alignWidget->setAlignWidgetType(false, display);
+#else
+        if(Driver::instance().SetCalP(0)) {
             std::cout << "Align Widget 1 OK" << std::endl;
             Mode = 2;
             alignWidget->setAlignWidgetType(false, display);
@@ -108,7 +110,13 @@ void MainWindow::on_finishAlignWidget()
             // stay in the same mode
             //Mode = 0;
         }
+#endif
     } else if (Mode == 2) {
+
+#ifdef DEBUG_SHOW_MAIN
+        std::cout << "Align Widget 2 OK" << std::endl;
+        Mode = 0;
+#else
         if(Driver::instance().SetCalP(w_cal)) {
             std::cout << "Align Widget 2 OK" << std::endl;
             Mode = 0;
@@ -116,6 +124,7 @@ void MainWindow::on_finishAlignWidget()
         } else {
             std::cout << "Align Widget 2 Error" << std::endl;
         }
+#endif
     } else {
         std::cout << "on_finishAlignWidget Error Mode: " << (int)Mode << std::endl;
     }
@@ -226,6 +235,7 @@ void MainWindow::routine()
 #else
                     scalesParameters.weight = 9999999;
                     scalesParameters.weight_stable = true;
+                    ackScaleParameters.P_Max = "Max=6/15 kg";
 #endif
                     //std::cout << "emit showCheckingWidget"<< std::endl;
                     emit updateMainWidget();
@@ -448,7 +458,9 @@ void MainWindow::on_holdTimerTimeout()
 {
     std::cout << "on_holdTimerTimeout calCode: " << calCode << std::endl;
 
+#ifndef DEBUG_SHOW_MAIN
     Driver::instance().SetCal(calCode);
+#endif
 
     Mode = 1;
     setVisible(false);
