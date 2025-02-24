@@ -96,6 +96,7 @@
          <font>
           <family>Sans Serif</family>
           <pointsize>16</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -128,6 +129,7 @@
          <font>
           <family>Sans Serif</family>
           <pointsize>16</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -178,6 +180,7 @@
          <font>
           <family>Sans Serif</family>
           <pointsize>30</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -252,19 +255,20 @@
          <widget class="QLabel" name="weightNLabel">
           <property name="minimumSize">
            <size>
-            <width>400</width>
+            <width>500</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>400</width>
+            <width>500</width>
             <height>16777215</height>
            </size>
           </property>
           <property name="font">
            <font>
             <pointsize>70</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -283,19 +287,20 @@
          <widget class="QLabel" name="kgLabel">
           <property name="minimumSize">
            <size>
-            <width>100</width>
+            <width>120</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>100</width>
+            <width>120</width>
             <height>16777215</height>
            </size>
           </property>
           <property name="font">
            <font>
             <pointsize>60</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -303,7 +308,7 @@
            <enum>Qt::RightToLeft</enum>
           </property>
           <property name="text">
-           <string>kg</string>
+           <string> kg</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -320,7 +325,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>20</width>
             <height>20</height>
            </size>
           </property>
@@ -383,6 +388,7 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -396,6 +402,7 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -409,6 +416,7 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -422,6 +430,7 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -435,6 +444,7 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -448,6 +458,7 @@
           <property name="font">
            <font>
             <pointsize>14</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -532,6 +543,7 @@
              <font>
               <family>Sans Serif</family>
               <pointsize>40</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -572,6 +584,7 @@
              <font>
               <family>Sans Serif</family>
               <pointsize>14</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -595,6 +608,7 @@
              <font>
               <family>Sans Serif</family>
               <pointsize>14</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -655,7 +669,7 @@
      <x>0</x>
      <y>0</y>
      <width>1111</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
