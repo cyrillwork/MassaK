@@ -35,6 +35,8 @@ AlignWidget::AlignWidget(QWidget *parent) :
     // palette.setColor(QPalette::ButtonText, QColor(Qt::white));
     // ui->finishButton->setPalette(palette);
     // //ui->finishButton->show();
+
+    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1</font><font color='green'>.0.1</font>");
 }
 
 AlignWidget::~AlignWidget()
@@ -67,19 +69,25 @@ void AlignWidget::setAlignWidgetType(bool type, const DisplayParameters& display
 
 void AlignWidget::on_closeButton_released()
 {
-    std::cout << "on_closeButton_released" << std::endl;
+    if(verbose) {
+        std::cout << "on_closeButton_released" << std::endl;
+    }
     QCoreApplication::quit();
 }
 
 void AlignWidget::on_closeButton_clicked()
 {
-    std::cout << "on_closeButton_clicked" << std::endl;
+    if(verbose) {
+        std::cout << "on_closeButton_clicked" << std::endl;
+    }
     QCoreApplication::quit();
 }
 
 void AlignWidget::on_finishButton_released()
 {
-    std::cout << "on_finishButton_released" << std::endl;
+    if(verbose) {
+        std::cout << "on_finishButton_released" << std::endl;
+    }
     emit finishAlignWidget();
 }
 

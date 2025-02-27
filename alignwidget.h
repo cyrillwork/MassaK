@@ -34,7 +34,9 @@ private slots:
 
 private:
     Ui::AlignWidget *ui;
+
     bool alignType = true; // true - with zero, false - with max weight
+    bool verbose = false;
 };
 
 #endif // ALIGNWIDGET_H

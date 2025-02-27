@@ -7,7 +7,7 @@ mkdir ../inspection_module/lib/serial
 cp ./*.cpp ../inspection_module
 cp ./*.h   ../inspection_module
 cp ./*.pro ../inspection_module
-cp ./*.png ../inspection_module
+cp ./logo.png ../inspection_module
 cp ./*.ui  ../inspection_module
 
 cp ./build.sh ../inspection_module

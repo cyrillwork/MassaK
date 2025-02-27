@@ -53,7 +53,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-#ifdef DEBUG_TEST
+#ifdef DEBUG_SHOW_MAIN
     const int32_t timeoutUsec = 3000;
 #else
     const int32_t timeoutUsec = 10000;
@@ -87,4 +87,6 @@ private:
 
     int32_t w_cal = 0;
     std::string getDisplayParameters(const std::string& p_max, std::string& weight_clb);
+
+    bool verbose = false;
 };

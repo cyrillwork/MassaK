@@ -44,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent)
     rrr1.setWidth(rrr1.width() + 10);
     ui->logoButton->setFixedSize(rrr1);
 
+    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1</font><font color='green'>.0.1</font>");
+
     // QPixmap pixmap2("quit.png");
     // QIcon ButtonIcon(pixmap2);
     // ui->closeButton->setIcon(ButtonIcon);
@@ -92,8 +94,10 @@ void MainWindow::setJsonFilename(const std::string& name)
 
 void MainWindow::on_finishAlignWidget()
 {
-    isFinishAlign = true;
-    std::cout << "on_finishAlignWidget" << std::endl;
+    isFinishAlign = true;    
+    if(verbose) {
+        std::cout << "on_finishAlignWidget" << std::endl;
+    }
 
     if(Mode == 1) {
 #ifdef DEBUG_SHOW_MAIN
@@ -102,7 +106,10 @@ void MainWindow::on_finishAlignWidget()
         alignWidget->setAlignWidgetType(false, display);
 #else
         if(Driver::instance().SetCalP(0)) {
-            std::cout << "Align Widget 1 OK" << std::endl;
+            if(verbose) {
+                std::cout << "Align Widget 1 OK" << std::endl;
+            }
+
             Mode = 2;
             alignWidget->setAlignWidgetType(false, display);
         } else {
@@ -118,7 +125,15 @@ void MainWindow::on_finishAlignWidget()
         Mode = 0;
 #else
         if(Driver::instance().SetCalP(w_cal)) {
-            std::cout << "Align Widget 2 OK" << std::endl;
+            if(verbose) {
+                std::cout << "Align Widget 2 OK" << std::endl;
+            }
+
+            {
+                int32_t temp_calCode = 0xFFFFFFFF;
+                Driver::instance().SetCal(temp_calCode);
+            }
+
             Mode = 0;
             needUpdateParams = true;
         } else {
@@ -155,14 +170,18 @@ void MainWindow::on_setZero_released()
 
 void MainWindow::on_setTare_released()
 {
-    ScalesParameters params;
-    Driver::instance().GetScalesParametersStruct(params);
+    //ScalesParameters params;
+    //Driver::instance().GetScalesParametersStruct(params);
 
-    int32_t tare = params.weight;
-    std::cout << "tare: " << tare << std::endl;
+    int32_t tare = 0;//params.weight;
+    if(verbose) {
+        std::cout << "tare: " << tare << std::endl;
+    }
 
     auto res = Driver::instance().SetTare(tare);
-    std::cout << "Set Tare res:" << res << std::endl;
+    if(verbose) {
+        std::cout << "Set Tare res:" << res << std::endl;
+    }
 
     if(!res) {
         deviceStatus = DeviceStatusType::NoPortAnswer;
@@ -193,7 +212,9 @@ void MainWindow::routine()
     //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     while(is_run) {
-        std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << display.codeAD << std::endl;
+        if(verbose) {
+            std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << display.codeAD << std::endl;
+        }
 
 #ifdef DEBUG_SHOW_MAIN
         if(true) {
@@ -205,7 +226,10 @@ void MainWindow::routine()
         if( (DeviceStatusType::NoPortAnswer == deviceStatus || deviceStatus == DeviceStatusType::AnswerWithError)
             || (display.codeAD == "") || (display.codeAD == "0") || needUpdateParams)
         {
-            std::cout << "Driver::instance().GetScaleParCheck()"<< std::endl;
+            if(verbose) {
+                std::cout << "Driver::instance().GetScaleParCheck()"<< std::endl;
+            }
+
             deviceStatus = Driver::instance().GetScaleParCheck(ackScaleParameters);
 
             if(!json_file_name.empty() && deviceStatus == DeviceStatusType::GetGoodAnswer) {
@@ -213,7 +237,9 @@ void MainWindow::routine()
             }
 
             if(DeviceStatusType::NoPortAnswer == deviceStatus || DeviceStatusType::AnswerWithError == deviceStatus) {
-                std::cout << "emit showMessageWidget"<< std::endl;
+                if(verbose) {
+                    std::cout << "emit showMessageWidget"<< std::endl;
+                }
                 emit showMessageWidget();
             }
         }
@@ -285,11 +311,11 @@ void MainWindow::updateMainWidgetMode0()
         ui->calcodeLabel->setText("  ");
     }
 
-#ifdef MASSAK_WINDOWS
-    ui->PoVerLabel->setText("  VF_LX_0.1.0.W");
-#else
-    ui->PoVerLabel->setText("  VF_LX_0.1.0.L");
-#endif
+//#ifdef MASSAK_WINDOWS
+//    ui->PoVerLabel->setText("  VF_LX_0.1.0.W");
+//#else
+//    ui->PoVerLabel->setText("  VF_LX_0.1.0.L");
+//#endif
 
     // if(!ackScaleParameters.PO_Ver.empty()) {
     //     std::string _tmp = "  " + ackScaleParameters.PO_Ver;
@@ -412,14 +438,17 @@ std::string MainWindow::getDisplayParameters(const std::string& p_max, std::stri
 
 void MainWindow::on_closeButton_released()
 {
-    //close();
-    std::cout << "on_closeButton_released" << std::endl;
+    if(verbose) {
+        std::cout << "on_closeButton_released" << std::endl;
+    }
     QCoreApplication::quit();
 }
 
 void MainWindow::on_updateMainWidget()
 {
-    std::cout << "on_updateMainWidget Mode: " << Mode << std::endl;
+    if(verbose) {
+        std::cout << "on_updateMainWidget Mode: " << Mode << std::endl;
+    }
     if(Mode == 0) {
         updateMainWidgetMode0();
     } else if((Mode == 1) || (Mode == 2)) {
@@ -430,7 +459,9 @@ void MainWindow::on_updateMainWidget()
 
 void MainWindow::on_showMessageWidget()
 {
-    std::cout << "get MainWindow::on_showMessageWidget" << std::endl;
+    if(verbose) {
+        std::cout << "get MainWindow::on_showMessageWidget" << std::endl;
+    }
     hide();
 
     if(!messageWidget) {
@@ -450,30 +481,35 @@ void MainWindow::on_showMessageWidget()
 
 void MainWindow::on_logoButton_released()
 {
-    std::cout << "on_logoButton_released" << std::endl;
+    if(verbose) {
+        std::cout << "on_logoButton_released" << std::endl;
+    }
     holdTimer->stop();
 }
 
 void MainWindow::on_holdTimerTimeout()
 {
-    std::cout << "on_holdTimerTimeout calCode: " << calCode << std::endl;
+    if(verbose) {
+        std::cout << "on_holdTimerTimeout calCode: " << calCode << std::endl;
+    }
 
 #ifndef DEBUG_SHOW_MAIN
     Driver::instance().SetCal(calCode);
 #endif
 
     Mode = 1;
-    setVisible(false);
+    //setVisible(false);
 
     if(!alignWidget) {
         alignWidget = std::make_unique<AlignWidget>();
         alignWidget->connectMainWindow(this);
     }
     alignWidget->setAlignWidgetType(true, display);
-    alignWidget->show();
 
     if(is_full_screen) {
         alignWidget->showFullScreen();
+    } else {
+        alignWidget->show();
     }
 }
 
@@ -505,7 +541,9 @@ void MainWindow::on_saveToJson()
     if (file.open(QIODevice::WriteOnly)) {
         file.write(jsonDoc.toJson());
         file.close();
-        std::cout << "Struct saved to " << json_file_name << std::endl;
+        if(verbose) {
+            std::cout << "Struct saved to " << json_file_name << std::endl;
+        }
     } else {
         std::cerr << "Failed to open file for writing" << std::endl;
     }
@@ -513,7 +551,9 @@ void MainWindow::on_saveToJson()
 
 void MainWindow::on_logoButton_pressed()
 {
-    std::cout << "on_logoButton_pressed" << std::endl;
+    if(verbose) {
+        std::cout << "on_logoButton_pressed" << std::endl;
+    }
     holdTimer->start();    
 }
 

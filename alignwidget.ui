@@ -17,94 +17,17 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLabel" name="label">
-       <property name="minimumSize">
-        <size>
-         <width>60</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
+      <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Vertical</enum>
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="zeroLabel">
-       <property name="maximumSize">
-        <size>
-         <width>60</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <family>Sans Serif</family>
-         <pointsize>16</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="netLabel">
-       <property name="maximumSize">
-        <size>
-         <width>60</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <family>Sans Serif</family>
-         <pointsize>16</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
+         <width>110</width>
+         <height>20</height>
         </size>
        </property>
       </spacer>
@@ -115,19 +38,6 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <spacer name="verticalSpacer_10">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_15">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -161,32 +71,6 @@
       </widget>
      </item>
      <item>
-      <spacer name="verticalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_14">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <spacer name="verticalSpacer_9">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -202,7 +86,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="horizontalSpacer_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -218,19 +102,19 @@
         <widget class="QLabel" name="weightLabel">
          <property name="minimumSize">
           <size>
-           <width>500</width>
+           <width>600</width>
            <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>500</width>
+           <width>600</width>
            <height>16777215</height>
           </size>
          </property>
          <property name="font">
           <font>
-           <pointsize>70</pointsize>
+           <pointsize>100</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -250,19 +134,19 @@
         <widget class="QLabel" name="kgLabel">
          <property name="minimumSize">
           <size>
-           <width>120</width>
+           <width>170</width>
            <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>120</width>
+           <width>170</width>
            <height>16777215</height>
           </size>
          </property>
          <property name="font">
           <font>
-           <pointsize>60</pointsize>
+           <pointsize>100</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -278,59 +162,20 @@
          </property>
         </widget>
        </item>
-       <item>
-        <spacer name="horizontalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_5">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_13">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item>
       <spacer name="verticalSpacer_8">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>40</height>
+         <height>200</height>
         </size>
        </property>
       </spacer>
@@ -341,13 +186,13 @@
         <number>3</number>
        </property>
        <property name="leftMargin">
-        <number>50</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="QLabel" name="w_clbLabel">
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>20</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -361,7 +206,7 @@
         <widget class="QLabel" name="infoLabel">
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>20</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -392,35 +237,22 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <widget class="QPushButton" name="finishButton">
          <property name="minimumSize">
           <size>
-           <width>250</width>
-           <height>40</height>
+           <width>500</width>
+           <height>110</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>300</width>
-           <height>16777215</height>
+           <width>500</width>
+           <height>110</height>
           </size>
          </property>
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>40</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -433,23 +265,10 @@
          </property>
         </widget>
        </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
      </item>
      <item>
-      <spacer name="verticalSpacer_6">
+      <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -457,6 +276,42 @@
         <size>
          <width>20</width>
          <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="versionLabel">
+       <property name="font">
+        <font>
+         <pointsize>20</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: black;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_6">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
         </size>
        </property>
       </spacer>
@@ -485,20 +340,20 @@
       <widget class="QPushButton" name="closeButton">
        <property name="minimumSize">
         <size>
-         <width>90</width>
-         <height>90</height>
+         <width>112</width>
+         <height>114</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>90</width>
-         <height>90</height>
+         <width>112</width>
+         <height>114</height>
         </size>
        </property>
        <property name="font">
         <font>
          <family>Sans Serif</family>
-         <pointsize>30</pointsize>
+         <pointsize>40</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -527,36 +382,7 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <spacer name="verticalSpacer_11">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
-   </item>
-   <item>
-    <spacer name="horizontalSpacer_4">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
