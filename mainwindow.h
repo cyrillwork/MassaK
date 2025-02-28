@@ -34,11 +34,11 @@ signals:
 
 public slots:
     void on_finishAlignWidget();
+    void on_closeButton_released();
 
 private slots:
     void on_setZero_released();
     void on_setTare_released();
-    void on_closeButton_released();
 
     void on_updateMainWidget();
     void on_showMessageWidget();
@@ -87,6 +87,7 @@ private:
 
     int32_t w_cal = 0;
     std::string getDisplayParameters(const std::string& p_max, std::string& weight_clb);
+    void resetSET_CAL();
 
     bool verbose = false;
 };

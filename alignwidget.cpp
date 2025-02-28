@@ -36,7 +36,7 @@ AlignWidget::AlignWidget(QWidget *parent) :
     // ui->finishButton->setPalette(palette);
     // //ui->finishButton->show();
 
-    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1</font><font color='green'>.0.1</font>");
+    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1.0.1 </font>");
 }
 
 AlignWidget::~AlignWidget()
@@ -47,6 +47,7 @@ AlignWidget::~AlignWidget()
 void AlignWidget::connectMainWindow(QWidget *parent)
 {
     connect(this, &AlignWidget::finishAlignWidget, (MainWindow*)parent, &MainWindow::on_finishAlignWidget);
+    connect(this, &AlignWidget::closeApplication,  (MainWindow*)parent, &MainWindow::on_closeButton_released);
 }
 
 void AlignWidget::setAlignWidgetType(bool type, const DisplayParameters& display)
@@ -72,15 +73,8 @@ void AlignWidget::on_closeButton_released()
     if(verbose) {
         std::cout << "on_closeButton_released" << std::endl;
     }
-    QCoreApplication::quit();
-}
 
-void AlignWidget::on_closeButton_clicked()
-{
-    if(verbose) {
-        std::cout << "on_closeButton_clicked" << std::endl;
-    }
-    QCoreApplication::quit();
+    emit closeApplication();
 }
 
 void AlignWidget::on_finishButton_released()
@@ -123,5 +117,11 @@ void AlignWidget::updateWeightInfo(const ScalesParameters& scalesParameters, con
       //  ui->zeroLabel->setText(QString(display.weight_zero.c_str()));
       //  ui->netLabel->setText(QString(display.weight_net.c_str()));
     }
+}
+
+
+void AlignWidget::on_closeButton_clicked()
+{
+
 }
 

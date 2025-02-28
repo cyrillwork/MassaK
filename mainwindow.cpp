@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     rrr1.setWidth(rrr1.width() + 10);
     ui->logoButton->setFixedSize(rrr1);
 
-    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1</font><font color='green'>.0.1</font>");
+    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1.0.1 </font>");
 
     // QPixmap pixmap2("quit.png");
     // QIcon ButtonIcon(pixmap2);
@@ -129,10 +129,7 @@ void MainWindow::on_finishAlignWidget()
                 std::cout << "Align Widget 2 OK" << std::endl;
             }
 
-            {
-                int32_t temp_calCode = 0xFFFFFFFF;
-                Driver::instance().SetCal(temp_calCode);
-            }
+            resetSET_CAL();
 
             Mode = 0;
             needUpdateParams = true;
@@ -436,11 +433,22 @@ std::string MainWindow::getDisplayParameters(const std::string& p_max, std::stri
     return "";
 }
 
+void MainWindow::resetSET_CAL()
+{
+    int32_t temp_calCode = 0xFFFFFFFF;
+    Driver::instance().SetCal(temp_calCode);
+}
+
 void MainWindow::on_closeButton_released()
 {
     if(verbose) {
         std::cout << "on_closeButton_released" << std::endl;
     }
+
+#ifndef DEBUG_SHOW_MAIN
+    resetSET_CAL();
+#endif
+
     QCoreApplication::quit();
 }
 

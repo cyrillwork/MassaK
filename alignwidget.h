@@ -26,6 +26,7 @@ public:
 
 signals:
     void finishAlignWidget();
+    void closeApplication();
 
 private slots:
     void on_closeButton_released();
