@@ -5,4 +5,4 @@ echo $SRC_DIR
 
 export QT_QWS_FONTDIR=$SRC_DIR/fonts
 
-./inspection_module
+LD_LIBRARY_PATH=./ ./inspection_module
