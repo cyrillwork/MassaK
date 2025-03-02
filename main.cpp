@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "mainwindow.h"
 
 #include <QApplication>
@@ -5,6 +7,8 @@
 
 int main(int argc, char *argv[])
 {
+    std::cout.rdbuf( nullptr );
+
     QApplication app(argc, argv);
 
     MainWindow mainWindow;
