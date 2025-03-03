@@ -13,6 +13,7 @@ cp ./*.ui  ../inspection_module
 cp ./build.sh ../inspection_module
 cp ./run.sh ../inspection_module
 cp ./clean.sh ../inspection_module
+cp ./install.sh ../inspection_module
 
 cp ./lib/*.cpp ../inspection_module/lib
 cp ./lib/*.h   ../inspection_module/lib

@@ -54,7 +54,7 @@ private:
     Ui::MainWindow *ui;
 
 #ifdef DEBUG_SHOW_MAIN
-    const int32_t timeoutUsec = 3000;
+    const int32_t timeoutUsec = 1000;
 #else
     const int32_t timeoutUsec = 10000;
 #endif

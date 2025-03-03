@@ -9,6 +9,8 @@
 #include <QJsonValue>
 #include <QString>
 #include <iostream>
+#include <QGuiApplication>
+#include <QScreen>
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QDesktopWidget>
@@ -45,6 +47,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->logoButton->setFixedSize(rrr1);
 
     ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1.0.1 </font>");
+
+    //auto _size = QApplication::desktop()->screen()->rect();
+    //auto orient = QGuiApplication::primaryScreen()->orientation();
+    if(QGuiApplication::primaryScreen()->orientation() == Qt::ScreenOrientation::LandscapeOrientation) {
+        ui->optionalSpacer->changeSize(20, 260);
+    }
 
     // QPixmap pixmap2("quit.png");
     // QIcon ButtonIcon(pixmap2);
@@ -375,6 +383,11 @@ void MainWindow::updateMainWidgetMode0()
             ui->infoLabel->setText(info_temp);
         }
     }
+
+#ifdef DEBUG_SHOW_MAIN
+    scalesParameters.weight_zero = true;
+    scalesParameters.weight_net = true;
+#endif
 
     { //labels
         if(scalesParameters.weight_zero) {
