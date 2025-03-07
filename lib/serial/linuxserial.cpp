@@ -56,6 +56,11 @@ bool LinuxSerial::set_params(const std::string& baud_rate)
             tty.c_cflag |= PARENB; // Enable parity
             tty.c_cflag |= PARODD; // Set odd parity
             _baud_rate = B57600;
+        } else if(baud_rate == "9600") {
+            LOG(INFO) << "Set speed B9600" << std::endl;
+            tty.c_cflag |= PARENB; // Enable parity
+            tty.c_cflag |= PARODD; // Set odd parity
+            _baud_rate = B9600;
         } else if(baud_rate == "19200") {
             LOG(INFO) << "Set speed B19200" << std::endl;
             // clear mark/space parity

@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     rrr1.setWidth(rrr1.width() + 10);
     ui->logoButton->setFixedSize(rrr1);
 
-    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1.0.1 </font>");
+    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1.0.2 </font>");
 
     //auto _size = QApplication::desktop()->screen()->rect();
     //auto orient = QGuiApplication::primaryScreen()->orientation();

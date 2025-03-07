@@ -15,10 +15,15 @@ Controller::Controller(const std::string& port_name, bool high_speed):
     ptrSerial = serial_factory();
     //std::cout << "Controller" << std::endl;
 
-    baud = "4800";
-    if(name.find("ttyACM") != std::string::npos ) {
+    if(high_speed) {
         baud = "57600";
+    } else {
+        baud = "9600";
     }
+
+//    if(name.find("ttyACM") != std::string::npos ) {
+//        baud = "57600";
+//    }
 
     is_init = open();
     if(is_init) {

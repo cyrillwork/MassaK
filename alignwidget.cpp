@@ -36,7 +36,7 @@ AlignWidget::AlignWidget(QWidget *parent) :
     // ui->finishButton->setPalette(palette);
     // //ui->finishButton->show();
 
-    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1.0.1 </font>");
+    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1.0.2 </font>");
 }
 
 AlignWidget::~AlignWidget()

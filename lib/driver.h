@@ -35,6 +35,8 @@ public:
     DeviceStatusType GetScaleParCheck(AckScaleParameters& params);
 
 private:    
+    bool high_speed = false;
+
     Driver();
     std::mutex mutexRequest;
 

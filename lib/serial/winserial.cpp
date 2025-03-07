@@ -93,6 +93,12 @@ bool WinSerial::set_params(const std::string& baud_rate)
         ComDCM.Parity   = NOPARITY;
         ComDCM.StopBits = ONESTOPBIT;
         std::cout << "57600" << std::endl;
+    } else if(baud_rate == "9600") {
+        ComDCM.BaudRate = CBR_9600;
+        ComDCM.ByteSize = 8;
+        ComDCM.Parity   = NOPARITY;
+        ComDCM.StopBits = ONESTOPBIT;
+        std::cout << "9600" << std::endl;
     } else if(baud_rate == "4800") {
         ComDCM.BaudRate = CBR_4800;
         ComDCM.ByteSize = 8;

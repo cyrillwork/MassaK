@@ -344,10 +344,9 @@ bool Driver::checkPortGetMassa()
 
 bool Driver::search_port()
 {
-    bool result = false;
-    bool high_speed = false;
+    bool result = false;    
 
-    LOG(INFO) << "search_port begin" << std::endl;
+    LOG(INFO) << "search_port begin high_speed: " << high_speed << std::endl;
     COMPorts array_ports;       
 
     //if(array_ports.empty())
@@ -369,7 +368,7 @@ bool Driver::search_port()
                 controller = nullptr;
             }
         }
-        //high_speed = !high_speed;
+        high_speed = !high_speed;
         LOG(INFO) << "---------------------------------" << std::endl;
     }
     LOG(INFO) << "search_port end" << std::endl;
