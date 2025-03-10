@@ -123,6 +123,10 @@ DeviceStatusType Driver::GetScaleParCheck(AckScaleParameters& params)
     return result;
 }
 
+void Driver::setCustomPort(const std::string& port)
+{
+    custom_port = port;
+}
 
 bool Driver::SetZero()
 {
@@ -346,32 +350,49 @@ bool Driver::search_port()
 {
     bool result = false;    
 
-    LOG(INFO) << "search_port begin high_speed: " << high_speed << std::endl;
-    COMPorts array_ports;       
-
-    //if(array_ports.empty())
+    if(custom_port.empty())
     {
-        CheckCOMPorts ports;
-        ports.get_tty_ports(array_ports);
-        for(const auto& iii: array_ports) {
-            LOG(INFO) << "Found port: " << iii << std::endl;
-            controller = std::make_unique<Controller>(array_ports.back(), high_speed);
-            LOG(INFO) << "is_init: " << controller->isInit() << std::endl;
-            if(controller->isInit() && checkPortGetMassa()) {
-                LOG(INFO) << "set connected" << std::endl;
-                controller->setConnected(true);
-                result = true;
-                break;
-            } else {
-                LOG(INFO) << "not connected" << std::endl;
-                controller.reset();
-                controller = nullptr;
+        LOG(INFO) << "search_port begin high_speed: " << high_speed << std::endl;
+        COMPorts array_ports;
+        //if(array_ports.empty())
+        {
+            CheckCOMPorts ports;
+            ports.get_tty_ports(array_ports);
+            for(const auto& iii: array_ports) {
+                LOG(INFO) << "Found port: " << iii << std::endl;
+                controller = std::make_unique<Controller>(array_ports.back(), high_speed);
+                LOG(INFO) << "is_init: " << controller->isInit() << std::endl;
+                if(controller->isInit() && checkPortGetMassa()) {
+                    LOG(INFO) << "set connected" << std::endl;
+                    controller->setConnected(true);
+                    result = true;
+                    break;
+                } else {
+                    LOG(INFO) << "not connected" << std::endl;
+                    controller.reset();
+                    controller = nullptr;
+                }
             }
+
+            LOG(INFO) << "---------------------------------" << std::endl;
         }
-        high_speed = !high_speed;
-        LOG(INFO) << "---------------------------------" << std::endl;
+        LOG(INFO) << "search_port end" << std::endl;
+    } else {
+        LOG(INFO) << "search_port custom_port: " << custom_port << " high_speed: " << high_speed << std::endl;
+        controller = std::make_unique<Controller>(custom_port, high_speed);
+        LOG(INFO) << "is_init: " << controller->isInit() << std::endl;
+        if(controller->isInit() && checkPortGetMassa()) {
+            LOG(INFO) << "set connected" << std::endl;
+            controller->setConnected(true);
+            result = true;
+        } else {
+            LOG(INFO) << "not connected" << std::endl;
+            controller.reset();
+            controller = nullptr;
+        }
     }
-    LOG(INFO) << "search_port end" << std::endl;
+
+    high_speed = !high_speed;
 
     return result;
 }

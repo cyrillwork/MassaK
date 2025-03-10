@@ -21,11 +21,10 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(const std::string& name, QWidget *parent = nullptr);
     ~MainWindow();
 
     void setJsonFilename(const std::string& name);
-
 signals:
     void updateMainWidget();
     void showMessageWidget();
@@ -75,6 +74,7 @@ private:
     DisplayParameters display;
 
     std::string json_file_name;
+    std::string port_name;
 
     void show_info();
     void routine();

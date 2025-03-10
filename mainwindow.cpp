@@ -24,9 +24,10 @@ static bool is_full_screen = false;
 static bool is_full_screen = true;
 #endif
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(const std::string& name, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , port_name{name}
 {
     ui->setupUi(this);
 
@@ -215,6 +216,10 @@ void MainWindow::show_info()
 void MainWindow::routine()
 {
     //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    if(!port_name.empty()) {
+        Driver::instance().setCustomPort(port_name);
+    }
 
     while(is_run) {
         if(verbose) {

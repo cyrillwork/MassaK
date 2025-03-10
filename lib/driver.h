@@ -34,8 +34,11 @@ public:
 
     DeviceStatusType GetScaleParCheck(AckScaleParameters& params);
 
-private:    
+    void setCustomPort(const std::string& port);
+
+private:
     bool high_speed = false;
+    std::string custom_port;
 
     Driver();
     std::mutex mutexRequest;
