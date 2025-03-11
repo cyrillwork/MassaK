@@ -132,7 +132,7 @@ bool Controller::open()
         LOG(INFO) << "Error open port: " << name << std::endl;
         result = false;
     } else {
-        LOG(INFO) << "port opened OK " << std::endl;
+        LOG(INFO) << "port " << name << " opened OK " << std::endl;
         //fcntl(fd, F_SETFL, FNDELAY);	//read with no delay
         result = ptrSerial->set_params( baud );
     }

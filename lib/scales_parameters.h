@@ -4,6 +4,8 @@
 #include <string>
 #include <stdint.h>
 
+#define PROGRAM_VERSION "<font color='white'>MK module inspection, версия VF_1.1.0.3 </font>"
+
 struct ScalesParameters
 {
     bool connection     = false;

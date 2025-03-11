@@ -1,3 +1,3 @@
 #!/bin/bash
 
-LD_LIBRARY_PATH=./lib ./inspection_module -p $@
+LD_LIBRARY_PATH=./lib ./inspection_module --port $@

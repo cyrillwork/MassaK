@@ -27,8 +27,17 @@ static bool is_full_screen = true;
 MainWindow::MainWindow(const std::string& name, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , port_name{name}
+    //, port_name{name}
 {
+
+    if(!name.empty()) {
+#ifndef MASSAK_WINDOWS
+        //Its for Linux
+        port_name = "/dev/";
+#endif
+        port_name += name;
+    }
+
     ui->setupUi(this);
 
     connect(this, &MainWindow::updateMainWidget, this, &MainWindow::on_updateMainWidget);
@@ -47,7 +56,7 @@ MainWindow::MainWindow(const std::string& name, QWidget *parent)
     rrr1.setWidth(rrr1.width() + 10);
     ui->logoButton->setFixedSize(rrr1);
 
-    ui->versionLabel->setText("<font color='white'>MK module inspection, версия VF_1.1.0.2 </font>");
+    ui->versionLabel->setText(PROGRAM_VERSION);
 
     //auto _size = QApplication::desktop()->screen()->rect();
     //auto orient = QGuiApplication::primaryScreen()->orientation();
@@ -76,12 +85,13 @@ MainWindow::MainWindow(const std::string& name, QWidget *parent)
     //palette2.setColor(QPalette::ButtonText, QColor(Qt::white));
     //ui->setTare->setPalette(palette2);
     //ui->setTare->show();
+    on_showMessageWidget();
 
     holdTimer = new QTimer(this);
     holdTimer->setInterval(timeoutUsec);
     connect(holdTimer, &QTimer::timeout, this, &MainWindow::on_holdTimerTimeout);
 
-    setVisible(false);
+    //setVisible(false);
 
     is_run = true;
     main_thread = std::make_unique<std::thread>(&MainWindow::routine, this);
@@ -104,7 +114,7 @@ void MainWindow::setJsonFilename(const std::string& name)
 void MainWindow::on_finishAlignWidget()
 {
     isFinishAlign = true;    
-    if(verbose) {
+    if(DEBUG_VERBOSE) {
         std::cout << "on_finishAlignWidget" << std::endl;
     }
 
@@ -115,7 +125,7 @@ void MainWindow::on_finishAlignWidget()
         alignWidget->setAlignWidgetType(false, display);
 #else
         if(Driver::instance().SetCalP(0)) {
-            if(verbose) {
+            if(DEBUG_VERBOSE) {
                 std::cout << "Align Widget 1 OK" << std::endl;
             }
 
@@ -134,7 +144,7 @@ void MainWindow::on_finishAlignWidget()
         Mode = 0;
 #else
         if(Driver::instance().SetCalP(w_cal)) {
-            if(verbose) {
+            if(DEBUG_VERBOSE) {
                 std::cout << "Align Widget 2 OK" << std::endl;
             }
 
@@ -180,12 +190,12 @@ void MainWindow::on_setTare_released()
     //Driver::instance().GetScalesParametersStruct(params);
 
     int32_t tare = 0;//params.weight;
-    if(verbose) {
+    if(DEBUG_VERBOSE) {
         std::cout << "tare: " << tare << std::endl;
     }
 
     auto res = Driver::instance().SetTare(tare);
-    if(verbose) {
+    if(DEBUG_VERBOSE) {
         std::cout << "Set Tare res:" << res << std::endl;
     }
 
@@ -215,14 +225,22 @@ void MainWindow::show_info()
 
 void MainWindow::routine()
 {
-    //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    bool first_time = true;
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     if(!port_name.empty()) {
         Driver::instance().setCustomPort(port_name);
     }
 
     while(is_run) {
-        if(verbose) {
+
+        if(first_time) {
+            emit showMessageWidget();
+            first_time = false;
+        }
+
+        if(DEBUG_VERBOSE) {
             std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << display.codeAD << std::endl;
         }
 
@@ -236,7 +254,7 @@ void MainWindow::routine()
         if( (DeviceStatusType::NoPortAnswer == deviceStatus || deviceStatus == DeviceStatusType::AnswerWithError)
             || (display.codeAD == "") || (display.codeAD == "0") || needUpdateParams)
         {
-            if(verbose) {
+            if(DEBUG_VERBOSE) {
                 std::cout << "Driver::instance().GetScaleParCheck()"<< std::endl;
             }
 
@@ -247,7 +265,7 @@ void MainWindow::routine()
             }
 
             if(DeviceStatusType::NoPortAnswer == deviceStatus || DeviceStatusType::AnswerWithError == deviceStatus) {
-                if(verbose) {
+                if(DEBUG_VERBOSE) {
                     std::cout << "emit showMessageWidget"<< std::endl;
                 }
                 emit showMessageWidget();
@@ -457,9 +475,37 @@ void MainWindow::resetSET_CAL()
     Driver::instance().SetCal(temp_calCode);
 }
 
+void MainWindow::setAllEnabled(bool flag)
+{
+    ui->setTare->setEnabled(flag);
+    ui->setZero->setEnabled(flag);
+    ui->logoButton->setEnabled(flag);
+    ui->closeButton->setEnabled(flag);
+
+    if(!flag) {
+        ui->kgLabel->setText(" ");
+        ui->weightNLabel->setText(" ");
+        ui->netLabel->setVisible(false);
+        ui->zeroLabel->setVisible(false);
+        ui->setZero->setVisible(false);
+        ui->setTare->setVisible(false);
+        ui->closeButton->setVisible(false);
+
+        //setWindowFlags(windowFlags() | Qt::WindowStaysOnBottomHint );
+
+    } else {
+
+        //setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint );
+
+        ui->setZero->setVisible(true);
+        ui->setTare->setVisible(true);
+        ui->closeButton->setVisible(true);
+    }
+}
+
 void MainWindow::on_closeButton_released()
 {
-    if(verbose) {
+    if(DEBUG_VERBOSE) {
         std::cout << "on_closeButton_released" << std::endl;
     }
 
@@ -467,15 +513,16 @@ void MainWindow::on_closeButton_released()
     resetSET_CAL();
 #endif
 
-    QCoreApplication::quit();
+    QCoreApplication::exit(0);// quit();
 }
 
 void MainWindow::on_updateMainWidget()
 {
-    if(verbose) {
+    if(DEBUG_VERBOSE) {
         std::cout << "on_updateMainWidget Mode: " << Mode << std::endl;
     }
     if(Mode == 0) {
+        setAllEnabled(true);
         updateMainWidgetMode0();
     } else if((Mode == 1) || (Mode == 2)) {
         updateMainWidgetMode1_2();
@@ -485,10 +532,12 @@ void MainWindow::on_updateMainWidget()
 
 void MainWindow::on_showMessageWidget()
 {
-    if(verbose) {
+    if(DEBUG_VERBOSE) {
         std::cout << "get MainWindow::on_showMessageWidget" << std::endl;
     }
-    hide();
+
+    //hide();
+    setAllEnabled(false);
 
     if(!messageWidget) {
         messageWidget = std::make_unique<MessageForm>();
@@ -502,12 +551,14 @@ void MainWindow::on_showMessageWidget()
 #else
     messageWidget->move(QGuiApplication::screens().at(0)->geometry().center() - messageWidget->rect().center());
 #endif
-    //messageWidget->show();
+
+    messageWidget->setWindowFlag(Qt::WindowStaysOnTopHint);
+    messageWidget->show();
 }
 
 void MainWindow::on_logoButton_released()
 {
-    if(verbose) {
+    if(DEBUG_VERBOSE) {
         std::cout << "on_logoButton_released" << std::endl;
     }
     holdTimer->stop();
@@ -515,7 +566,7 @@ void MainWindow::on_logoButton_released()
 
 void MainWindow::on_holdTimerTimeout()
 {
-    if(verbose) {
+    if(DEBUG_VERBOSE) {
         std::cout << "on_holdTimerTimeout calCode: " << calCode << std::endl;
     }
 
@@ -541,7 +592,7 @@ void MainWindow::on_holdTimerTimeout()
 
 void MainWindow::on_lostConnection()
 {
-    hide();
+    //hide();
     display.clear();
     ackScaleParameters.clear();
     scalesParameters.clear();
@@ -567,7 +618,7 @@ void MainWindow::on_saveToJson()
     if (file.open(QIODevice::WriteOnly)) {
         file.write(jsonDoc.toJson());
         file.close();
-        if(verbose) {
+        if(DEBUG_VERBOSE) {
             std::cout << "Struct saved to " << json_file_name << std::endl;
         }
     } else {
@@ -575,11 +626,21 @@ void MainWindow::on_saveToJson()
     }
 }
 
+void MainWindow::focusInEvent(QFocusEvent* event)
+{
+    if(DEBUG_VERBOSE) {
+        std::cout << "focusInEvent" << std::endl;
+    }
+
+    // Handle focus in event
+    QWidget::focusInEvent(event);
+}
+
 void MainWindow::on_logoButton_pressed()
 {
-    if(verbose) {
+    if(DEBUG_VERBOSE) {
         std::cout << "on_logoButton_pressed" << std::endl;
     }
-    holdTimer->start();    
+    holdTimer->start();
 }
 

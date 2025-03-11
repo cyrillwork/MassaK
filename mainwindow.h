@@ -10,6 +10,8 @@
 #include "alignwidget.h"
 #include "messageform.h"
 
+#define DEBUG_VERBOSE true
+
 //#define DEBUG_TEST
 //#define DEBUG_SHOW_MAIN
 
@@ -48,6 +50,9 @@ private slots:
 
     void on_lostConnection();
     void on_saveToJson();
+
+protected:
+    void focusInEvent(QFocusEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
@@ -88,6 +93,5 @@ private:
     int32_t w_cal = 0;
     std::string getDisplayParameters(const std::string& p_max, std::string& weight_clb);
     void resetSET_CAL();
-
-    bool verbose = false;
+    void setAllEnabled(bool flag);
 };
