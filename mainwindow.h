@@ -32,6 +32,7 @@ signals:
     void showMessageWidget();
     void lostConnection();
     void saveToJson();
+    void closeAlignWidget();
 
 public slots:
     void on_finishAlignWidget();
@@ -40,7 +41,7 @@ public slots:
 private slots:
     void on_setZero_released();
     void on_setTare_released();
-
+    void on_closeAlignWidget();
     void on_updateMainWidget();
     void on_showMessageWidget();
 

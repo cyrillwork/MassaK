@@ -44,6 +44,7 @@ MainWindow::MainWindow(const std::string& name, QWidget *parent)
     connect(this, &MainWindow::showMessageWidget,  this, &MainWindow::on_showMessageWidget);
     connect(this, &MainWindow::lostConnection, this, &MainWindow::on_lostConnection);
     connect(this, &MainWindow::saveToJson, this, &MainWindow::on_saveToJson);
+    connect(this, &MainWindow::closeAlignWidget, this, &MainWindow::on_closeAlignWidget);
 
     //QPixmap pixmap("logo.png");
     //ui->logoLabel->setPixmap(pixmap);
@@ -205,6 +206,21 @@ void MainWindow::on_setTare_released()
     }
 }
 
+void MainWindow::on_closeAlignWidget()
+{
+    Mode = 0;
+
+    if(alignWidget) {
+        alignWidget->hide();
+    }
+
+    setVisible(true);
+
+    if(is_full_screen) {
+        showFullScreen();
+    }
+}
+
 void MainWindow::show_info()
 {
     std::string str_info;
@@ -226,6 +242,7 @@ void MainWindow::show_info()
 void MainWindow::routine()
 {
     bool first_time = true;
+    bool need_reset = true;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
@@ -258,17 +275,30 @@ void MainWindow::routine()
                 std::cout << "Driver::instance().GetScaleParCheck()"<< std::endl;
             }
 
-            deviceStatus = Driver::instance().GetScaleParCheck(ackScaleParameters);
+            bool was_changed = false;
+
+            auto temp_status = Driver::instance().GetScaleParCheck(ackScaleParameters);
+
+            if(temp_status != deviceStatus) {
+                deviceStatus = temp_status;
+                was_changed = true;
+            }
 
             if(!json_file_name.empty() && deviceStatus == DeviceStatusType::GetGoodAnswer) {
                 emit saveToJson();
             }
 
-            if(DeviceStatusType::NoPortAnswer == deviceStatus || DeviceStatusType::AnswerWithError == deviceStatus) {
+            if ( (DeviceStatusType::NoPortAnswer == deviceStatus ||
+                    DeviceStatusType::AnswerWithError == deviceStatus) && was_changed )
+            {
                 if(DEBUG_VERBOSE) {
                     std::cout << "emit showMessageWidget"<< std::endl;
                 }
                 emit showMessageWidget();
+            }
+
+            if(DeviceStatusType::NoPortAnswer == deviceStatus) {
+                need_reset = true;
             }
         }
 
@@ -277,12 +307,15 @@ void MainWindow::routine()
         {
             if(!isFinishAlign)
             {
+
 #ifndef DEBUG_SHOW_MAIN
                 deviceStatus = Driver::instance().GetScalesParameters();
 #endif
                 if( (deviceStatus == DeviceStatusType::GetGoodAnswer) ||
                     (deviceStatus == DeviceStatusType::AnswerWithOverWeight) )
                 {
+
+                    need_reset = true;
 
 #ifndef DEBUG_SHOW_MAIN
                     Driver::instance().GetScalesParametersStruct(scalesParameters);
@@ -294,7 +327,15 @@ void MainWindow::routine()
                     //std::cout << "emit showCheckingWidget"<< std::endl;
                     emit updateMainWidget();
                 } else {
-                    emit lostConnection();
+                    if(need_reset)
+                    {
+                        if(Mode == 1 || Mode == 2) {
+                            emit closeAlignWidget();
+                        }
+                        emit lostConnection();
+                        emit showMessageWidget();
+                        need_reset = false;
+                    }
                 }
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
@@ -485,17 +526,23 @@ void MainWindow::setAllEnabled(bool flag)
     if(!flag) {
         ui->kgLabel->setText(" ");
         ui->weightNLabel->setText(" ");
+        ui->infoLabel->setText(" ");
+        ui->calcodeLabel->setText(" ");
+        ui->PoSummLabel->setText(" ");
+
         ui->netLabel->setVisible(false);
         ui->zeroLabel->setVisible(false);
+
         ui->setZero->setVisible(false);
         ui->setTare->setVisible(false);
         ui->closeButton->setVisible(false);
-
         //setWindowFlags(windowFlags() | Qt::WindowStaysOnBottomHint );
 
     } else {
-
         //setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint );
+
+        ui->netLabel->setVisible(true);
+        ui->zeroLabel->setVisible(true);
 
         ui->setZero->setVisible(true);
         ui->setTare->setVisible(true);
