@@ -21,6 +21,9 @@ MessageForm::MessageForm(QWidget *parent) :
     // ui->closeButton->setFixedSize(rrr);    
 
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint );
+
+    //setWindowModality(Qt::WindowModal);
+    setWindowModality(Qt::ApplicationModal);
 }
 
 MessageForm::~MessageForm()
