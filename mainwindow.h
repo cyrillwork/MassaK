@@ -13,7 +13,7 @@
 #define DEBUG_VERBOSE true
 
 //#define DEBUG_TEST
-#define DEBUG_SHOW_MAIN
+//#define DEBUG_SHOW_MAIN
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

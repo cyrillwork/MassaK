@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
         mainWindow.setJsonFilename(file_name);
     }
 
-    //mainWindow.showFullScreen();
+    mainWindow.showFullScreen();
 
     return app.exec();
 }

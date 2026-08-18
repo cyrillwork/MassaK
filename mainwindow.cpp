@@ -21,7 +21,7 @@
 #ifdef DEBUG_TEST
 static bool is_full_screen = false;
 #else
-static bool is_full_screen = false;
+static bool is_full_screen = true;
 #endif
 
 MainWindow::MainWindow(const std::string& name, QWidget *parent)
@@ -96,23 +96,6 @@ MainWindow::MainWindow(const std::string& name, QWidget *parent)
 
     is_run = true;
     main_thread = std::make_unique<std::thread>(&MainWindow::routine, this);
-
-    {
-        // Получаем список экранов
-        QRect size;
-        QList<QScreen*> _screens = QGuiApplication::screens();
-
-        if(_screens.size() > 1) {
-            QScreen *targetScreen = _screens.at(1);
-            size = targetScreen->geometry();
-        } else {
-            QScreen *screen = QGuiApplication::primaryScreen();
-            size = screen->geometry(); // или screen->availableGeometry()
-        }
-
-        setGeometry(size);
-    }
-
 }
 
 MainWindow::~MainWindow()
