@@ -18,15 +18,10 @@
 #include <QScreen>
 #endif
 
-#ifdef DEBUG_TEST
-static bool is_full_screen = false;
-#else
-static bool is_full_screen = true;
-#endif
-
-MainWindow::MainWindow(const std::string& name, QWidget *parent)
+MainWindow::MainWindow(const std::string& name, bool fullScreen, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , is_full_screen(fullScreen)
     //, port_name{name}
 {
 
@@ -633,6 +628,7 @@ void MainWindow::on_holdTimerTimeout()
     if(is_full_screen) {
         alignWidget->showFullScreen();
     } else {
+        alignWidget->resize(size());
         alignWidget->show();
     }
 }
@@ -690,4 +686,3 @@ void MainWindow::on_logoButton_pressed()
     }
     holdTimer->start();
 }
-

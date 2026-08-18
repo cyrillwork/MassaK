@@ -23,7 +23,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    MainWindow(const std::string& name, QWidget *parent = nullptr);
+    MainWindow(const std::string& name, bool fullScreen, QWidget *parent = nullptr);
     ~MainWindow();
 
     void setJsonFilename(const std::string& name);
@@ -92,6 +92,7 @@ private:
     void updateMainWidgetMode1_2();
 
     int32_t w_cal = 0;
+    bool is_full_screen = true;
     std::string getDisplayParameters(const std::string& p_max, std::string& weight_clb);
     void resetSET_CAL();
     void setAllEnabled(bool flag);
