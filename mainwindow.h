@@ -54,6 +54,8 @@ private slots:
 
 protected:
     void focusInEvent(QFocusEvent *event) override;
+    void moveEvent(QMoveEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
@@ -96,4 +98,5 @@ private:
     std::string getDisplayParameters(const std::string& p_max, std::string& weight_clb);
     void resetSET_CAL();
     void setAllEnabled(bool flag);
+    void centerMessageWidget();
 };

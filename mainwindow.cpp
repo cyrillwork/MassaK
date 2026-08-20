@@ -10,13 +10,9 @@
 #include <QString>
 #include <iostream>
 #include <QGuiApplication>
+#include <QMoveEvent>
+#include <QResizeEvent>
 #include <QScreen>
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-#include <QDesktopWidget>
-#else
-#include <QScreen>
-#endif
 
 MainWindow::MainWindow(const std::string& name, bool fullScreen, QWidget *parent)
     : QMainWindow(parent)
@@ -81,7 +77,7 @@ MainWindow::MainWindow(const std::string& name, bool fullScreen, QWidget *parent
     //palette2.setColor(QPalette::ButtonText, QColor(Qt::white));
     //ui->setTare->setPalette(palette2);
     //ui->setTare->show();
-    on_showMessageWidget();
+    QTimer::singleShot(0, this, &MainWindow::on_showMessageWidget);
 
     holdTimer = new QTimer(this);
     holdTimer->setInterval(timeoutUsec);
@@ -164,6 +160,8 @@ void MainWindow::on_finishAlignWidget()
         setVisible(true);
         if(is_full_screen) {
             showFullScreen();
+        } else {
+            showNormal();
         }
     }
 
@@ -213,6 +211,8 @@ void MainWindow::on_closeAlignWidget()
 
     if(is_full_screen) {
         showFullScreen();
+    } else {
+        showNormal();
     }
 }
 
@@ -236,7 +236,6 @@ void MainWindow::show_info()
 
 void MainWindow::routine()
 {
-    bool first_time = true;
     bool need_reset = true;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -246,12 +245,6 @@ void MainWindow::routine()
     }
 
     while(is_run) {
-
-        if(first_time) {
-            emit showMessageWidget();
-            first_time = false;
-        }
-
         if(DEBUG_VERBOSE) {
             std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << display.codeAD << std::endl;
         }
@@ -350,6 +343,8 @@ void MainWindow::updateMainWidgetMode0()
 
     if(is_full_screen) {
         showFullScreen();
+    } else {
+        showNormal();
     }
 
     if(!ackScaleParameters.Calcode.empty()) {
@@ -587,15 +582,34 @@ void MainWindow::on_showMessageWidget()
 
     messageWidget->setTextAndShow(deviceStatus);
     messageWidget->adjustSize();
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    messageWidget->move(QApplication::desktop()->screen()->rect().center() - messageWidget->rect().center());
-#else
-    messageWidget->move(QGuiApplication::screens().at(0)->geometry().center() - messageWidget->rect().center());
-#endif
-
     messageWidget->setWindowFlag(Qt::WindowStaysOnTopHint);
+    centerMessageWidget();
     messageWidget->show();
+}
+
+void MainWindow::centerMessageWidget()
+{
+    if(messageWidget) {
+        messageWidget->move(geometry().center() - messageWidget->rect().center());
+    }
+}
+
+void MainWindow::moveEvent(QMoveEvent *event)
+{
+    QMainWindow::moveEvent(event);
+
+    if(messageWidget && messageWidget->isVisible()) {
+        centerMessageWidget();
+    }
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+
+    if(messageWidget && messageWidget->isVisible()) {
+        centerMessageWidget();
+    }
 }
 
 void MainWindow::on_logoButton_released()
@@ -628,8 +642,8 @@ void MainWindow::on_holdTimerTimeout()
     if(is_full_screen) {
         alignWidget->showFullScreen();
     } else {
-        alignWidget->resize(size());
-        alignWidget->show();
+        alignWidget->setGeometry(geometry());
+        alignWidget->showNormal();
     }
 }
 

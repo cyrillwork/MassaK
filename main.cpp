@@ -3,16 +3,25 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QPoint>
 #include <QRegularExpression>
 #include <QSize>
 #include <QWidget>
 
 namespace
 {
-bool parseResolution(const std::string& value, QSize& resolution)
+struct WindowGeometry
 {
-    static const QRegularExpression resolutionPattern(QStringLiteral("^(\\d+)x(\\d+)$"));
-    const QRegularExpressionMatch match = resolutionPattern.match(QString::fromStdString(value));
+    QSize size;
+    QPoint position;
+    bool hasPosition = false;
+};
+
+bool parseGeometry(const std::string& value, WindowGeometry& geometry)
+{
+    static const QRegularExpression geometryPattern(
+            QStringLiteral("^=?(\\d+)[xX](\\d+)(?:([+-]\\d+)([+-]\\d+))?$"));
+    const QRegularExpressionMatch match = geometryPattern.match(QString::fromStdString(value));
     if(!match.hasMatch()) {
         return false;
     }
@@ -25,7 +34,19 @@ bool parseResolution(const std::string& value, QSize& resolution)
         return false;
     }
 
-    resolution = QSize(width, height);
+    geometry.size = QSize(width, height);
+    geometry.hasPosition = !match.captured(3).isEmpty();
+    if(geometry.hasPosition) {
+        bool xOk = false;
+        bool yOk = false;
+        const int x = match.captured(3).toInt(&xOk);
+        const int y = match.captured(4).toInt(&yOk);
+        if(!xOk || !yOk) {
+            return false;
+        }
+        geometry.position = QPoint(x, y);
+    }
+
     return true;
 }
 }
@@ -36,15 +57,16 @@ int main(int argc, char *argv[])
             "Ошибка. Используемые параметры ввода:"
             "\n\t--port имя порта (например ttyS4)"
             "\n\t--i путь и имя файла json (информация по весам)"
-            "\n\t--resolution <ширина>x<высота> (например 1280x720)";
+            "\n\t--geometry <ширина>x<высота>[+X+Y] (например 1280x720+0+0)";
 
     std::string port_name;
     std::string file_name;
-    QSize resolution;
-    bool hasResolution = false;
+    WindowGeometry geometry;
+    bool hasGeometry = false;
 
-    QApplication app(argc, argv);
-
+    // The XCB platform plugin consumes the standard --geometry option while
+    // QApplication is being constructed. Parse application arguments first
+    // so that the requested windowed mode is not mistaken for fullscreen.
     if(argc > 1)
     {
         if((argc - 1) % 2 != 0) {
@@ -58,12 +80,12 @@ int main(int argc, char *argv[])
                 port_name = std::string(argv[shift + 1]);
             } else if(std::string(argv[shift]) == "--i") {
                 file_name = std::string(argv[shift + 1]);
-            } else if(std::string(argv[shift]) == "--resolution") {
-                if(!parseResolution(argv[shift + 1], resolution)) {
+            } else if(std::string(argv[shift]) == "--geometry") {
+                if(!parseGeometry(argv[shift + 1], geometry)) {
                     std::cout << help_str << std::endl;
                     return -1;
                 }
-                hasResolution = true;
+                hasGeometry = true;
             } else {
                 std::cout << help_str << std::endl;
                 return -1;
@@ -71,20 +93,25 @@ int main(int argc, char *argv[])
         }
     }
 
+    QApplication app(argc, argv);
+
     if(!DEBUG_VERBOSE) {
         //no cout prints
         std::cout.rdbuf( nullptr );
     }
 
-    MainWindow mainWindow(port_name, !hasResolution);
+    MainWindow mainWindow(port_name, !hasGeometry);
     //mainWindow.setVisible(false);
     if(!file_name.empty()) {
         mainWindow.setJsonFilename(file_name);
     }
 
-    if(hasResolution) {
-        mainWindow.resize(resolution);
-        mainWindow.show();
+    if(hasGeometry) {
+        mainWindow.resize(geometry.size);
+        if(geometry.hasPosition) {
+            mainWindow.move(geometry.position);
+        }
+        mainWindow.showNormal();
     } else {
         mainWindow.showFullScreen();
     }
