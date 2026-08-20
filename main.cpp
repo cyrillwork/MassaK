@@ -3,9 +3,12 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QGuiApplication>
 #include <QPoint>
 #include <QRegularExpression>
+#include <QScreen>
 #include <QSize>
+#include <QWindow>
 #include <QWidget>
 
 namespace
@@ -57,12 +60,15 @@ int main(int argc, char *argv[])
             "Ошибка. Используемые параметры ввода:"
             "\n\t--port имя порта (например ttyS4)"
             "\n\t--i путь и имя файла json (информация по весам)"
-            "\n\t--geometry <ширина>x<высота>[+X+Y] (например 1280x720+0+0)";
+            "\n\t--geometry <ширина>x<высота>[+X+Y] (например 1280x720+0+0)"
+            "\n\t--screen <номер экрана, начиная с 0> (например 1)";
 
     std::string port_name;
     std::string file_name;
     WindowGeometry geometry;
     bool hasGeometry = false;
+    int screenNumber = -1;
+    bool hasScreen = false;
 
     // The XCB platform plugin consumes the standard --geometry option while
     // QApplication is being constructed. Parse application arguments first
@@ -86,6 +92,14 @@ int main(int argc, char *argv[])
                     return -1;
                 }
                 hasGeometry = true;
+            } else if(std::string(argv[shift]) == "--screen") {
+                bool screenOk = false;
+                screenNumber = QString::fromLocal8Bit(argv[shift + 1]).toInt(&screenOk);
+                if(!screenOk || screenNumber < 0) {
+                    std::cout << help_str << std::endl;
+                    return -1;
+                }
+                hasScreen = true;
             } else {
                 std::cout << help_str << std::endl;
                 return -1;
@@ -94,6 +108,17 @@ int main(int argc, char *argv[])
     }
 
     QApplication app(argc, argv);
+
+    QScreen *targetScreen = nullptr;
+    if(hasScreen) {
+        const QList<QScreen *> screens = QGuiApplication::screens();
+        if(screenNumber >= screens.size()) {
+            std::cout << "Ошибка: экран с номером " << screenNumber
+                      << " не найден. Доступно экранов: " << screens.size() << std::endl;
+            return -1;
+        }
+        targetScreen = screens.at(screenNumber);
+    }
 
     if(!DEBUG_VERBOSE) {
         //no cout prints
@@ -106,13 +131,29 @@ int main(int argc, char *argv[])
         mainWindow.setJsonFilename(file_name);
     }
 
+    if(targetScreen) {
+        mainWindow.winId();
+        if(mainWindow.windowHandle()) {
+            mainWindow.windowHandle()->setScreen(targetScreen);
+        }
+    }
+
     if(hasGeometry) {
         mainWindow.resize(geometry.size);
         if(geometry.hasPosition) {
-            mainWindow.move(geometry.position);
+            const QPoint screenOrigin = targetScreen
+                    ? targetScreen->geometry().topLeft()
+                    : QPoint();
+            mainWindow.move(screenOrigin + geometry.position);
+        } else if(targetScreen) {
+            mainWindow.move(targetScreen->availableGeometry().center()
+                            - mainWindow.rect().center());
         }
         mainWindow.showNormal();
     } else {
+        if(targetScreen) {
+            mainWindow.move(targetScreen->geometry().topLeft());
+        }
         mainWindow.showFullScreen();
     }
 
