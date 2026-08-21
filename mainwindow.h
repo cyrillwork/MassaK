@@ -95,6 +95,7 @@ private:
 
     int32_t w_cal = 0;
     bool is_full_screen = true;
+    std::string model = "";
     std::string getDisplayParameters(const std::string& p_max, std::string& weight_clb);
     void resetSET_CAL();
     void setAllEnabled(bool flag);

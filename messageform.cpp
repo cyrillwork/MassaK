@@ -50,14 +50,14 @@ void MessageForm::setTextAndShow(int deviceStatus)
 
 void MessageForm::on_closeButton_clicked()
 {
-    std::cout << "on_closeButton_clicked" << std::endl;
+    //std::cout << "on_closeButton_clicked" << std::endl;
     QCoreApplication::exit(0);//quit();
 }
 
 
 void MessageForm::on_closeButton_released()
 {
-    std::cout << "on_closeButton_released" << std::endl;
+    //std::cout << "on_closeButton_released" << std::endl;
     QCoreApplication::exit(0);//quit();
 }
 

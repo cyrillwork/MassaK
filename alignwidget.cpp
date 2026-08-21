@@ -12,6 +12,7 @@ AlignWidget::AlignWidget(QWidget *parent) :
     ui(new Ui::AlignWidget)
 {
     ui->setupUi(this);
+    setWindowFlag(Qt::FramelessWindowHint, true);
     //setWindowState(Qt::WindowFullScreen);
     //showFullScreen();
 

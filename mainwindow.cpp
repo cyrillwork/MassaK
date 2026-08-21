@@ -30,6 +30,7 @@ MainWindow::MainWindow(const std::string& name, bool fullScreen, QWidget *parent
     }
 
     ui->setupUi(this);
+    setWindowFlag(Qt::FramelessWindowHint, true);
 
     connect(this, &MainWindow::updateMainWidget, this, &MainWindow::on_updateMainWidget);
     connect(this, &MainWindow::showMessageWidget,  this, &MainWindow::on_showMessageWidget);
@@ -91,6 +92,7 @@ MainWindow::MainWindow(const std::string& name, bool fullScreen, QWidget *parent
 
 MainWindow::~MainWindow()
 {
+    emit saveToJson();
     if(main_thread && main_thread->joinable()) {
         is_run = false;
         main_thread->join();
@@ -107,24 +109,24 @@ void MainWindow::on_finishAlignWidget()
 {
     isFinishAlign = true;    
     if(DEBUG_VERBOSE) {
-        std::cout << "on_finishAlignWidget" << std::endl;
+        //std::cout << "on_finishAlignWidget" << std::endl;
     }
 
     if(Mode == 1) {
 #ifdef DEBUG_SHOW_MAIN
-        std::cout << "Align Widget 1 OK" << std::endl;
+        //std::cout << "Align Widget 1 OK" << std::endl;
         Mode = 2;
         alignWidget->setAlignWidgetType(false, display);
 #else
         if(Driver::instance().SetCalP(0)) {
             if(DEBUG_VERBOSE) {
-                std::cout << "Align Widget 1 OK" << std::endl;
+                //std::cout << "Align Widget 1 OK" << std::endl;
             }
 
             Mode = 2;
             alignWidget->setAlignWidgetType(false, display);
         } else {
-            std::cout << "error SetCal calCode: " << calCode << std::endl;
+            //std::cout << "error SetCal calCode: " << calCode << std::endl;
             // stay in the same mode
             //Mode = 0;
         }
@@ -132,12 +134,12 @@ void MainWindow::on_finishAlignWidget()
     } else if (Mode == 2) {
 
 #ifdef DEBUG_SHOW_MAIN
-        std::cout << "Align Widget 2 OK" << std::endl;
+        //std::cout << "Align Widget 2 OK" << std::endl;
         Mode = 0;
 #else
         if(Driver::instance().SetCalP(w_cal)) {
             if(DEBUG_VERBOSE) {
-                std::cout << "Align Widget 2 OK" << std::endl;
+                //std::cout << "Align Widget 2 OK" << std::endl;
             }
 
             resetSET_CAL();
@@ -145,11 +147,11 @@ void MainWindow::on_finishAlignWidget()
             Mode = 0;
             needUpdateParams = true;
         } else {
-            std::cout << "Align Widget 2 Error" << std::endl;
+            //std::cout << "Align Widget 2 Error" << std::endl;
         }
 #endif
     } else {
-        std::cout << "on_finishAlignWidget Error Mode: " << (int)Mode << std::endl;
+        //std::cout << "on_finishAlignWidget Error Mode: " << (int)Mode << std::endl;
     }
 
     if(Mode == 0)
@@ -171,7 +173,7 @@ void MainWindow::on_finishAlignWidget()
 void MainWindow::on_setZero_released()
 {
     auto res = Driver::instance().SetZero();
-    std::cout << "Set Zero res:" << res << std::endl;
+    //std::cout << "Set Zero res:" << res << std::endl;
     if(!res) {
         deviceStatus = DeviceStatusType::NoPortAnswer;
         emit lostConnection();
@@ -185,12 +187,12 @@ void MainWindow::on_setTare_released()
 
     int32_t tare = 0;//params.weight;
     if(DEBUG_VERBOSE) {
-        std::cout << "tare: " << tare << std::endl;
+        //std::cout << "tare: " << tare << std::endl;
     }
 
     auto res = Driver::instance().SetTare(tare);
     if(DEBUG_VERBOSE) {
-        std::cout << "Set Tare res:" << res << std::endl;
+        //std::cout << "Set Tare res:" << res << std::endl;
     }
 
     if(!res) {
@@ -246,7 +248,7 @@ void MainWindow::routine()
 
     while(is_run) {
         if(DEBUG_VERBOSE) {
-            std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << display.codeAD << std::endl;
+            //std::cout << "info deviceStatus: " << (int)deviceStatus << " calCode: " << display.codeAD << std::endl;
         }
 
 #ifdef DEBUG_SHOW_MAIN
@@ -474,26 +476,32 @@ std::string MainWindow::getDisplayParameters(const std::string& p_max, std::stri
     if(p_max.find("3/6 kg") != std::string::npos) {
         w_cal = 6000;
         weight_clb = "6.000 kg";
+        model = "6.2";
         return std::string("Max = 3/6kg  Min=20g e= 1/2g  T=-3kg");
     } else if(p_max.find("6 kg") != std::string::npos) {
         w_cal = 6000;
         weight_clb = "6.000 kg";
+        model = "6.1";
         return std::string("Max = 6kg  Min=40g e= 2g  T=-6kg");
     } else if(p_max.find("6/15 kg") != std::string::npos) {
         w_cal = 15000;
         weight_clb = "15.000 kg";
+        model = "15.2";
         return std::string("Max = 6/15kg  Min=40g e= 2/5g  T=-6kg");
     } else if(p_max.find("15 kg") != std::string::npos) {
         w_cal = 15000;
         weight_clb = "15.000 kg";
+        model = "15.1";
         return std::string("Max = 15kg  Min=100g e= 5g  T=-15kg");
     } else if(p_max.find("15/32 kg") != std::string::npos) {
         w_cal = 30000;
         weight_clb = "30.000 kg";
+        model = "32.2";
         return std::string("Max = 15/32kg  Min=100g e= 5/10g  T=-15kg");
     } else if(p_max.find("32 kg") != std::string::npos) {
         w_cal = 30000;
         weight_clb = "30.000 kg";
+        model = "32.1";
         return std::string("Max = 32kg  Min=200g e= 10g  T=-32kg");
     }
 
@@ -543,7 +551,7 @@ void MainWindow::setAllEnabled(bool flag)
 void MainWindow::on_closeButton_released()
 {
     if(DEBUG_VERBOSE) {
-        std::cout << "on_closeButton_released" << std::endl;
+        //std::cout << "on_closeButton_released" << std::endl;
     }
 
 #ifndef DEBUG_SHOW_MAIN
@@ -556,7 +564,7 @@ void MainWindow::on_closeButton_released()
 void MainWindow::on_updateMainWidget()
 {
     if(DEBUG_VERBOSE) {
-        std::cout << "on_updateMainWidget Mode: " << Mode << std::endl;
+        //std::cout << "on_updateMainWidget Mode: " << Mode << std::endl;
     }
     if(Mode == 0) {
         setAllEnabled(true);
@@ -570,7 +578,7 @@ void MainWindow::on_updateMainWidget()
 void MainWindow::on_showMessageWidget()
 {
     if(DEBUG_VERBOSE) {
-        std::cout << "get MainWindow::on_showMessageWidget" << std::endl;
+        //std::cout << "get MainWindow::on_showMessageWidget" << std::endl;
     }
 
     //hide();
@@ -615,7 +623,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::on_logoButton_released()
 {
     if(DEBUG_VERBOSE) {
-        std::cout << "on_logoButton_released" << std::endl;
+        //std::cout << "on_logoButton_released" << std::endl;
     }
     holdTimer->stop();
 }
@@ -623,7 +631,7 @@ void MainWindow::on_logoButton_released()
 void MainWindow::on_holdTimerTimeout()
 {
     if(DEBUG_VERBOSE) {
-        std::cout << "on_holdTimerTimeout calCode: " << calCode << std::endl;
+        //std::cout << "on_holdTimerTimeout calCode: " << calCode << std::endl;
     }
 
 #ifndef DEBUG_SHOW_MAIN
@@ -659,7 +667,17 @@ void MainWindow::on_saveToJson()
 {
     auto _params = ackScaleParameters;
     QJsonObject jsonObj;
+    std::string md;
 
+    if (model != "") {
+        jsonObj["firmwareVersion"] = QString::fromStdString("U_38.1.6"); //_params.PO_Ver
+        md = "MK(TB)-" + model;
+        jsonObj["model"] = QString::fromStdString(md);
+        jsonObj["vendor"] = QString::fromStdString("MASSA-K");
+    } else {
+        return;
+    }
+    /*
     jsonObj["P_Max"] = QString::fromStdString(_params.P_Max);
     jsonObj["P_Min"] = QString::fromStdString(_params.P_Min);
     jsonObj["P_e"] = QString::fromStdString(_params.P_e);
@@ -668,25 +686,32 @@ void MainWindow::on_saveToJson()
     jsonObj["Calcode"] = QString::fromStdString(_params.Calcode);
     jsonObj["PO_Ver"] = QString::fromStdString(_params.PO_Ver);
     jsonObj["PO_Summ"] = QString::fromStdString(_params.PO_Summ);
-
+*/
     QJsonDocument jsonDoc(jsonObj);
+
+    std::cout << jsonDoc.toJson().toStdString() << std::endl;
+
+    if (json_file_name.empty()) return;
+
     QFile file(QString(json_file_name.c_str()));
 
     if (file.open(QIODevice::WriteOnly)) {
         file.write(jsonDoc.toJson());
         file.close();
         if(DEBUG_VERBOSE) {
-            std::cout << "Struct saved to " << json_file_name << std::endl;
+            //std::cout << "Struct saved to " << json_file_name << std::endl;
         }
     } else {
-        std::cerr << "Failed to open file for writing" << std::endl;
+        if(DEBUG_VERBOSE) {
+            //std::cerr << "Failed to open file for writing" << std::endl;
+        }
     }
 }
 
 void MainWindow::focusInEvent(QFocusEvent* event)
 {
     if(DEBUG_VERBOSE) {
-        std::cout << "focusInEvent" << std::endl;
+        //std::cout << "focusInEvent" << std::endl;
     }
 
     // Handle focus in event
@@ -696,7 +721,7 @@ void MainWindow::focusInEvent(QFocusEvent* event)
 void MainWindow::on_logoButton_pressed()
 {
     if(DEBUG_VERBOSE) {
-        std::cout << "on_logoButton_pressed" << std::endl;
+        //std::cout << "on_logoButton_pressed" << std::endl;
     }
     holdTimer->start();
 }
